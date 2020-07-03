@@ -1,0 +1,137 @@
+---
+title: "Online updating of onlineforecast models"
+author: "Peder Bacher"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_debth: 3
+vignette: >
+  %\VignetteIndexEntry{Online updating of onlineforecast models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: literature.bib
+---
+
+```{r external-code, cache=FALSE, include=FALSE, purl = FALSE}
+# Have to load the knitr to use hooks
+library(knitr)
+# This vignettes name
+vignettename <- "online-updating"
+# Read external code from init.R
+knitr::read_chunk("init.R")
+```
+```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+```
+
+
+## Intro
+This vignette explains how to 
+
+Load the package:
+```{r}
+# Load the package
+#library(onlineforecast)
+library(devtools)
+load_all(as.package("../../onlineforecast"))
+```
+
+Load data, setup and define a model:
+```{r, output.lines=10}
+# Keep the data in D to simplify notation
+D <- Dbuildingheatload
+# Set the score period 
+D$scoreperiod <- in_range("2010-12-20", D$t)
+# Set the training period
+D$trainperiod <- in_range(D$t[1], D$t, "2011-02-01")
+# Define a new model with low-pass filtering of the Ta input
+model <- forecastmodel$new()
+model$output = "heatload"
+model$add_inputs(Ta = "lp(Ta, a1=0.9)",
+                 mu = "ones()")
+model$add_regprm("rls_prm(lambda=0.9)")
+model$add_prmbounds(Ta__a1 = c(0.5, 0.9, 0.9999),
+                    lambda = c(0.9, 0.99, 0.9999))
+model$kseq <- c(3,18)
+# Optimize the parameters
+model$prm <- rls_optim(model, subset(D,D$trainperiod))$par
+```
+
+
+
+## Recursive update and prediction
+
+How to get new data and update and predict.
+
+First fit on a period
+```{r}
+iseq <- which(in_range("2010-12-15",D$t,"2011-01-01"))
+Dfit <- subset(D, iseq)
+model$kseq <- 1:36
+rls_fit(model$prm, model, Dfit)
+```
+
+Now the fits are saved in the model object (its an R6 object, hence passed by reference to the functions and can be changed inside the functions). A list of fits with an entry for each horizon is in Lfits, see the two first
+```{r}
+str(model$Lfits[1:2])
+```
+
+Now new data arrives, take the point right after the fit period
+```{r}
+(i <- iseq[length(iseq)] + 1)
+Dnew <- subset(D, i)
+```
+
+First we need to transform the new data (This must only be done once for each new data, since some transform functions, e.g. lp(), actually keep states, see the detailed vignette in ??)
+```{r}
+Dnew_transformed <- model$transform_data(Dnew)
+```
+
+Then we can update the parameters using the transformed data
+```{r}
+rls_update(model, Dnew_transformed, Dnew[[model$output]])
+```
+
+Calculate predictions using the new data and the updated fits (rls coefficient estimates in model$Lfits[[k]]$theta)
+```{r}
+yhat <- rls_predict(model, Dnew_transformed)
+```
+
+Plot to see that it fits the observations
+```{r}
+iseq <- i+model$kseq
+plot(D$t[iseq], D$heatload[iseq], type = "b", xlab = "t", ylab = "y")
+lines(D$t[iseq], yhat, type = "b", col = 2)
+legend("topright", c("observations",pst("predictions (",min(model$kseq)," to ",max(model$kseq)," steps ahead)")), lty = 1, col = 1:2)
+```
+
+Run this for a longer period to verify that the same forecasts are obtained (in one go vs. iteratively)
+
+First in one go
+```{r}
+val <- rls_fit(model$prm, model, D, returnanalysis = TRUE)
+D$Yhat1 <- val$Yhat
+```
+
+and then iteratively
+```{r}
+itrain <- which(in_range("2010-12-15",D$t,"2011-01-01"))
+itest <- which(in_range("2011-01-01",D$t,"2011-01-04"))
+rls_fit(model$prm, model, subset(D, itrain))
+
+D$Yhat2 <- data.frame(matrix(NA, nrow(D$Yhat1), ncol(D$Yhat1)))
+names(D$Yhat2) <- names(D$Yhat1)
+for(i in itest){
+    Dnew <- subset(D, i)
+    Dnewtr <- model$transform_data(Dnew)
+    rls_update(model, Dnewtr, Dnew[[model$output]])
+    D$Yhat2[i, ] <- as.numeric(rls_predict(model, Dnewtr))
+}
+```
+
+Compare to see the difference between the one step forecasts
+```{r}
+D$Yhat1$k1[itest] - D$Yhat2$k1[itest]
+```
+
+Note about model$reset_states()

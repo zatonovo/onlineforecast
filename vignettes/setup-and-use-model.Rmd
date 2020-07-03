@@ -1,0 +1,428 @@
+---
+title: "Setup and use onlineforecast models"
+author: "Peder Bacher"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_debth: 3
+vignette: >
+  %\VignetteIndexEntry{Setup and use onlineforecast models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: literature.bib
+---
+
+```{r external-code, cache=FALSE, include=FALSE, purl = FALSE}
+# Have to load the knitr to use hooks
+library(knitr)
+# This vignettes name
+vignettename <- "setup-and-use-model"
+# Read external code from init.R
+knitr::read_chunk("init.R")
+```
+```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+```
+
+
+## Intro
+This vignette explains how to setup and use an onlineforecast
+model. This takes offset in the example of building heat load forecasting??(ref)
+and assumes that the data is setup correctly, as explained in
+[setup-data vignette](setup-data.html).
+
+Load the package:
+```{r}
+## Load the package
+library(onlineforecast)
+```
+
+Just start by:
+```{r}
+# Keep the data in D to simplify notation
+D <- Dbuildingheatload
+```
+
+
+## Score period
+
+Set the `scoreperiod` as a logical vector with same length as `t`. It controls
+which points are included in score calculations in the package functions when the parameters are being optimized. this
+must be set in the `data.list` used.
+
+Use it to exclude a burn-in period of one week:
+```{r}
+# Print the first time point
+D$t[1]
+# Set the score period 
+D$scoreperiod <- in_range("2010-12-22", D$t)
+# Plot to see it
+plot(D$t, D$scoreperiod, xlab="Time", ylab="Scoreperiod")
+```
+Other periods, which should be excluded from score calculations, can simply
+also be set to `FALSE`. E.g.:
+```{r}
+# Exclude other points example
+scoreperiod2 <- D$scoreperiod
+scoreperiod2[in_range("2010-12-30",D$t,"2011-01-02")] <- FALSE
+```
+would exclude the days around new year (must of course be set in
+`D$scoreperiod`, not in `scoreperiod2` to have an effect).
+
+
+
+
+
+## Setting up a model
+
+A simple onlineforecast model can be setup by:
+```{r}
+# Generate new object (R6 class)
+model <- forecastmodel$new()
+# Set the model output
+model$output = "heatload"
+# Inputs (transformation step)
+model$add_inputs(Ta = "Ta",
+                 mu = "ones()")
+# Regression step parameters
+model$add_regprm("rls_prm(lambda=0.9)")
+# Optimization bounds for parameters
+model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
+# Set the horizons for which the model will be fitted
+model$kseq <- c(3,18)
+```
+
+
+### Steps in setting up a model
+
+Let's go through the steps of setting up the model.
+
+First a new forecastmodel object is generated and the model output is set (per
+default it is `"y"`):
+```{r}
+# Generate new object
+model <- forecastmodel$new()
+# Set the model output
+model$output = "heatload"
+```
+The output is simply the variable name from `D` we want to forecast.
+
+The model inputs are defined by:
+```{r}
+# Inputs (transformation step)
+model$add_inputs(Ta = "Ta",
+                 mu = "ones()")
+```
+So this is really where the structure of the model is specified. The inputs are
+given a name (`Ta` and `mu`), which each are set as an R expression (in a
+string). The expressions defines the **transformation step**: they will each
+be evaluated in an environment with a given `data.list`. This means that the
+variables from the data (e.g. `D`) can be used in the expressions - below in [Input transformations] we will detail this evaluation.
+
+Next step for setting up the model is to set the parameters for the **regression
+step** by providing an expression, as a string, which returns the regression
+parameter values. In the present case we will use the Recursive Least Squares
+(RLS) when regressing and we need to set the forgetting factor `lambda` by:
+```{r}
+# Regression step parameters
+model$add_regprm("rls_prm(lambda=0.9)")
+```
+
+The expression is just of a function, which returns
+a list - in this case with the value of `lambda` ??(see onlineforecast
+vignette). The result of it begin evaluated is kept in:
+```{r}
+# The evaluation happens with
+eval(parse(text="rls_prm(lambda=0.9)"))
+# and the result is stored in
+model$regprm 
+```
+
+We will tune the parameters, for this model it's only the forgetting
+factor, so we set the parameter bounds (lower, init, upper) for it by:
+```{r}
+# Optimization bounds for parameters
+model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
+```
+
+Finally, we set the horizons for which to fit:
+```{r}
+# Set the horizons for which the model will be fitted
+model$kseq <- c(3,18)
+```
+The horizons to fit for is actually not directly related to the model, but
+rather the fitting of the model. In principle, it would be more "clean" if the
+model, data and fit was kept separate, however for recursive fitting this
+becomes un-feasible.
+<!-- see more ??(ref, where to we emphasize the recursive
+fitting, maybe a vignette by it self!?) -->
+
+
+### Tune the parameters
+
+We have set up the model and can now tune the `lambda` with the `rls_optim()`,
+which is a wrapper for the `optim()` function:
+```{r, output.lines=15}
+# Call the optim() wrapper
+model$prm <- rls_optim(model, D)$par
+```
+Note, how it only calculated a score for the 3 and 18 steps
+horizons - as we specified with `model$kseq` above. The parameters could be
+optimized separately for each horizon, for example it is often such that for the
+first horizons a very low forgetting factor is optimal (e.g. 0.9). Currently,
+however, the parameters can only be optimized together. By optimizing for a
+short (3 steps) and a long horizon (18 steps), we obtain a balance - using less computations compared to optimizing on all horizons.
+
+The optimization converge and the tuned parameter becomes:
+```{r}
+# Optimized lambda
+model$prm
+```
+
+Now we can fit with the optimized `lambda` on all horizons over the entire period:
+```{r}
+# Set to fit for all horizons
+model$kseq <- 1:36
+# Fit for all on entire period in D
+fit1 <- rls_fit(model$prm, model, D)
+```
+
+See the summary of the fit:
+```{r}
+# See the summary of the fit
+summary(fit1)
+```
+See `?summary.rls_fit` for details.
+
+
+Plot the forecasts (`Yhat` adheres to the forecast matrix format and in
+`plot_ts()` the forecasts are lagged `k` steps to be aligned with the observations):
+```{r}
+# Put the forecasts in D
+D$Yhat1 <- fit1$Yhat
+# Plot them for selected horizons
+plot_ts(D, c("^heatload|^Y"), kseq = c(1,6,18,36))
+```
+We clearly see the burn-in period, where the forecasts vary a lot, 
+
+Plot a forecast for a particular time point and forward in time:
+```{r, fig.height=4}
+# Select a point
+i <- 996-48
+# and kseq steps ahead
+iseq <- i+model$kseq
+# The observations ahead in time
+plot(D$t[iseq], D$heatload[iseq], type = "b", xlab = "t", ylab = "y")
+title(main=pst("Forecast available at ",D$t[i]))
+# The forecasts
+lines(D$t[iseq], D$Yhat1[i, ], type = "b", col = 2)
+legend("topright", c("Observations",pst("Predictions (",min(model$kseq)," to ",max(model$kseq)," steps ahead)")), lty = 1, col = 1:2)
+```
+
+
+## Input transformations
+
+The inputs can be transformations of the variables in the data, i.e. `D` in this
+example. The function `ones()` generate a forecast matrix of 1 for the needed
+horizons. It cannot be called directly:
+```{r, eval=FALSE}
+# This will give error
+ones()
+```
+(the code above was not executed)
+
+however we can see the result of the evaluation by:
+```{r}
+# Evaluate input expressions
+datatr <- model$transform_data(D)
+# See what came out
+summary(datatr)
+# In particular for the mu = "ones()"
+head(datatr$mu)
+```
+
+If we wanted to debug we could:
+```{r, eval=FALSE}
+# Set to debug
+#debug(ones)
+# Run the input transformation now and it will stop in ones()
+datatr <- model$transform_data(D)
+# Set to undebug
+#undebug(ones)
+```
+(the code above was not executed).
+
+
+Let's extend the model by adding a low-pass filter transformation of the
+ambient temperature forecasts. We could just update the input by:
+```{r}
+# Just update the Ta input by
+model$add_inputs(Ta = "lp(Ta, a1=0.9)")
+```
+
+but let's just repeat the whole model definition for clarification - including
+the new transformation: 
+```{r} 
+# Define a new model with low-pass filtering of the Ta input
+model <- forecastmodel$new()
+model$output = "heatload"
+model$add_inputs(Ta = "lp(Ta, a1=0.9)",
+                 mu = "ones()")
+model$add_regprm("rls_prm(lambda=0.9)")
+model$add_prmbounds(Ta__a1 = c(0.5, 0.9, 0.9999),
+                    lambda = c(0.9, 0.99, 0.9999))
+model$kseq <- c(3,18)
+```
+Note how also a new set of parameter bounds were added in `add_prmbounds()`
+following a neat little syntax: `Ta__a1` indicates that the first appearance of `a1` in the `Ta` input expression, will be changed in the optimization.
+
+We can see the parameter bounds with:
+```{r}
+model$prmbounds
+```
+
+To inspect the result of low-pass filtering:
+```{r}
+# Low-pass filter Ta (with a1=0.9 as defined above)
+datatr <- model$transform_data(D)
+# Actually, lp() can be called directly (although two warnings are thrown)
+Talp <- lp(D$Ta, a1=0.99)
+```
+and to see the result we could: 
+```{r}
+# Plot the Ta$k1 forecasts
+plot(D$t, D$Ta$k1, type="l")
+# Add the filtered with a1=0.9
+lines(D$t, datatr$Ta[ ,"k1"], col=2)
+# Add the filtered with a1=0.99
+lines(D$t, Talp[ ,"k1"], col=3)
+```
+hence with a low-pass coefficient `a1=0.99`, which is very high (max is 1), the
+Ta forecast is really smoothed, which models a system with a time constant
+(i.e. slow dynamics, e.g. well insulated and building with lots of concrete).
+
+There are quite a few functions available for input transformations:
+
+- `ones()` generates an matrix of ones (for including an intercept).
+- `fs()` generate Fourier series for modelling harmonic functions.
+- `bspline()` wraps the `bs()` function for generating base splines.
+- `AR()` generates auto-regressive model inputs.
+
+and they can even be combined, see more details in ??(ref) and in their help
+description, e.g. `?fs`.
+
+
+Tuning the two parameters: the low-pass filter coefficient `a1` and the
+forgetting factor `lambda`, can now be done:
+```{r, output.lines=15}
+# Optimize the parameters
+model$prm <- rls_optim(model, D)$par
+```
+
+
+Plot the forecasts (Yhat adheres to the forecast matrix format and in `plot_ts` the forecasts are lagged `k` steps to sync with the observations)
+```{r, fig.height=4}
+# Fit for all horizons
+model$kseq <- 1:36
+# Fit with RLS
+fit2 <- rls_fit(model$prm, model, D)
+# Take the forecasts
+D$Yhat2 <- fit2$Yhat
+# Plot all
+plot_ts(D, c("^heatload$|^Y"), kseq = c(1,18))
+```
+See more on how to extend this model even further in ??(ref til
+buildingloadforecast vignette på hjemmeside)
+
+We can see the summary:
+```{r}
+summary(fit2)
+```
+
+but more interesting is it to see if an improvement was achieved with the
+low-pass filtering, so calculate the RMSE for both models:
+```{r}
+# Calculate the score
+RMSE1 <- summary(fit1, printit=FALSE)$scoreval
+RMSE2 <- summary(fit2, printit=FALSE)$scoreval
+```
+Now, this is calculated for the points included in the `scoreperiod`, so it's
+important to make sure that exactly the same values are forecasted. A check can
+be done by:
+```{r}
+# Check that all NAs in the scoreperiod are at the same positions
+all(is.na(fit1$Yhat[fit1$data$scoreperiod, ]) == is.na(fit2$Yhat[fit2$data$scoreperiod, ]))
+```
+
+Finally, plot the RMSE for the two models:
+```{r}
+# Plot the score for the two models
+plot(RMSE1, xlab="Horizon k", ylab="RMSE", type="b", ylim=range(RMSE1,RMSE2))
+lines(RMSE2, type="b", col=2)
+legend("topleft", c("Input: Ta","Input: Low-pass Ta"), lty=1, col=1:2)
+```
+We can see, that we obtained improvements. Around 3-4% for the longer horizons.
+
+For more on evaluation, see the vignette ??(ref til forecast-evaluation.html)
+
+For more development of the load forecast model see ??(building load forecast).
+
+
+
+## Time of day and using observations as input
+
+### Time of day as input
+
+Often we need to have the time of day as an input to a forecastmodel:
+```{r, output.lines=28}
+make_tday(D$t, kseq=1:3)
+```
+So we can use it like this:
+```{r}
+D$tday <- make_tday(D$t, 1:36)
+```
+See the help `?make_tday` for more details.
+
+
+### Using observations as input
+
+If we want to use observations in inputs to a model, we can use e.g.:
+```{r}
+D$Tao <- make_input(D$Ta.obs, kseq=1:36)
+model$add_inputs(Tao = "lp(Tao, a1=0.99)")
+```
+
+
+## Caching of optimized parameters
+
+Working with time consuming calculations caching can be very
+valuable. The optimization results can be cached by providing a path to a
+directory:
+```{r, output.lines=15}
+rls_optim(model, D, cachedir="cache")$par
+```
+where cache files are saved:
+```{r}
+dir("cache")
+```
+so running it again will read the cache instead of calculating the optimization:
+```{r}
+rls_optim(model, D, cachedir="cache")$par
+```
+
+Remove the cache by:
+```{r}
+file.remove(dir("cache", full.names=TRUE))
+file.remove("cache")
+```
+
+
+## Deep clone model
+
+Usually, an object of an R6 class can be copied (in memory) deeply with
+'$clone(deep=TRUE)', however that will result in problems with the
+forecastmodels, therefore the deep clone must be done by:
+```{r}
+m1 <- model$clone_deep()
+```
+See `?R6` for details on R6 objects.

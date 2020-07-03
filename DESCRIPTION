@@ -1,0 +1,30 @@
+Package: onlineforecast
+Type: Package
+Title: Forecast modelling for online application
+Version: 1.0.0
+Description: A package for fitting adaptive forecasting models. Provides a way to use forecasts as input to models, e.g. weather forecasts for energy related forecasting. The models can be fitted recursively and can easily be setup for updating parameters when new data arrives.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Authors@R: c(
+    person("Peder", "Bacher", email="pbac@dtu.dk", role = c("aut", "cre")),
+    person("Hjorleifur", "Bergsteinsson", "G", email="hgbe@dtu.dk", role = c("aut","cre"))
+Depends: R (>= 3.0)
+Imports:
+    Rcpp (>= 0.12.18),
+    R6 (>= 2.2.2),
+    splines (>= 3.1.1),
+    plotly,
+    digest
+LinkingTo: Rcpp, RcppArmadillo
+Suggests:
+    knitr,
+    rmarkdown,
+    R.rsp,
+    testthat (>= 2.1.0)
+VignetteBuilder:
+    knitr,
+    R.rsp
+RoxygenNote: 7.1.0
+URL: http://onlineforecasting.org
+BugReports: https://lab.compute.dtu.dk/pbac/onlineforecasting/-/issues
