@@ -31,7 +31,7 @@
 #' @examples
 #'
 #' # Data for plots
-#' D <- subset(Dbuildingheatload, 1:192)
+#' D <- subset(Dbuilding, 1:192)
 #'
 #' # See the parameters which can be set
 #' p <- par_ts()

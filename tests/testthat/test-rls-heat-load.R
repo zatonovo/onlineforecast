@@ -8,7 +8,7 @@ context("running RLS test")
 test_that("run", {
 
     ## ------------------------------------------------------------------------
-    D <- Dbuildingheatload
+    D <- Dbuilding
     D$y <- D$heatload
     D$tday <- make_tday(D$t, kseq=1:36)
 

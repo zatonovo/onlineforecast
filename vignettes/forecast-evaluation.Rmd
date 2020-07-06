@@ -15,19 +15,21 @@ bibliography: literature.bib
 library(knitr)
 # This vignettes name
 vignettename <- "forecast-evaluation"
-# Read external code from init.R
-knitr::read_chunk("init.R")
+# Read external code
+knitr::read_chunk("shared-init.R")
 ```
 ```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+```
+```{r links, cache=FALSE, echo=FALSE, purl=FALSE, results="asis"}
 ```
 
 
 ## Intro
 This vignette provides a short overview of the basics of forecast evaluation
 with the functions from the onlineforecast package. It follows up on the
-vignettes ??{ref} and ??{ref} and continues the building load forecast modelling
-presented there. If something is introduced in the present text, but not
-explained, then have a look in the two preceding vignettes to find an explanation.
+vignettes [setup-data](setup-data.html) and [setup-and-use-model](setup-and-use-model.html), and continues the building load forecast
+modelling presented there. If something is introduced in the present text, but
+not explained, then have a look in the two preceding vignettes to find an explanation.
 
 ## Load forecasts
 
@@ -42,7 +44,7 @@ load_all(as.package("../../onlineforecast"))
 Just start by:
 ```{r}
 # Keep the data in D to simplify notation
-D <- Dbuildingheatload
+D <- Dbuilding
 # Keep the model output in y (just easier code later)
 D$y <- D$heatload
 # 
@@ -175,7 +177,7 @@ model. This is however not at all trivial, since the suitable reference model
 depends on the particular case of forecasting, e.g. the suitable reference model
 for wind power forecasting is not the same as for solar power forecasting -
 even within the same application the suitable reference model can be different
-depending on particular conditions etc. ??(referencer)
+depending on particular conditions etc. <!-- ??(referencer) -->
 
 In general the fundamental reference model should be the simplest reasonable
 model not relying on any inputs, hence either a model based on a mean
@@ -381,7 +383,7 @@ The RLS coefficients are in the fit for each horizon:
 str(fit1$Lfitval$k1)
 ```
 
-A pairs plot with residuals and inputs ??comment if patterns are left:
+A pairs plot with residuals and inputs <!-- ??comment --> if patterns are left:
 ```{r plotpairs, fig.height=figwidth}
 kseq <- c(1,36)
 D$Residuals <- residuals(fit2)[ ,pst("h",kseq)]

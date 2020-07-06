@@ -4,7 +4,7 @@ load_all(as.package("../../onlineforecast"))
 ?lm_predict
 
 # Take data
-D <- subset(Dbuildingheatload, c("2010-12-15", "2011-01-01"))
+D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 D$y <- D$heatload
 # Define a model 
 model <- forecastmodel$new()

@@ -15,7 +15,7 @@
 #' @examples
 #'
 #' # Data for example
-#' D <- subset(Dbuildingheatload, c("2010-12-15","2010-12-20"))
+#' D <- subset(Dbuilding, c("2010-12-15","2010-12-20"))
 #' 
 #' # Generate the input
 #' make_input(D$heatload, 1:4)

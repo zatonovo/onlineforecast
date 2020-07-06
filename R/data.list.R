@@ -55,7 +55,7 @@ data.list <- function(...) {
 #' @return a data.list with the subset.
 #' @examples
 #' # Use the data.list with building heat load 
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' # Take a subset for the example
 #' D <- subset(D, 1:10, nms=c("t","Ta.obs","Ta","I.obs","I"), kseq=1:3)
 #' 
@@ -82,7 +82,7 @@ data.list <- function(...) {
 #' subset(D, kseq=2, pattern="^I")
 #' 
 #' # Take data for Ta and lag the forecasts (good for plotting and fitting a model)
-#' X <- subset(Dbuildingheatload, 1:1000, pattern="^Ta", kseq = 10, lagforecasts = TRUE)
+#' X <- subset(Dbuilding, 1:1000, pattern="^Ta", kseq = 10, lagforecasts = TRUE)
 #' 
 #' # A scatter plot between the forecast and the observations (try lagforecasts = FALSE and see the difference)
 #' plot(X$Ta$k10, X$Ta.obs)
@@ -193,7 +193,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
 #' @examples
 #'
 #' #' # Use the data.list with building heat load 
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' # Take a subset
 #' D <- subset(D, 1:5, nms=c("t","Ta.obs","Ta","I.obs","I"), kseq=1:3)
 #'
@@ -231,7 +231,7 @@ as.data.frame.data.list <- function(x){
 #' @param ... Passed to pairs().
 #' @examples
 #' # Take a subset for the example
-#' D <- subset(Dbuildingheatload, c("2010-12-15","2011-01-15"), pattern="^Ta|^I", kseq=1:3)
+#' D <- subset(Dbuilding, c("2010-12-15","2011-01-15"), pattern="^Ta|^I", kseq=1:3)
 #' pairs(D)
 #'
 #' # If the forecasts and the observations are not aligned in time it is easy to see by comparing to the previous plot.
@@ -240,7 +240,7 @@ as.data.frame.data.list <- function(x){
 #' # Hence if the forecasts were not synced properly, then it can be detected using this type of plot.
 #'
 #' # Alternatively, lag when taking the subset
-#' D <- subset(Dbuildingheatload, c("2010-12-15","2011-01-15"), pattern="^Ta|^I", kseq=1:3, lagforecasts=TRUE)
+#' D <- subset(Dbuilding, c("2010-12-15","2011-01-15"), pattern="^Ta|^I", kseq=1:3, lagforecasts=TRUE)
 #' pairs(D, lagforecasts=FALSE)
 #' 
 #' @export
@@ -262,7 +262,7 @@ pairs.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = 
 #' @return The tables generated.
 #'
 #' # Check a data.list (see \code{?\link{check.data.list}})
-#' check(Dbuildingheatload)
+#' check(Dbuilding)
 #' 
 #' @export
 check <- function(object){
@@ -293,15 +293,15 @@ check <- function(object){
 #' @return The tables generated.
 #'
 #' # Check a data.list (see \code{?\link{check.data.list}})
-#' check(Dbuildingheatload)
+#' check(Dbuilding)
 #'
 #' # Vector with observations not same length as t
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' D$heatload <- D$heatload[1:10]
 #' check(D)
 #'
 #' # Some NAs in k1 forecast
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' D$Ta$k1[1:1500] <- NA
 #' check(D)
 #'
@@ -400,16 +400,16 @@ check.data.list <- function(object){
 #'
 #' @examples
 #'
-#' Dbuildingheatload == Dbuildingheatload
+#' Dbuilding == Dbuilding
 #'
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' D$Ta$k2[1] <- NA
-#' Dbuildingheatload == D
+#' Dbuilding == D
 #'
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' names(D)[5] <- "I"
 #' names(D)[6] <- "Ta"
-#' Dbuildingheatload == D
+#' Dbuilding == D
 #' 
 #' 
 

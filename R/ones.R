@@ -22,7 +22,7 @@
 #' # Set the forecast horizons
 #' model$kseq <- 1:4
 #' # During the transformation stage the ones will be generated for the horizons
-#' model$transform_data(subset(Dbuildingheatload, 1:7))
+#' model$transform_data(subset(Dbuilding, 1:7))
 #'
 #' @export
 

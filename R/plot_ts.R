@@ -39,7 +39,7 @@
 #' @examples
 #'
 #' # Time series plots for \code{data.list}, same as for \code{data.frame} except use of \code{kseq}
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' plot_ts(D, c("heatload","Ta"), kseq=c(1,24))
 #' # Make two plots (and set the space for the legend)
 #' plot_ts(D, c("heatload","Ta"), kseq=c(1,24), legendspace=11)
@@ -453,7 +453,7 @@ plot_ts_series <- function(data, pattern, iplot = 1,
 #' @examples
 #'
 #' # Fit a model (see vignette 'setup-and-use-model'
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' D$scoreperiod <- in_range("2010-12-22", D$t)
 #' model <- forecastmodel$new()
 #' model$output = "heatload"

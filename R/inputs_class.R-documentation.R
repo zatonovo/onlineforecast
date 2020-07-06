@@ -52,7 +52,7 @@
 #'
 #' # Now the transformation stage can be carried out to create the regression stage data
 #' # Take a data.list subset for the example
-#' D <- subset(Dbuildingheatload, 1:10, kseq=1:4)
+#' D <- subset(Dbuilding, 1:10, kseq=1:4)
 #' # Transform the data
 #' model$inputs[[1]]$evaluate(D)
 #' # What happens is simply that the expression is evaluated with the data
@@ -73,7 +73,7 @@
 #' # the lp() has saved it's state for next time
 #' model$inputs[[1]]$state_L
 #' # New data arrives
-#' Dnew <- subset(Dbuildingheatload, 11, kseq=1:4)
+#' Dnew <- subset(Dbuilding, 11, kseq=1:4)
 #' # So in lp() the state is read and it continues
 #' model$inputs[[1]]$evaluate(Dnew)
 #'

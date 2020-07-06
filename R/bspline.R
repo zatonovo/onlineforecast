@@ -26,7 +26,7 @@
 #'
 #' # How to make a diurnal curve using splines
 #' # Select first 54 hours from the load data
-#' D <- subset(Dbuildingheatload, 1:54, kseq=1:4)
+#' D <- subset(Dbuilding, 1:54, kseq=1:4)
 #' # Make the hour of the day as a forecast input
 #' D$tday <- make_tday(D$t, kseq=1:4)
 #' D$tday

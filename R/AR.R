@@ -33,7 +33,7 @@
 #' @examples
 #'
 #' # Setup data and a model for the example
-#'
+#' D <- Dbuilding
 #' model <- forecastmodel$new()
 #' model$output = "heatload"
 #' # Use the AR in the transformation stage
@@ -45,15 +45,15 @@
 #' # In the transformation stage the AR input will be generated
 #' # See that it generates two input matrices, simply with the lagged heat load at t for every k
 #' model$transform_data(subset(D, 1:10))
-
+#'
 #' # Fit with recursive least squares (no parameters prm in the model)
 #' fit <- rls_fit(c(lambda=0.99), model, D, returnanalysis=TRUE)
-
+#'
 #' # Plot the result, see "?plot_ts.rls_fit"
-#' plot(fit, xlim=c(asct("2010-12-20"),max(D$t)))
+#' plot_ts(fit, xlim=c(asct("2010-12-20"),max(D$t)))
 #' # Plot for a short period with peaks
-#' plot(fit, xlim=c("2011-01-05","2011-01-07"))
-
+#' plot_ts(fit, xlim=c("2011-01-05","2011-01-07"))
+#'
 #' # For online updating, see ??ref{vignette}:
 #' # the needed lagged output values are stored in the model for next time new data is available
 #' model$yAR

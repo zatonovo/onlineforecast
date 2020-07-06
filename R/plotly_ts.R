@@ -17,7 +17,7 @@
 #' \code{\link{plot_ts}}
 #' @examples
 #'
-#' D <- Dbuildingheatload
+#' D <- Dbuilding
 #' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
 #' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
 #' plotly_ts(D, c("heatload","Ta$|Ta.obs$"), kseq=c(1,24))

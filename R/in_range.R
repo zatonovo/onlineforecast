@@ -21,7 +21,7 @@
 #' @examples
 #'
 #' # Take a subset
-#' D <- subset(Dbuildingheatload, c("2010-12-15", "2011-01-01"))
+#' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #'
 #' # Just a logical returning TRUE in a specified period
 #' in_range("2010-12-20", D$t, "2010-12-22")

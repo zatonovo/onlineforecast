@@ -18,37 +18,36 @@ bibliography: literature.bib
 library(knitr)
 # This vignettes name
 vignettename <- "setup-and-use-model"
-# Read external code from init.R
-knitr::read_chunk("init.R")
+# Read external code
+knitr::read_chunk("shared-init.R")
 ```
 ```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+```
+```{r links, cache=FALSE, echo=FALSE, purl=FALSE, results="asis"}
 ```
 
 
 ## Intro
 This vignette explains how to setup and use an onlineforecast
-model. This takes offset in the example of building heat load forecasting??(ref)
-and assumes that the data is setup correctly, as explained in
-[setup-data vignette](setup-data.html).
+model. This takes offset in the example of [building heat load
+forecasting] and assumes that the data is setup correctly, as explained in
+[setup-data](setup-data.html) vignette. The R code is available
+[here](setup-and-use-model.R). More information on [onlineforecasting.org].
 
-Load the package:
+Start by loading the package:
 ```{r}
-## Load the package
+# Load the package
 library(onlineforecast)
-```
-
-Just start by:
-```{r}
-# Keep the data in D to simplify notation
-D <- Dbuildingheatload
+# Set the data in D to simplify notation
+D <- Dbuilding
 ```
 
 
 ## Score period
 
 Set the `scoreperiod` as a logical vector with same length as `t`. It controls
-which points are included in score calculations in the package functions when the parameters are being optimized. this
-must be set in the `data.list` used.
+which points are included in score calculations in functions for optimization
+etc. It must be set.
 
 Use it to exclude a burn-in period of one week:
 ```{r}
@@ -114,23 +113,22 @@ model$add_inputs(Ta = "Ta",
                  mu = "ones()")
 ```
 So this is really where the structure of the model is specified. The inputs are
-given a name (`Ta` and `mu`), which each are set as an R expression (in a
+given a name (`Ta` and `mu`), which each are set as an R expression (given as a
 string). The expressions defines the **transformation step**: they will each
 be evaluated in an environment with a given `data.list`. This means that the
-variables from the data (e.g. `D`) can be used in the expressions - below in [Input transformations] we will detail this evaluation.
+variables from the data can be used in the expressions (e.g. `Ta` is in `D`) - below in [Input transformations] we will detail this evaluation.
 
 Next step for setting up the model is to set the parameters for the **regression
-step** by providing an expression, as a string, which returns the regression
+step** by providing an expression, which returns the regression
 parameter values. In the present case we will use the Recursive Least Squares
-(RLS) when regressing and we need to set the forgetting factor `lambda` by:
+(RLS) when regressing, and we need to set the forgetting factor `lambda` by:
 ```{r}
 # Regression step parameters
 model$add_regprm("rls_prm(lambda=0.9)")
 ```
 
 The expression is just of a function, which returns
-a list - in this case with the value of `lambda` ??(see onlineforecast
-vignette). The result of it begin evaluated is kept in:
+a list - in this case with the value of `lambda` (see [onlineforecasting]). The result of it begin evaluated is kept in:
 ```{r}
 # The evaluation happens with
 eval(parse(text="rls_prm(lambda=0.9)"))
@@ -154,8 +152,6 @@ The horizons to fit for is actually not directly related to the model, but
 rather the fitting of the model. In principle, it would be more "clean" if the
 model, data and fit was kept separate, however for recursive fitting this
 becomes un-feasible.
-<!-- see more ??(ref, where to we emphasize the recursive
-fitting, maybe a vignette by it self!?) -->
 
 
 ### Tune the parameters
@@ -201,7 +197,7 @@ Plot the forecasts (`Yhat` adheres to the forecast matrix format and in
 # Put the forecasts in D
 D$Yhat1 <- fit1$Yhat
 # Plot them for selected horizons
-plot_ts(D, c("^heatload|^Y"), kseq = c(1,6,18,36))
+plot_ts(D, c("^heatload$|^Y"), kseq = c(1,6,18,36))
 ```
 We clearly see the burn-in period, where the forecasts vary a lot, 
 
@@ -308,7 +304,7 @@ There are quite a few functions available for input transformations:
 - `bspline()` wraps the `bs()` function for generating base splines.
 - `AR()` generates auto-regressive model inputs.
 
-and they can even be combined, see more details in ??(ref) and in their help
+and they can even be combined, see more details in [onlineforecasting] and in their help
 description, e.g. `?fs`.
 
 
@@ -331,8 +327,6 @@ D$Yhat2 <- fit2$Yhat
 # Plot all
 plot_ts(D, c("^heatload$|^Y"), kseq = c(1,18))
 ```
-See more on how to extend this model even further in ??(ref til
-buildingloadforecast vignette på hjemmeside)
 
 We can see the summary:
 ```{r}
@@ -363,10 +357,9 @@ legend("topleft", c("Input: Ta","Input: Low-pass Ta"), lty=1, col=1:2)
 ```
 We can see, that we obtained improvements. Around 3-4% for the longer horizons.
 
-For more on evaluation, see the vignette ??(ref til forecast-evaluation.html)
+For more on evaluation, see the vignette [forecast-evaluation](forecast-evaluation.html).
 
-For more development of the load forecast model see ??(building load forecast).
-
+See more on how to extend this model even further in [building heat load forecasting].
 
 
 ## Time of day and using observations as input

@@ -18,10 +18,12 @@ bibliography: literature.bib
 library(knitr)
 # This vignettes name
 vignettename <- "online-updating"
-# Read external code from init.R
-knitr::read_chunk("init.R")
+# Read external code
+knitr::read_chunk("shared-init.R")
 ```
 ```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+```
+```{r links, cache=FALSE, echo=FALSE, purl=FALSE, results="asis"}
 ```
 
 
@@ -39,7 +41,7 @@ load_all(as.package("../../onlineforecast"))
 Load data, setup and define a model:
 ```{r, output.lines=10}
 # Keep the data in D to simplify notation
-D <- Dbuildingheatload
+D <- Dbuilding
 # Set the score period 
 D$scoreperiod <- in_range("2010-12-20", D$t)
 # Set the training period
@@ -82,7 +84,9 @@ Now new data arrives, take the point right after the fit period
 Dnew <- subset(D, i)
 ```
 
-First we need to transform the new data (This must only be done once for each new data, since some transform functions, e.g. lp(), actually keep states, see the detailed vignette in ??)
+First we need to transform the new data (This must only be done once for each
+new data, since some transform functions, e.g. lp(), actually keep states, see
+the detailed description in )
 ```{r}
 Dnew_transformed <- model$transform_data(Dnew)
 ```

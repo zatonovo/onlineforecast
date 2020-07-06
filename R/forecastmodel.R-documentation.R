@@ -168,13 +168,13 @@
 #' @examples
 #' 
 #' # Check if the model is setup and can be used with a given data.list
-#' model$check(Dbuildingheatload)
+#' model$check(Dbuilding)
 #' # Add the model output
 #' model$output <- "heatload"
-#' model$check(Dbuildingheatload)
+#' model$check(Dbuilding)
 #' # Add the horizons to fit for
 #' model$kseq <- 1:4
 #' # No errors, it's fine :)
-#' model$check(Dbuildingheatload)
+#' model$check(Dbuilding)
 NULL
 

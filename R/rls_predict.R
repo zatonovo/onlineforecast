@@ -9,7 +9,7 @@
 #' @examples
 #'
 #' # Take data (See vignette ??(ref) for better model and more details)
-#' D <- subset(Dbuildingheatload, c("2010-12-15", "2011-01-01"))
+#' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #' D$y <- D$heatload
 #' # Define a model 
 #' model <- forecastmodel$new()
@@ -44,7 +44,7 @@
 #' plot_ts(D, c("y|Yhat"), kseq=1)
 #'
 #' # Recursive updating and prediction
-#' Dnew <- subset(Dbuildingheatload, c("2011-01-01", "2011-01-02"))
+#' Dnew <- subset(Dbuilding, c("2011-01-01", "2011-01-02"))
 #'
 #' for(i in 1:length(Dnew$t)){
 #'     # New data arrives

@@ -20,18 +20,20 @@ library(knitr)
 ## This vignettes name
 vignettename <- "setup-data"
 ## Read external code
-knitr::read_chunk("init.R")
+knitr::read_chunk("shared-init.R")
 ```
 ```{r init, cache=FALSE, include=FALSE, purl=FALSE}
 ```
+```{r links, cache=FALSE, echo=FALSE, purl=FALSE, results="asis"}
+```
+
 
 
 ## Intro
-This vignette explains how to setup data consisting of
-observations and forecasts, such that it can be used for onlineforecast
-models. A generic introduction and description is in available in the paper
-?(ref) [onlineforecasting vignette](onlineforecasting.pdf). ??(more on the other
-vignettes and website and code from this vignette)
+This vignette explains how to setup data consisting of observations and
+forecasts, such that it can be used for onlineforecast models. A generic
+introduction and description is in available in [onlineforecasting]. The code is
+available [here](setup-data.R). More information on [onlineforecasting.org].
 
 
 ## Data example
@@ -43,14 +45,14 @@ library(onlineforecast)
 ```
 
 In the package different data sets are included. The
-`Dbuildingheatload` holds the data used for the example of
+`Dbuilding` holds the data used for the example of
 heat load forecasting in the building-heat-load-forecasting vignette.
 
 When the package is loaded the data is also loaded, so we can access it
 directly. Let's start out by:
 ```{r}
 ## Keep it in D to simplify notation
-D <- Dbuildingheatload
+D <- Dbuilding
 ```
 
 The class is 'data.ĺist':
@@ -308,9 +310,8 @@ lines(D$t[i], y)
 legend("topright", c("8-step forecasts lagged","Observations"), lty=1, col=2:1)
 ```
 
-Of course that model was very simple, see how to make a better model in the
-??(examples and website)
-[solar forecast vignette](solar-power-forecasting.html).
+Of course that model was very simple, see how to make a better model in
+[building-heat-load-forecasting] and more information on the [website].
 
 
 

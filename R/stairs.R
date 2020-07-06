@@ -27,16 +27,16 @@
 #' stairs(1:10, x)
 #'
 #' # Use for time series plotting
-#' plot_ts(Dbuildingheatload, "heatload", c("2010-12-15","2010-12-16"), plotfun=stairs)
+#' plot_ts(Dbuilding, "heatload", c("2010-12-15","2010-12-16"), plotfun=stairs)
 #'
 #' # Set it globally for all plot_ts
 #' p <- par_ts()
 #' p$plotfun <- stairs
 #' options(par_ts=p)
-#' plot_ts(Dbuildingheatload, "heatload", c("2010-12-15","2010-12-16"))
+#' plot_ts(Dbuilding, "heatload", c("2010-12-15","2010-12-16"))
 #'
 #' # Modify it to only lines
-#' plot_ts(Dbuildingheatload, "heatload", c("2010-12-15","2010-12-16"), plotfun=function(x,y,...){stairs(x,y, type="l")})
+#' plot_ts(Dbuilding, "heatload", c("2010-12-15","2010-12-16"), plotfun=function(x,y,...){stairs(x,y, type="l")})
 #'
 #' @export
 stairs <- function(x, y, type="b", preline=FALSE, pch=19, ...)

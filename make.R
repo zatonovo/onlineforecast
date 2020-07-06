@@ -51,10 +51,10 @@ docit()
 
 # ----------------------------------------------------------------
 # Build the package (remember to rebuild vignettes for release)
-build(".", vignettes=TRUE)
+build(".", vignettes=FALSE)
 
 # Install it
-install.packages("../onlineforecast_0.1.0.tar.gz")
+install.packages("../onlineforecast_1.0.0.tar.gz")
 
 library(onlineforecast)
 

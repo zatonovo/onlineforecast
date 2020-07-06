@@ -4,7 +4,7 @@ library(devtools)
 load_all(as.package("../../onlineforecast"))
 
 
-D <- Dbuildingheatload
+D <- Dbuilding
 
 
 
