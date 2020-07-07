@@ -13,21 +13,25 @@ library(roxygen2)
 # load_all(pack)
 
 # Update NAMESPACE, use this function to export all functions! (with @export, but S3methods (e.g. print.lm) will not get exported, so change it to export)
-docit <- function(){
-    document()
-    # Read
-    nm <- "NAMESPACE"
-    x <- scan(nm, what="character", sep="\n",blank.lines.skip=FALSE)
-    # Manipulate x
-    for(i in 1:length(x)){
-        if(length(grep("^S3method", x[i])) > 0){
-            x[i] <- gsub(",",".",gsub("S3method", "export", x[i]))
-        }
-     }
-    #
-    write(x, nm)
-}
-docit()
+## docit <- function(){
+##     document()
+##     # Read
+##     nm <- "NAMESPACE"
+##     x <- scan(nm, what="character", sep="\n",blank.lines.skip=FALSE)
+##     # Manipulate x
+##     for(i in 1:length(x)){
+##         if(length(grep("^S3method", x[i])) > 0){
+##             x[i] <- gsub(",",".",gsub("S3method", "export", x[i]))
+##         }
+##      }
+##     #
+##     write(x, nm)
+## }
+## docit()
+
+# ----------------------------------------------------------------
+# Do also "R CMD check ../onlineforecast_1.0.0.tar.gz", it does give some other results!
+#devtools::check()
 
 # ----------------------------------------------------------------
 # For running tests in folder "tests/testthat/"
@@ -51,7 +55,8 @@ docit()
 
 # ----------------------------------------------------------------
 # Build the package (remember to rebuild vignettes for release)
-build(".", vignettes=FALSE)
+document()
+build(".", vignettes=TRUE)
 
 # Install it
 install.packages("../onlineforecast_1.0.0.tar.gz")
@@ -60,7 +65,6 @@ library(onlineforecast)
 
 # # Add new vignette
 #usethis::use_vignette("test")
-
 
 # # ----------------------------------------------------------------
 # # Load the current version directly from the folder

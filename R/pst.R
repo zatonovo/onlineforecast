@@ -1,4 +1,5 @@
-#' @title Simple wrapper for past0()
+#' @title Simple wrapper for paste0().
+#' @param ... Passed to paste0().
 #' @export
 
 pst <- function(...) {

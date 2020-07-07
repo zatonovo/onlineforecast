@@ -1,3 +1,4 @@
+#' @importFrom parallel mclapply
 rls_reduce <- function(model, data, preduce=list(NA), scorefun = rmse){
     ## prm test
     ##preduce <- list(I__degree = c(min=1, init=7), mu_tday__nharmonics = c(min=1, init=7))
@@ -9,8 +10,6 @@ rls_reduce <- function(model, data, preduce=list(NA), scorefun = rmse){
     if(!is.na(preduce[1])){
         m$insert_prm(pr)
     }
-    ##
-    library(parallel)
     ##
     valref <- rls_optim(m, data, printout=FALSE)$value
     ##

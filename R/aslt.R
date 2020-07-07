@@ -10,9 +10,9 @@
 #' 
 #' 
 #' @title Convertion to POSIXlt
-#' @param object 
+#' @param object The character, POSIXct, POSIClt, or numeric which is converted to POSIXct.
 #' @param tz Timezone. If set, then the time zone will be changed of the object.
-#' @param ... 
+#' @param ... Arguments to be passed to methods.
 #' @return An object of class POSIXlt
 #' @section Methods:
 #' #' @examples
@@ -30,7 +30,7 @@
 #' aslt(as.numeric(x, units="sec"))
 #' 
 #' @export
-aslt <- function(object, tz, ...){
+aslt <- function(object, ...){
     UseMethod("aslt")
 }
 
@@ -46,18 +46,18 @@ aslt.character <- function(object, tz = "GMT", ...){
 #' @section Methods:
 #'     - aslt.POSIXct: Converts to POSIXct.
 #' @export
-aslt.POSIXct <- function(object, tz = NA){
+aslt.POSIXct <- function(object, tz = NA, ...){
     if(!is.na(tz)){
         attr(object, "tzone") <- tz
     }
-    as.POSIXlt(object)
+    as.POSIXlt(object, ...)
 }
 
 #' @rdname aslt
 #' @section Methods:
 #'     - aslt.POSIXlt: Changes the time zone of the object if tz is given.
 #' @export
-aslt.POSIXlt <- function(object, tz = NA){
+aslt.POSIXlt <- function(object, tz = NA, ...){
     if(!is.na(tz)){
         attr(object, "tzone") <- tz
     }
@@ -68,6 +68,6 @@ aslt.POSIXlt <- function(object, tz = NA){
 #' @section Methods:
 #'     - aslt.numeric: Converts from UNIX time in seconds to POSIXlt.
 #' @export
-aslt.numeric <- function(object){
-    as.POSIXlt(ISOdate(1970, 1, 1, 0) + object)
+aslt.numeric <- function(object, ...){
+    as.POSIXlt(ISOdate(1970, 1, 1, 0, ...) + object)
 }

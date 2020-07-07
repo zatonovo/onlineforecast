@@ -4,9 +4,10 @@
 ^data/all
 ^vignettes/tmp-output
 ^vignettes/make.R
-^vignettes/init.R
+^vignettes/shared-init.Rmd
 ^vignettes/cache
 ^vignettes/literature.bib
+^vignettes/online-updating.Rmd
 ^tests
 ^misc-R$
 ^.*\.Rhistory$

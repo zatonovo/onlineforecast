@@ -13,14 +13,15 @@
 #'
 #' Note that the plot parameters set with \code{\link{par_ts}()} have no effect on the \code{plotly} plots.
 #'
-#' @seealso
-#' \code{\link{plot_ts}}
+#' @rdname plot_ts
 #' @examples
 #'
+#' \donttest{
 #' D <- Dbuilding
 #' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
 #' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
 #' plotly_ts(D, c("heatload","Ta$|Ta.obs$"), kseq=c(1,24))
+#' }
 #'
 #' @export
 

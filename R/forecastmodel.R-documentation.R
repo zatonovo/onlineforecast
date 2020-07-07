@@ -7,9 +7,9 @@
 #' R6 class for a forecastmodel
 #' 
 #' This class holds the variables and functions needed for defining and setting up a forecast model - independent of the fitting scheme.
+#' See the vignettes on how to setup and use a model and the website \url{onlineforecasting.org} for more info.
 #'
-#' See the vignettes ??(ref) on how to setup and use a model and the website for more.
-#'
+#' @title Class for forecastmodels
 #' @name forecastmodel
 #' @details
 #' 
@@ -168,13 +168,13 @@
 #' @examples
 #' 
 #' # Check if the model is setup and can be used with a given data.list
-#' model$check(Dbuilding)
+#' \donttest{model$check(Dbuilding)}
 #' # Add the model output
 #' model$output <- "heatload"
-#' model$check(Dbuilding)
+#' \donttest{model$check(Dbuilding)}
 #' # Add the horizons to fit for
 #' model$kseq <- 1:4
 #' # No errors, it's fine :)
 #' model$check(Dbuilding)
 NULL
-
+# Don't delete the NULL above

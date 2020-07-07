@@ -38,10 +38,12 @@
 #' # Or we can change the low-pass filter coefficient
 #' lm_fit(c(Ta__a1=0.99), model, D, rmse, returnanalysis=FALSE)
 #'
-#' # This could be passed to optim() (or any optimizer). See \code{forecastmodel$insert_prm()} for more details.
-#' optim(c(Ta__a1=0.98), lm_fit, model=model, data=D, scorefun=rmse, returnanalysis=FALSE, lower=c(Ta__a1=0.4), upper=c(Ta__a1=0.999), method="L-BFGS-B")
+#' # This could be passed to optim() (or any optimizer).
+#' # See \code{forecastmodel$insert_prm()} for more details.
+#' optim(c(Ta__a1=0.98), lm_fit, model=model, data=D, scorefun=rmse, returnanalysis=FALSE,
+#'       lower=c(Ta__a1=0.4), upper=c(Ta__a1=0.999), method="L-BFGS-B")
 #'
-#' # lm_optim is simply a helper, it's makes using bounds easiere and enables caching of the results
+#' # lm_optim is simply a helper it makes using bounds easiere and enables caching of the results
 #' # First add bounds for lambda (lower, init, upper)
 #' model$add_prmbounds(Ta__a1 = c(0.4, 0.98, 0.999))
 #'
@@ -61,9 +63,9 @@
 #' file.remove(dir("cache", full.names=TRUE))
 #' file.remove("cache")
 #'
-#'
+#' @importFrom stats optim
 #' @export
-lm_optim <- function(model, data, scorefun = rmse, init=NA, cachedir="", printout=TRUE, method="L-BFGS-B", ...){
+lm_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, method="L-BFGS-B", ...){
     ## Take the parameters bounds from the parameter bounds set in the model
     init <- model$get_prmbounds("init")
     lower <- model$get_prmbounds("lower")
@@ -77,7 +79,8 @@ lm_optim <- function(model, data, scorefun = rmse, init=NA, cachedir="", printou
         ## Have to insert the parameters in the expressions
         model$insert_prm(init)
         ## Give all the elements to calculate the unique cache name
-        cnm <- cache_name(lm_fit, lm_optim, model$outputrange, model$regprm, model$transform_data(data), data[[model$output]], scorefun, init, lower, upper, cachedir = cachedir)
+        cnm <- cache_name(lm_fit, lm_optim, model$outputrange, model$regprm, model$transform_data(data),
+                          data[[model$output]], scorefun, init, lower, upper, cachedir = cachedir)
         ## Maybe load the cached result
         if(file.exists(cnm)){ return(readRDS(cnm)) }
     }

@@ -52,6 +52,7 @@ data.list <- function(...) {
 #' @param kseq The k horizons of forecasts to be included.
 #' @param lagforecasts Should the forecasts be lagged k steps (thus useful for plotting etc.).
 #' @param pattern Regex pattern applied to select the variables in x to be included.
+#' @param ... Not implemented.
 #' @return a data.list with the subset.
 #' @examples
 #' # Use the data.list with building heat load 
@@ -84,14 +85,15 @@ data.list <- function(...) {
 #' # Take data for Ta and lag the forecasts (good for plotting and fitting a model)
 #' X <- subset(Dbuilding, 1:1000, pattern="^Ta", kseq = 10, lagforecasts = TRUE)
 #' 
-#' # A scatter plot between the forecast and the observations (try lagforecasts = FALSE and see the difference)
+#' # A scatter plot between the forecast and the observations
+#' # (try lagforecasts = FALSE and see the difference)
 #' plot(X$Ta$k10, X$Ta.obs)
 #'
 #' # Fit a model for the 10-step horizon
 #' abline(lm(Ta.obs ~ Ta.k10, X), col=2)
 #'
 #' @export
-subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = FALSE, pattern = NA) {
+subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = FALSE, pattern = NA, ...) {
     D <- x
     # --------------------------------
     # Set nms if needed (find the columns to take)
@@ -172,7 +174,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
     if(lagforecasts){
         val <- lapply(val, function(X){
             if(any(class(X) == "data.frame") & length(grep("^k[[:digit:]]+$",names(X))) > 0) {
-                return(lag.data.frame(X, lag="+k"))
+                return(lag.data.frame(X, lagseq="+k"))
             }else{
                 return(X)
             }
@@ -189,6 +191,9 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
 #' 
 #' @title Convert to data.frame
 #' @param x The data.list to be converted.
+#' @param row.names Not used.
+#' @param optional Not used.
+#' @param ... Not used.
 #' @return A data.frame
 #' @examples
 #'
@@ -201,7 +206,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
 #' as.data.frame(D)
 #'
 #' @export
-as.data.frame.data.list <- function(x){
+as.data.frame.data.list <- function(x, row.names=NULL, optional=FALSE, ...){
     # Then convert into a data.frame
     val <- do.call("cbind", x)
     if(class(val) == "matrix"){
@@ -221,20 +226,24 @@ as.data.frame.data.list <- function(x){
 #' A very useful plot for checking what is in the forecasts, how they are synced and match the observations.
 #' 
 #' @title Generation of pairs plot for a data.list.
-#' @param x The data.list from which to plot
-#' @param lagforecasts Lag the forecasts such that they are synced with obervations?
-#' @param includet Include t?
-#' @param lower.panel Passed to pairs().
-#' @param panel Passed to pairs().
-#' @param pch Passed to pairs().
-#' @param cex Passed to pairs().
-#' @param ... Passed to pairs().
+#' @param x The data.list from which to plot.
+#' @param subset The subset to be included. Passed to \code{\link{subset.data.list}()}.
+#' @param nms The names of the variables to be included. Passed to \code{\link{subset.data.list}()}.
+#' @param kseq The horizons to be included. Passed to \code{\link{subset.data.list}()}.
+#' @param lagforecasts Lag the forecasts such that they are synced with obervations. Passed to \code{\link{subset.data.list}()}.
+#' @param pattern Regex pattern to select the included variables. Passed to \code{\link{subset.data.list}()}.
+#' @param lower.panel Passed to \code{\link{pairs}()}.
+#' @param panel Passed to \code{\link{pairs}()}.
+#' @param pch Passed to \code{\link{pairs}()}.
+#' @param cex Passed to \code{\link{pairs}()}.
+#' @param ... Passed to \code{\link{pairs}()}.
 #' @examples
 #' # Take a subset for the example
 #' D <- subset(Dbuilding, c("2010-12-15","2011-01-15"), pattern="^Ta|^I", kseq=1:3)
 #' pairs(D)
 #'
-#' # If the forecasts and the observations are not aligned in time it is easy to see by comparing to the previous plot.
+#' # If the forecasts and the observations are not aligned in time,
+#' # which is easy to see by comparing to the previous plot.
 #' pairs(D, lagforecasts=FALSE)
 #' # Especially for the solar I syncronization is really important!
 #' # Hence if the forecasts were not synced properly, then it can be detected using this type of plot.
@@ -242,7 +251,8 @@ as.data.frame.data.list <- function(x){
 #' # Alternatively, lag when taking the subset
 #' D <- subset(Dbuilding, c("2010-12-15","2011-01-15"), pattern="^Ta|^I", kseq=1:3, lagforecasts=TRUE)
 #' pairs(D, lagforecasts=FALSE)
-#' 
+#'
+#' @importFrom graphics panel.smooth pairs
 #' @export
 pairs.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = TRUE, pattern = NA, lower.panel=NULL, panel=panel.smooth, pch=20, cex=0.7, ...){
     # First take the subset
@@ -400,6 +410,7 @@ check.data.list <- function(object){
 #'
 #' @examples
 #'
+#' \donttest{
 #' Dbuilding == Dbuilding
 #'
 #' D <- Dbuilding
@@ -410,7 +421,7 @@ check.data.list <- function(object){
 #' names(D)[5] <- "I"
 #' names(D)[6] <- "Ta"
 #' Dbuilding == D
-#' 
+#' }
 #' 
 
 "==.data.list" <- function(x, y) {

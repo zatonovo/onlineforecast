@@ -86,7 +86,8 @@
 #' rls_fit(c(lambda=0.9), model, D, scorefun=rmse, returnanalysis=FALSE)
 #'
 #' # Such that it can be passed to an optimzer (see ?rls_optim for a nice wrapper of optim)
-#' val <- optim(c(lambda=0.99), rls_fit, model = model, data = D, scorefun = rmse, returnanalysis=FALSE)
+#' val <- optim(c(lambda=0.99), rls_fit, model = model, data = D, scorefun = rmse,
+#'              returnanalysis=FALSE)
 #' val$par
 #' # Which can then simply be applied
 #' rls_fit(val$par, model, D, scorefun=rmse, returnanalysis=FALSE)

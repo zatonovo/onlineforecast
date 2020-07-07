@@ -20,13 +20,12 @@
 #'
 #' @title Convert to data.list class
 #' @param object The object to be converted into a data.list
-#' @param ... 
 #' @return a value of class data.list
 #' @seealso \code{For specific detailed info see the children, e.g. \link{as.data.list.data.frame} }
 #' @family as.data.list
 #' 
 #' @export
-as.data.list <- function(object, ...){
+as.data.list <- function(object){
     UseMethod("as.data.list")
 }
 
@@ -39,7 +38,7 @@ as.data.list <- function(object, ...){
 #' \code{xx} is the horizon. See the examples.
 #'
 #' @title Convertion of data.frame into data.list
-#' @param object 
+#' @param object The data.frame to be converted.
 #' @return a data.list
 #' @seealso as.data.list
 #' @family as.data.list

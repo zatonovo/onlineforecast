@@ -29,6 +29,7 @@
 #' @param scorefun The score function to be applied on each horizon.
 #' @param usecomplete Use on the set of observations which is complete on all horizons.
 #' @param printit Print the result.
+#' @param ... Not used.
 #' @return A list of:
 #' 
 #'     - scorefun.
@@ -39,7 +40,7 @@
 #'
 #' @examples
 #'
-#' # Take data (See vignette ??(ref) for better model and more details)
+#' # Take data
 #' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #' D$y <- D$heatload
 #' D$scoreperiod <- in_range("2010-12-20", D$t)
@@ -56,16 +57,17 @@
 #' summary(fit)
 #' # We see:
 #' #   - The model (output, inputs, lambda)
-#' #   - The Ta coefficient is around -0.12 in average (for all horizons) with a standard dev. of 0.03, so not varying extremely (between -0.18 and -0.027)
+#' #   - The Ta coefficient is around -0.12 in average (for all horizons) with a standard dev. of 0.03,
+#' #     so not varying extremely (between -0.18 and -0.027).
 #' #   - The intercept mu is around 5.5 and varying very little.
 #' #   - The RMSE is around 0.9 for all horizons.
 #'
 #' # The residuals and coefficient series can be seen by
-#' plot_ts.rls_fit(fit)
+#' plot_ts(fit)
 #'
-#' 
+#' @importFrom stats sd
 #' @export
-rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete = TRUE, printit = TRUE){
+rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete = TRUE, printit = TRUE, ...){
     fit <- object
     #
     scipen <- options(scipen=10)$scipen
@@ -127,5 +129,6 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete =
     invisible(list(scorefun = scorefun, scoreval = scoreval, scoreperiod = scoreperiodused))
 }
 
+#' @importFrom stats sd
 #' @export
 summary.rls_fit <- rls_summary

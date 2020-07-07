@@ -23,7 +23,7 @@
 #' # Seasonal persistence takes the value perlen steps back
 #' persistence(1:10, kseq=1:4, perlen=4)
 #'
-#' # If the horizons are longer than perlen, then it's the latest perlen*i steps back, where i is an integer
+#' # If the horizons are longer than perlen, then the perlen*i steps back is taken (i is an integer)
 #' persistence(1:10, kseq=1:12, perlen=4)
 #'
 #' 

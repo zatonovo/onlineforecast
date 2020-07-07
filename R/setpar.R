@@ -30,7 +30,8 @@
 #' # In a function, where this is used and a plot is generated, do like this to reset on exit
 #' oldpar <- setpar(mfrow=c(2,1))
 #' on.exit(par(oldpar))        
-#' 
+#'
+#' @importFrom graphics par
 #' @export
 setpar <- function(tmpl = "ts", mfrow = c(1,1), ...) {
     # Get par list

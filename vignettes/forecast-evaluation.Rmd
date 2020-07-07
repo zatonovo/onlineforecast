@@ -7,7 +7,6 @@ vignette: >
   %\VignetteIndexEntry{Forecast evaluation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: literature.bib
 ---
 
 ```{r external-code, cache=FALSE, include=FALSE, purl = FALSE}
@@ -15,13 +14,74 @@ bibliography: literature.bib
 library(knitr)
 # This vignettes name
 vignettename <- "forecast-evaluation"
-# Read external code
-knitr::read_chunk("shared-init.R")
+# REMEMBER TO CHANGE IN shared-init.Rmd and copy in to each vignette, if chaging setup
 ```
+<!--shared-init-start-->
 ```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+# Width will scale all
+figwidth <- 12
+# Scale the wide figures (100% out.width)
+figheight <- 4
+# Heights for stacked time series plots
+figheight1 <- 5
+figheight2 <- 6.5
+figheight3 <- 8
+figheight4 <- 9.5
+figheight5 <- 11
+# Set the size of squared figures (same height as full: figheight/figwidth)
+owsval <- 0.35
+ows <- paste0(owsval*100,"%")
+ows2 <- paste0(2*owsval*100,"%")
+# 
+fhs <- figwidth * owsval
+
+# Set for square fig: fig.width=fhs, fig.height=fhs, out.width=ows}
+# If two squared the:  fig.width=2*fhs, fig.height=fhs, out.width=ows2
+
+# Check this: https://bookdown.org/yihui/rmarkdown-cookbook/chunk-styling.html
+# Set the knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##    ",
+  prompt = FALSE,
+  cache = TRUE,
+  cache.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  fig.align="center",
+  fig.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  fig.height = figheight,
+  fig.width = figwidth,
+  out.width = "100%"
+)
+options(digits=3)
+
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "## ...output cropped"
+  if (length(lines)==1) {        # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
+
 ```
-```{r links, cache=FALSE, echo=FALSE, purl=FALSE, results="asis"}
-```
+
+[onlineforecasting]: https://onlineforecasting.org/articles/onlineforecasting.pdf
+[building heat load forecasting]: https://onlineforecasting.org/examples/building-heat-load-forecasting.html
+[onlineforecasting.org]: https://onlineforecasting.org
+<!--shared-init-end-->
+
 
 
 ## Intro
@@ -34,11 +94,11 @@ not explained, then have a look in the two preceding vignettes to find an explan
 ## Load forecasts
 
 First Load the package, setup the model and calculate the forecasts:
-```{r}
+```{r, echo=1:2, purl=1:2}
 # Load the package
-#library(onlineforecast)
-library(devtools)
-load_all(as.package("../../onlineforecast"))
+library(onlineforecast)
+#library(devtools)
+#load_all(as.package("../../onlineforecast"))
 ```
 
 Just start by:
@@ -358,7 +418,7 @@ plot_ts(fit2, kseq=kseq)
 A shorter period (plots not included here):
 ```{r, fig.height=figheight5, fig.keep="none"}
 xlim <- c("2011-01-01","2011-01-14")
-plot_ts.rls_fit(fit1, xlim=xlim, kseq=kseq)
+plot_ts(fit1, xlim=xlim, kseq=kseq)
 plot_ts(fit2, xlim=xlim, kseq=kseq)
 ```
 
@@ -383,16 +443,19 @@ The RLS coefficients are in the fit for each horizon:
 str(fit1$Lfitval$k1)
 ```
 
-A pairs plot with residuals and inputs <!-- ??comment --> if patterns are left:
+A pairs plot with residuals and inputs to see if patterns are left:
 ```{r plotpairs, fig.height=figwidth}
 kseq <- c(1,36)
 D$Residuals <- residuals(fit2)[ ,pst("h",kseq)]
 D$hour <- aslt(D$t)$hour
-pairs.data.list(D, subset=D$scoreperiod, pattern="Residuals|Ta|I|hour|^t$", kseq=kseq)
+pairs(D, subset=D$scoreperiod, pattern="Residuals|Ta|I|hour|^t$", kseq=kseq)
 ```
+So inspecting the two upper rows, there are no clear patterns to be seen for the
+mean (red lines are not deviating from zero). Some differences in the marginal
+distribution of the residuals are seen, e.g. for the hour the variance is
+clearly highest in the mornings.
 
 Histograms and box-plots to find patterns. From the histogram and qq-norm plot:
-
 ```{r}
 par(mfrow=c(1,2))
 hist(D$Residuals$h1)
@@ -401,7 +464,8 @@ qqline(D$Residuals$h1)
 ```
 We can see, that the residuals are symmetrical with heavy tails.
 
-From boxplots we see the distribution as a function of the time of day:
+From boxplots we see the distribution as a function of the time of day
+(i.e. hour in the pairs plot above):
 ```{r}
 boxplot(D$Residuals$h1 ~ D$tday$k0)
 ```

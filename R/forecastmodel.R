@@ -336,17 +336,22 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
 #' A simple print out of the model output and inputs
 #' 
 #' @title Print forecast model
-#' @param object forecastmodel
-
+#' @param x A forecastmodel object
+#' @param ... Not used.
+#' 
 #' @export
-print.forecastmodel <- function(object){
-    model <- object
+print.forecastmodel <- function(x, ...){
+    model <- x
     #    cat("\nObject of class forecastmodel (R6::class)\n\n")
     cat("\nOutput:",model$output,"\n")
     cat("Inputs: ")
-    cat(names(model$inputs)[1],"=",model$inputs[[1]]$expr,"\n")
-    for(i in 2:length(model$inputs)){
-        cat("       ",names(model$inputs)[i],"=",model$inputs[[i]]$expr,"\n")
+    if(length(model$inputs) == 0 ){
+        cat("No inputs\n")
+    }else{
+        cat(names(model$inputs)[1],"=",model$inputs[[1]]$expr,"\n")
+        for(i in 2:length(model$inputs)){
+            cat("       ",names(model$inputs)[i],"=",model$inputs[[i]]$expr,"\n")
+        }
+        cat("\n")
     }
-    cat("\n")    
 }

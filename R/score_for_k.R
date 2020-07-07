@@ -30,7 +30,7 @@
 #' head(Resid)
 #' score_for_k(Resid)$scoreperiod
 #'
-#' 
+#' @importFrom stats complete.cases
 #' @export
 score_for_k <- function(Residuals, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse){
     # If no scoreperiod is given, then use all
@@ -38,10 +38,11 @@ score_for_k <- function(Residuals, scoreperiod = NA, usecomplete = TRUE, scorefu
         scoreperiod <- rep(TRUE,nrow(Residuals))
     }else{
         # Do checking of scoreperiod
+        txt <- "It must be set to an index (int or logical) defining which points to be evaluated in the scorefun()."
         if( length(scoreperiod) != nrow(Residuals) ){
-            stop("scoreperiod is not same length as nrow(Residuals):",txt)
+            stop("scoreperiod is not same length as nrow(Residuals): ",txt)
         }else{
-            if( all(is.na(scoreperiod)) ){ stop("scoreperiod is all NA:",txt) }
+            if( all(is.na(scoreperiod)) ){ stop("scoreperiod is all NA: ",txt) }
         }
     }
     # Take only the rows which have a value for each horizon?

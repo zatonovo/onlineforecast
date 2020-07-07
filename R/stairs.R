@@ -10,12 +10,13 @@
 #'
 #' Often with time series the time points are in the end of the intervals, so the steps should go backaward, this is achieved with this function.
 #' 
-#' @title Plotting stairs with time point at end of interval
-#' @param x x values for plot
-#' @param y y values for plot
-#' @param type if 'b' then include points
-#' @param preline if TRUE, then a line backwards from the first point is added
-#' @param ... Passed to \code{lines()} and \code{points()} when they are called in the function
+#' @title Plotting stairs with time point at end of interval.
+#' @param x x values for plot.
+#' @param y y values for plot.
+#' @param type if 'b' then include points.
+#' @param preline if TRUE, then a line backwards from the first point is added.
+#' @param pch Passed to \code{points()}.
+#' @param ... Passed to \code{lines()} and \code{points()} when they are called in the function.
 #' @examples
 #'
 #' # Usual stairs plot has steps forward from x
@@ -36,8 +37,10 @@
 #' plot_ts(Dbuilding, "heatload", c("2010-12-15","2010-12-16"))
 #'
 #' # Modify it to only lines
-#' plot_ts(Dbuilding, "heatload", c("2010-12-15","2010-12-16"), plotfun=function(x,y,...){stairs(x,y, type="l")})
+#' plot_ts(Dbuilding, "heatload", c("2010-12-15","2010-12-16"),
+#'         plotfun=function(x,y,...){stairs(x,y, type="l")})
 #'
+#' @importFrom graphics lines points
 #' @export
 stairs <- function(x, y, type="b", preline=FALSE, pch=19, ...)
 {

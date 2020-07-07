@@ -39,8 +39,9 @@
 #' # Or we can change the lambda
 #' rls_fit(c(lambda=0.9), model, D, rmse, returnanalysis=FALSE)
 #'
-#' # This could be passed to optim() (or any optimizer). See \code{forecastmodel$insert_prm()} for more details.
-#' optim(c(lambda=0.98), rls_fit, model=model, data=D, scorefun=rmse, returnanalysis=FALSE, lower=c(lambda=0.9), upper=c(lambda=0.999), method="L-BFGS-B")
+#' # This could be passed to optim() (or any optimizer, see forecastmodel$insert_prm()).
+#' optim(c(lambda=0.98), rls_fit, model=model, data=D, scorefun=rmse, returnanalysis=FALSE,
+#'       lower=c(lambda=0.9), upper=c(lambda=0.999), method="L-BFGS-B")
 #'
 #' # rls_optim is simply a helper, it's makes using bounds easiere and enables caching of the results
 #' # First add bounds for lambda (lower, init, upper)
@@ -105,4 +106,3 @@ rls_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, 
     # Return the result
     return(res)
 }
-

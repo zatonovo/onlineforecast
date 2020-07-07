@@ -68,7 +68,7 @@
 #' # Some diurnal pattern is present
 #' acf(residuals(fit)$h1, na.action=na.pass, lag.max=96)
 #'
-#'
+#' @importFrom stats lm residuals
 #' @export
 lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, printout = TRUE){
     # Check that the model is setup correctly, it will stop and print a message if not

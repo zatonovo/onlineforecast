@@ -14,20 +14,35 @@
 #' If any of these parameters are given to \code{\link{plot_ts}()}, then it will be used over the default.
 #'
 #' @title Set parameters for \code{\link{plot_ts}()}
-#' @param fromoptions logical: Read the parameters set in \code{\link{options}("par_ts")$par_ts}
-#' @param ... any of the following parameters can be set:
-#' @param xnm "t": The name of the time v
-#' @param legendspace 10: Horizontal space for the lengend in character spaces
-#' @param legendcex 1: Scaling of the legend
-#' @param legendrangeshow TRUE: Include the range for each variable in the legend
-#' @param ylimextend c(lower,upper): Extend the ylim for each plot with a proportion, seperately for the lower and upper limit
-#' @param yaxisextend c(lower,upper): Extend the yaxis for each plot with a proportion, seperately for the lower and upper limit
-#' @param mainsline (numeric) with the \code{line} for the main in the plots.
-#' @param cex (numeric) The cex to use for the \code{plot_ts} plots.
-#' @param plotfun The function used for plotting, as default \code{lines}.
-#' @param xaxisformat (character) The format of the xaxis, see \code{\link{strptime}()}.
-#' @param colorramp colorRampPalette: The colorramp used for setting multiple colors in each plot
+#' @param fromoptions logical: Read the list of parameters set in \code{\link{options}("par_ts")$par_ts}, then the additional parameters set in \code{...} are replaced before the list is returned.
+#' @param p List of the parameters, as returned by the function itself. If given, the additional parameters set in \code{...} are replaced before the list is returned.
+#' @param ... any of the following parameters can be set replacing the default values:
+#' 
+#' \code{xnm} "t": The name of the time
 #'
+#' \code{legendspace} 10:
+#' Horizontal space for the lengend in character spaces
+#'
+#' \code{legendcex} 1: Scaling of the legend
+#' 
+#' \code{legendrangeshow} TRUE: Include the range for each variable in the legend
+#' 
+#' \code{ylimextend} c(lower,upper): Extend the ylim for each plot with a proportion, seperately for the lower and upper limit
+#' 
+#' \code{yaxisextend} c(lower,upper): Extend the yaxis for each plot with a proportion, seperately for the lower and upper limit
+#' 
+#' \code{mainsline} (numeric): with the \code{line} for the main in the plots.
+#' 
+#' \code{cex} (numeric): The cex to use for the \code{plot_ts} plots.
+#' 
+#' \code{plotfun}: The function used for plotting, as default \code{lines}.
+#' 
+#' \code{xaxisformat} (character): The format of the xaxis, see \code{\link{strptime}()}.
+#' 
+#' \code{colorramp} colorRampPalette: The colorramp used for setting multiple colors in each plot
+#'
+#' @return A list of the parameters above, which can be set globally (see examples) or passed to \code{\link{plot_ts}}.
+#' 
 #' @examples
 #'
 #' # Data for plots
@@ -68,7 +83,9 @@
 #' p$colorramp <- rainbow
 #' options(par_ts=p)
 #' plot_ts(D, c("heatload","Ta"), kseq=1:24)
-#' 
+#'
+#' @importFrom graphics lines
+#' @importFrom grDevices colorRampPalette
 #' @export
 par_ts <- function(fromoptions=FALSE, p=NA, ...){
     # Take the values in options= if they are there

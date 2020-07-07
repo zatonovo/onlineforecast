@@ -43,7 +43,7 @@
 #' # Plot it
 #' plot_ts(D, c("y|Yhat"), kseq=1)
 #'
-#'
+#' @importFrom stats predict
 #' @export
 lm_predict <- function(model, datatr) {
   # Calculate the predictions

@@ -1,7 +1,9 @@
+# REMEMBER TO CHANGE IN shared-init.Rmd and copy in to each vignette, if chaging setup
+
 library(knitr)
 library(rmarkdown)
 
-## Put the files in this dir (ignored in the git)
+# Put the files in this dir (ignored in the git)
 dirnam <- "tmp-output/"
 dir.create(dirnam)
 
@@ -20,14 +22,12 @@ makeit("setup-data", openit=FALSE)
 file.remove(dir("cache", full.names=TRUE))
 file.remove("cache")
 file.remove(dir("tmp-output/tmp-setup-and-use-model/", full.names=TRUE))
-
-makeit("setup-and-use-model", openit=FALSE, clean=FALSE)
-oi
+makeit("setup-and-use-model", openit=FALSE, clean=TRUE)
 
 #
 file.remove(dir("tmp-output/tmp-forecast-evaluation/", full.names=TRUE))
 makeit("forecast-evaluation", openit=FALSE)
 
-#
-file.remove(dir("tmp-output/tmp-online-updating/", full.names=TRUE))
-makeit("online-updating", openit=FALSE)
+# Finish and include it!!
+## file.remove(dir("tmp-output/tmp-online-updating/", full.names=TRUE))
+## makeit("online-updating", openit=FALSE)

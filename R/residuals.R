@@ -5,9 +5,10 @@
 #' The residuals returned are synced with the observations (i.e. k0) and the columns are names "hxx" (not kxx) to indicate this and will not be lagged in \code{\link{plot_ts}()}.
 #' 
 #' @title Calculate the residuals given a forecast matrix and the observations.
-#' @param Yhat The forecast matrix (with kxx as column names).
-#' @param y The observations vector
-#' @return A data.frame with the residuals for each horizon
+#' @param object The forecast matrix (a data.frame with kxx as column names, Yhat in returned fits).
+#' @param y The observations vector.
+#' @param ... Not used.
+#' @return A data.frame with the residuals for each horizon.
 #'
 #' @examples
 #' # Just a vector to be forecasted
@@ -28,8 +29,10 @@
 #' # which means that they are aligned with the observations and will not be lagged in the plot
 #' plot_ts(D, c("y|Yhat","Resid"))
 #'
-#' Check that it matches (the forecasts is lagged in the plot_ts such that the forecast for t+k is at t+k (and not t))
-#' plot_ts(D, c("y|Yhat","Resid"), xlim=c(1,10), kseq=1, plotfun=function(x,...){lines(x,...,type="b")})
+#' # Check that it matches (the forecasts is lagged in the plot_ts
+#' # such that the forecast for t+k is at t+k (and not t))
+#' plot_ts(D, c("y|Yhat","Resid"), xlim=c(1,10), kseq=1,
+#'         plotfun=function(x,...){lines(x,...,type="b")})
 #'
 #' # Just for fun, see the auto-correlation function of the persistence 
 #' acf(D$Resid$h1, na.action=na.pass)
@@ -37,7 +40,8 @@
 #'
 #' @rdname residuals
 #' @export
-residuals.data.frame <- function(Yhat, y){
+residuals.data.frame <- function(object, y, ...){
+    Yhat <- object
     # Add some checking at some point
     Residuals <- y - lag(Yhat, "+k")
     # Named with hxx (it's not a forecast, but an observation available at t)
@@ -51,8 +55,10 @@ residuals.data.frame <- function(Yhat, y){
 residuals.matrix <- residuals.data.frame
 
 #' @rdname residuals
-#' @param fit The value from a fit a forecastmodel (currently \code{\link{lm_fit}} or \code{\link{rls_fit}}.
+#' @param object The value from a fit a forecastmodel (currently \code{\link{lm_fit}} or \code{\link{rls_fit}}.
+#' @param ... Not used.
 #' @export
-residuals.forecastmodel_fit <- function(fit){
+residuals.forecastmodel_fit <- function(object, ...){
+    fit <- object
     residuals(fit$Yhat, fit$data[[fit$model$output]])
 }

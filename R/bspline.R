@@ -57,7 +57,7 @@ bspline <- function(X, Boundary.knots = NA, intercept = TRUE, df = NULL, knots =
     if (class(X) == "list") {
         # Call again for each element
         val <- lapply(1:length(X), function(i) {
-            bspline(X[[i]], df = df, knots = knits, degree = degree, intercept = intercept, 
+            bspline(X[[i]], df = df, knots = knots, degree = degree, intercept = intercept, 
                     Boundary.knots = Boundary.knots)
         })
         nams(val) <- nams(X)

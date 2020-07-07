@@ -23,12 +23,12 @@ score_fit <- function(fit, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse
     }
 
     # Check score period
-    txt <- ": It must be set to an index (int or logical) defining which points to be evaluated in the scorefun()."
+    txt <- "It must be set to an index (int or logical) defining which points to be evaluated in the scorefun()."
     if(is.na(scoreperiod[1])){
         if("scoreperiod" %in% nams(fit$data)){
             scoreperiod <- fit$data$scoreperiod
         }else{
-            stop("scoreperiod is not set. Set it in the data used in the fit function or as argument in the present call:",txt)
+            stop("scoreperiod is not set. Set it in the data used in the fit function or as argument in the present call: ",txt)
         }
     }
 

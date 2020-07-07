@@ -4,10 +4,11 @@
 #load_all(as.package("../../onlineforecast"))
 #?input_class
 
-#' R6 class for a input_class
+#' R6 class for for forecastmodel inputs
 #' 
-#' Description of the class.
+#' Holds variables and functions needed for an input, as added by \code{\link{forecastmodel}$add_inputs()}.
 #'
+#' @title Class for forecastmodel inputs
 #' @name input_class
 #' @details
 #' Details of the class.
@@ -107,4 +108,4 @@
 #' 
 #----------------------------------------------------------------
 NULL
-
+# Don't delete the NULL above

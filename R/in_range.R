@@ -4,11 +4,14 @@
 #load_all(as.package("../../onlineforecast"))
 #?in_range
 
-#' Returns a logical vector of boolean values where TRUE indicates if timestamp is within the specified period.
+#' Returns a logical vector of boolean values where TRUE indicates if timestamp is within the
+#' specified period.
 #'
-#' Returns a logical vector of boolean values where TRUE indicates if timestamp is within the specified period spanned by tstart and tend. 
+#' Returns a logical vector of boolean values where TRUE indicates if timestamp is within the
+#' specified period spanned by tstart and tend. 
 #'
-#' Note the convention of time stamp in the end of the time intervals causes the time point which equals \code{tstart} not to be included. See last example.
+#' Note the convention of time stamp in the end of the time intervals causes the time point
+#' which equals \code{tstart} not to be included. See last example.
 #'
 #' The times can be given as character or POSIX, per default in tz='GMT'.
 #' 
@@ -36,7 +39,8 @@
 #' D$scoreperiod
 #'
 #' # Note the convention of time stamp in the end of the time intervals
-#' # causes the point with t = 2010-12-26 00:00:00 not to be included, since it's covering to "2010-12-25 23:00:00" to "2010-12-26 00:00:00"
+#' # causes the point with t = 2010-12-26 00:00:00 not to be included
+#' # since it's covering to "2010-12-25 23:00:00" to "2010-12-26 00:00:00"
 #' D$t[in_range("2010-12-26", D$t, "2010-12-27")]
 #'
 #'

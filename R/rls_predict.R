@@ -49,9 +49,11 @@
 #' for(i in 1:length(Dnew$t)){
 #'     # New data arrives
 #'     Dt <- subset(Dnew, i)
-#'     # Remember that the transformation must only be done once if some transformation which is has a state, e.g. lp(), is used
+#'     # Remember that the transformation must only be done once if some transformation
+#'     # which is has a state, e.g. lp(), is used
 #'     datatr <- model$transform_data(Dt)
-#'     # Update, remember that this must only be once for each new point (it updates the parameter estimates, i.e. model$Lfits)
+#'     # Update, remember that this must only be once for each new point
+#'     # (it updates the parameter estimates, i.e. model$Lfits)
 #'     rls_update(model, datatr, Dt$heatload)
 #'     # Now predict to generate the new forecast
 #'     print(rls_predict(model, datatr))

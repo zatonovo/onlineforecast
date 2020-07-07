@@ -18,7 +18,9 @@
 #'
 #' # See how it can be used in lp, which needs to save the state of the filter
 #' # Note how it is not needed to do anything else than getting and setting the state
-#' # in transformations (model$transform_data()), then multiple transformation functions can be called, but they are always in the same order, so the set and get state functions keep a counter internally to make sure that the correct values are set and returned when called again.
+#' # in transformations (model$transform_data()), then multiple transformation functions can be called,
+#' # but they are always in the same order, so the state (set,get) functions keep a counter internally
+#' # to make sure that the correct values are set and returned when called again.
 #' lp
 #' 
 #' 

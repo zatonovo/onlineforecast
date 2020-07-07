@@ -61,13 +61,15 @@
 #'
 #'
 #' # Use plotly
-#' L <- plot_ts(D, c("heatload","Ta"), kseq=c(1,24), usely=TRUE, xlab="Time", ylabs=c("Heat (kW)","Temperature (C)"))
+#' \donttest{library(plotly)
+#' L <- plot_ts(D, c("heatload","Ta"), kseq=c(1,24), usely=TRUE, xlab="Time",
+#'              ylabs=c("Heat (kW)","Temperature (C)"))
 #'
 #' # From plotly the figures are returned and can be further manipulated
 #' # e.g. put the legend in the top by
 #' L[[length(L)]] <- L[[length(L)]] %>% layout(legend = list(x = 100, y = 0.98))
 #' print(subplot(L, shareX=TRUE, nrows=length(L), titleY = TRUE))
-#'
+#' }
 #'
 #' @rdname plot_ts
 #' @export
@@ -134,7 +136,7 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
                             # Started with k, then it's forecasts and must be lagged to sync
                             if( prefix == "k" ){
                                 ks <- as.integer(gsub("k","",nams(DL[[nm]])[i]))
-                                X <- lag(X, lag=ks)
+                                X <- lag(X, lagseq=ks)
                             }
                             # Fix if it is a vector
                             if(is.null(dim(X))) {
@@ -179,6 +181,7 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
 # Plot all with prefix
 #' @param namesdata For \code{class(object)=="data.frame"} a character vector. Names of columns in object to be searched in, instead of \code{names(object)}.
 #' @rdname plot_ts
+#' @importFrom graphics par title
 #' @export
 plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
                                mains = NA, mainouter="", legendtexts = NA, xat = NA, usely=FALSE, plotit = TRUE, p = NA, namesdata=NA, ...) {
@@ -207,9 +210,9 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
     #
     if(usely){
         # with plotly
-        if(requireNamespace("plotly", quietly = TRUE)){
-            library("plotly")
-        }else{
+        if(!requireNamespace("plotly", quietly = TRUE)){
+#            loadNamespace("plotly")
+#        }else{
             stop("The plotly package must be installed.")
         }
         #
@@ -223,33 +226,36 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
         #colormap <- p$colorramp(nlines)
         #
         L <- list()
+        # This is hacky, but take the operator from the namespce directly (cannot plotly::%>% below. And don't want to plotly in imports, since it's big and don't want to force installation)
+        '%>%' <- plotly::'%>%'
+        #
         for(ii in 1:length(patterns)) {
             iseq <- Liseq[[ii]]
             #
-            fig <- plot_ly(x=data[ ,p$xnm])
+            fig <- plotly::plot_ly(x=data[ ,p$xnm])
             for(i in 1:length(iseq)){
-                fig <- fig %>% add_lines(y = data[ ,iseq[i]],
-                                         name = names(data)[iseq[i]],
-                                         # color = colormap[iii]
-                                         )#, legendgroup = paste0('group',ii))
+                fig <- fig %>% plotly::add_lines(y = data[ ,iseq[i]],
+                                                         name = names(data)[iseq[i]],
+                                                         # color = colormap[iii]
+                                                         )#, legendgroup = paste0('group',ii))
             }
             if(ii < length(patterns)){
                 # Add empty to make legend gap
-                fig <- fig %>% add_lines(y = rep("NA",nrow(data)), name=strrep("-",maxchar), line=list(color="white"))
+                fig <- fig %>% plotly::add_lines(y = rep("NA",nrow(data)), name=strrep("-",maxchar), line=list(color="white"))
             }
             # Add ylabs?
             if(!is.na(ylabs)[1]){
-                fig <- fig %>% layout(yaxis=list(title=ylabs[ii]))
+                fig <- fig %>% plotly::layout(yaxis=list(title=ylabs[ii]))
             }
-            fig <- fig %>% layout(xaxis=list(title=xlab))
+            fig <- fig %>% plotly::layout(xaxis=list(title=xlab))
             # Keep it
             L[[ii]] <- fig
         }
         # Center legend
-        L[[ii]] <- L[[ii]] %>% layout(legend = list(x = 100, y = 0.5))
+        L[[ii]] <- L[[ii]] %>% plotly::layout(legend = list(x = 100, y = 0.5))
         # Draw it
         if(plotit){
-            print(subplot(L, shareX=TRUE, nrows=length(L), titleY = TRUE))
+            print(plotly::subplot(L, shareX=TRUE, nrows=length(L), titleY = TRUE))
         }
         # Return if needed
         invisible(L)
@@ -274,6 +280,7 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
 }
 
 #' @rdname plot_ts
+#' @importFrom graphics par title
 #' @export
 plot_ts.matrix <- plot_ts.data.frame
 
@@ -302,6 +309,7 @@ plot_ts_iseq <- function(data, pattern, xnm, namesdata){
 
 
 # Plot all columns found with regex pattern
+#' @importFrom graphics plot lines axis title axis.POSIXct mtext par legend
 plot_ts_series <- function(data, pattern, iplot = 1,
                            ylim = NA, xlab = "", main = "", mainline = -1.2, legendtext = NA, xat = NA, plotit = TRUE, p = NA, namesdata = NA, xaxis = TRUE, ...) {
     #
@@ -467,7 +475,9 @@ plot_ts_series <- function(data, pattern, iplot = 1,
 #' plot_ts(fit1)
 #'
 #' # Plot it with plotly
+#' \donttest{
 #' plot_ts(fit1, usely=TRUE)
+#' }
 #'
 #' # Return the data
 #' Dplot <- plot_ts(fit1)
@@ -475,10 +485,12 @@ plot_ts_series <- function(data, pattern, iplot = 1,
 #' # The RLS coefficients are now in a nice format
 #' head(Dplot$mu)
 #'
+#' @rdname plot_ts
 #' @export
-plot_ts.rls_fit <- function(fit, patterns = c("^y$|^Yhat$","^Residuals$","CumAbsResiduals$",pst("^",names(fit$Lfitval[[1]]),"$")),
+plot_ts.rls_fit <- function(object, patterns = c("^y$|^Yhat$","^Residuals$","CumAbsResiduals$",pst("^",names(fit$Lfitval[[1]]),"$")),
                           xlim = NA, ylims = NA, xlab = "", ylabs = NA, mains = "", mainouter="", legendtexts = NA,
-                            xat = NA, usely=FALSE, plotit=TRUE, p=NA, kseq = NA, ...){
+                          xat = NA, usely=FALSE, plotit=TRUE, p=NA, kseq = NA, ...){
+    fit <- object
     # Calculate the residuals
     Residuals <- residuals(fit)
     # Prepares a data.list for the plot
@@ -497,7 +509,7 @@ plot_ts.rls_fit <- function(fit, patterns = c("^y$|^Yhat$","^Residuals$","CumAbs
         kseq <- fit$model$kseq
     }
     #
-    CumAbsResiduals <- onlineforecast:::lapply_cbind_df(kseq, function(k){
+    CumAbsResiduals <- lapply_cbind_df(kseq, function(k){
         tmp <- abs(Residuals[isubset,pst("h",k)])
         tmp[is.na(tmp)] <- 0
         cumsum(tmp)
@@ -511,7 +523,7 @@ plot_ts.rls_fit <- function(fit, patterns = c("^y$|^Yhat$","^Residuals$","CumAbs
         nm <- names(fit$Lfitval[[1]])[i]
         # Take the fitues each horizon for the input
         ik <- which(names(fit$Lfitval) %in% pst("k",kseq))
-        X <- onlineforecast:::lapply_cbind_df(ik, function(ii){
+        X <- lapply_cbind_df(ik, function(ii){
             fit$Lfitval[[ii]][isubset,nm]
         })
         names(X) <- gsub("k","h",names(fit$Lfitval)[ik])

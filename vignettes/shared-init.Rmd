@@ -1,5 +1,4 @@
-# ---- init
-
+```{r init, cache=FALSE, include=FALSE, purl=FALSE}
 # Width will scale all
 figwidth <- 12
 # Scale the wide figures (100% out.width)
@@ -57,8 +56,8 @@ knit_hooks$set(output = function(x, options) {
   hook_output(x, options)
 })
 
+```
 
-# ---- links
-cat("[onlineforecasting]: https://onlineforecasting.org/articles/onlineforecasting.pdf\n")
-cat("[building heat load forecasting]: https://onlineforecasting.org/examples/building-heat-load-forecasting.html\n")
-cat("[onlineforecasting.org]: https://onlineforecasting.org\n")
+[onlineforecasting]: https://onlineforecasting.org/articles/onlineforecasting.pdf
+[building heat load forecasting]: https://onlineforecasting.org/examples/building-heat-load-forecasting.html
+[onlineforecasting.org]: https://onlineforecasting.org
