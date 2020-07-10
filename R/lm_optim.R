@@ -28,7 +28,7 @@
 #' # Define a simple model 
 #' model <- forecastmodel$new()
 #' model$add_inputs(Ta = "lp(Ta, a1=0.9)",
-#'                  mu = "ones()")
+#'                  mu = "one()")
 #' # Before fitting the model, define which points to include in the evaluation of the score function
 #' D$scoreperiod <- in_range("2010-12-20", D$t)
 #' # And the sequence of horizons to fit for

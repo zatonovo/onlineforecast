@@ -49,9 +49,9 @@ knitr::opts_chunk$set(
   comment = "##    ",
   prompt = FALSE,
   cache = TRUE,
-  cache.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.align="center",
-  fig.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  fig.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.height = figheight,
   fig.width = figwidth,
   out.width = "100%"
@@ -110,7 +110,7 @@ D$trainperiod <- in_range(D$t[1], D$t, "2011-02-01")
 model <- forecastmodel$new()
 model$output = "heatload"
 model$add_inputs(Ta = "lp(Ta, a1=0.9)",
-                 mu = "ones()")
+                 mu = "one()")
 model$add_regprm("rls_prm(lambda=0.9)")
 model$add_prmbounds(Ta__a1 = c(0.5, 0.9, 0.9999),
                     lambda = c(0.9, 0.99, 0.9999))

@@ -18,7 +18,7 @@
 #' D$scoreperiod <- in_range("2010-12-20", D$t)
 #' # Define a simple model 
 #' model <- forecastmodel$new()
-#' model$add_inputs(Ta = "Ta", mu = "ones()")
+#' model$add_inputs(Ta = "Ta", mu = "one()")
 #' model$kseq <- 1:6
 #'
 #' # Here the expression which sets the parameters is defined

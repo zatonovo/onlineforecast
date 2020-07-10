@@ -8,7 +8,7 @@ D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 D$y <- D$heatload
 # Define a model 
 model <- forecastmodel$new()
-model$add_inputs(Ta = "lp(Ta, a1=0.7)", mu = "ones()")
+model$add_inputs(Ta = "lp(Ta, a1=0.7)", mu = "one()")
 
 # Before fitting the model, define which points to include in the evaluation of the score function
 D$scoreperiod <- in_range("2010-12-20", D$t)

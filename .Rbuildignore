@@ -2,7 +2,7 @@
 ^\.Rproj\.user$
 ^make.R
 ^data/all
-^vignettes/tmp-output
+^tmp
 ^vignettes/make.R
 ^vignettes/shared-init.Rmd
 ^vignettes/cache

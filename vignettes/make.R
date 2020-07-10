@@ -4,8 +4,11 @@ library(knitr)
 library(rmarkdown)
 
 # Put the files in this dir (ignored in the git)
-dirnam <- "tmp-output/"
+dirnam <- "../tmp/vignettes/"
+dir.create("../tmp")
 dir.create(dirnam)
+file.remove(dir("cache", full.names=TRUE))
+file.remove("cache")
 
 makeit <- function(nam, openit=FALSE, clean=TRUE){
     namrmd <- paste0(nam,".Rmd")
@@ -15,19 +18,18 @@ makeit <- function(nam, openit=FALSE, clean=TRUE){
     if(openit){ system(paste0("chromium-browser ",dirnam,nam,".html &")) }
 }
 
-file.remove(dir("tmp-output/tmp-setup-data/", full.names=TRUE))
+#
+file.remove(dir(paste0(dirnam,"tmp-setup-data/"), full.names=TRUE))
 makeit("setup-data", openit=FALSE)
 
 #
-file.remove(dir("cache", full.names=TRUE))
-file.remove("cache")
-file.remove(dir("tmp-output/tmp-setup-and-use-model/", full.names=TRUE))
+file.remove(dir(paste0(dirnam,"tmp-setup-and-use-model/"), full.names=TRUE))
 makeit("setup-and-use-model", openit=FALSE, clean=TRUE)
 
 #
-file.remove(dir("tmp-output/tmp-forecast-evaluation/", full.names=TRUE))
+file.remove(dir(paste0(dirnam,"tmp-output/tmp-forecast-evaluation/"), full.names=TRUE))
 makeit("forecast-evaluation", openit=FALSE)
 
 # Finish and include it!!
-## file.remove(dir("tmp-output/tmp-online-updating/", full.names=TRUE))
+## file.remove(dir(paste0(dirnam,"tmp-output/tmp-online-updating/"), full.names=TRUE))
 ## makeit("online-updating", openit=FALSE)

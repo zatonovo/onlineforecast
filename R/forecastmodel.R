@@ -133,7 +133,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
 
         # Keep the prm
         self$prm <- prm
-        # Find if any opt parameters, first the ones with "__" hence for the inputs
+        # Find if any opt parameters, first the one with "__" hence for the inputs
         pinputs <- prm[grep("__",nams(prm))]
         # If none found for inputs, then the rest must be for regression
         if (length(pinputs) == 0 & length(prm) > 0) {

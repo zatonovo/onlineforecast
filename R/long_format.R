@@ -21,7 +21,7 @@
 #' # Define a model
 #' model <- forecastmodel$new()
 #' model$add_inputs(Ta = "Ta",
-#'                  mu = "ones()")
+#'                  mu = "one()")
 #' model$add_regprm("rls_prm(lambda=0.99)")
 #' model$kseq <- 1:6
 #' # Fit it

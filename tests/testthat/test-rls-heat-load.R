@@ -23,7 +23,7 @@ test_that("run", {
     model$add_inputs(Ta = "lp(Ta, a1=0.9)", 
                      I = "lp(I, a1=0.7)", 
                      mu_tday = "fs(tday/24, nharmonics=10)",
-                     mu = "ones()")
+                     mu = "one()")
     model$add_regprm("rls_prm(lambda=0.9)")
 
     ## ------------------------------------------------------------------------

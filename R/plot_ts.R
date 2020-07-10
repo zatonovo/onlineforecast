@@ -466,7 +466,7 @@ plot_ts_series <- function(data, pattern, iplot = 1,
 #' model <- forecastmodel$new()
 #' model$output = "heatload"
 #' model$add_inputs(Ta = "Ta",
-#'                  mu = "ones()")
+#'                  mu = "one()")
 #' model$add_regprm("rls_prm(lambda=0.9)")
 #' model$kseq <- c(3,18)
 #' fit1 <- rls_fit(NA, model, D, returnanalysis = TRUE)

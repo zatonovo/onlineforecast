@@ -17,7 +17,7 @@
 #' 
 #' @param X data.frame (as part of data.list) with horizons as columns named \code{kxx} (i.e. one for each horizon)
 #' @param Boundary.knots The value is NA: then the boundaries are set to the range of each horizons (columns in X). See \code{?splines::bs}
-#' @param intercept Default value is TRUE: in an onlineforecast model there is no intercept per defauls (set by \code{ones()}. See \code{?splines::bs}
+#' @param intercept Default value is TRUE: in an onlineforecast model there is no intercept per defauls (set by \code{one()}. See \code{?splines::bs}
 #' @param df See \code{?splines::bs}
 #' @param knots See \code{?splines::bs}
 #' @param degree See \code{?splines::bs}

@@ -8,7 +8,7 @@ input_class <- R6::R6Class(
       state_L = list(),
       state_i = integer(1),
       ## The model in which it is included (reference to the R6 forecastmodel object), its needed here,
-      ##   since transformation functions (like AR, ones) need to access information about the model (like kseq)
+      ##   since transformation functions (like AR, one) need to access information about the model (like kseq)
       model = NA,
 
       ## methods

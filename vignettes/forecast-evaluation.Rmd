@@ -45,9 +45,9 @@ knitr::opts_chunk$set(
   comment = "##    ",
   prompt = FALSE,
   cache = TRUE,
-  cache.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.align="center",
-  fig.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  fig.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.height = figheight,
   fig.width = figwidth,
   out.width = "100%"
@@ -166,7 +166,7 @@ model <- forecastmodel$new()
 model$output = "y"
 model$add_inputs(Ta = "lp(Ta, a1=0.9)",
                  I = "lp(I, a1=0.9)",
-                 mu = "ones()")
+                 mu = "one()")
 model$add_prmbounds(Ta__a1 = c(0.8, 0.9, 0.99),
              I__a1 = c(0.6, 0.9, 0.99),
              lambda = c(0.9, 0.99, 0.9999))

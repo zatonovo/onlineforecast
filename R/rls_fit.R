@@ -54,7 +54,7 @@
 #' model <- forecastmodel$new()
 #' model$output <- "y"
 #' model$add_inputs(Ta = "Ta",
-#' 		    mu = "ones()")
+#' 		    mu = "one()")
 #' model$add_regprm("rls_prm(lambda=0.99)")
 #'
 #' # Before fitting the model, define which points to include in the evaluation of the score function

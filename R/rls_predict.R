@@ -13,7 +13,7 @@
 #' D$y <- D$heatload
 #' # Define a simple model 
 #' model <- forecastmodel$new()
-#' model$add_inputs(Ta = "Ta", mu = "ones()")
+#' model$add_inputs(Ta = "Ta", mu = "one()")
 #' model$add_regprm("rls_prm(lambda=0.99)")
 #'
 #' # Before fitting the model, define which points to include in the evaluation of the score function

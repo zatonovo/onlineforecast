@@ -49,9 +49,9 @@ knitr::opts_chunk$set(
   comment = "##    ",
   prompt = FALSE,
   cache = TRUE,
-  cache.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.align="center",
-  fig.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  fig.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.height = figheight,
   fig.width = figwidth,
   out.width = "100%"
@@ -142,7 +142,7 @@ model <- forecastmodel$new()
 model$output = "heatload"
 # Inputs (transformation step)
 model$add_inputs(Ta = "Ta",
-                 mu = "ones()")
+                 mu = "one()")
 # Regression step parameters
 model$add_regprm("rls_prm(lambda=0.9)")
 # Optimization bounds for parameters
@@ -170,7 +170,7 @@ The model inputs are defined by:
 ```{r}
 # Inputs (transformation step)
 model$add_inputs(Ta = "Ta",
-                 mu = "ones()")
+                 mu = "one()")
 ```
 So this is really where the structure of the model is specified. The inputs are
 given a name (`Ta` and `mu`), which each are set as an R expression (given as a
@@ -279,11 +279,11 @@ legend("topright", c("Observations",pst("Predictions (",min(model$kseq)," to ",m
 ## Input transformations
 
 The inputs can be transformations of the variables in the data, i.e. `D` in this
-example. The function `ones()` generate a forecast matrix of 1 for the needed
+example. The function `one()` generate a forecast matrix of 1 for the needed
 horizons. It cannot be called directly:
 ```{r, eval=FALSE}
 # This will give error
-ones()
+one()
 ```
 (the code above was not executed)
 
@@ -293,18 +293,18 @@ however we can see the result of the evaluation by:
 datatr <- model$transform_data(D)
 # See what came out
 summary(datatr)
-# In particular for the mu = "ones()"
+# In particular for the mu = "one()"
 head(datatr$mu)
 ```
 
 If we wanted to debug we could:
 ```{r, eval=FALSE}
 # Set to debug
-#debug(ones)
-# Run the input transformation now and it will stop in ones()
+#debug(one)
+# Run the input transformation now and it will stop in one()
 datatr <- model$transform_data(D)
 # Set to undebug
-#undebug(ones)
+#undebug(one)
 ```
 (the code above was not executed).
 
@@ -323,7 +323,7 @@ the new transformation:
 model <- forecastmodel$new()
 model$output = "heatload"
 model$add_inputs(Ta = "lp(Ta, a1=0.9)",
-                 mu = "ones()")
+                 mu = "one()")
 model$add_regprm("rls_prm(lambda=0.9)")
 model$add_prmbounds(Ta__a1 = c(0.5, 0.9, 0.9999),
                     lambda = c(0.9, 0.99, 0.9999))
@@ -359,7 +359,7 @@ Ta forecast is really smoothed, which models a system with a time constant
 
 There are quite a few functions available for input transformations:
 
-- `ones()` generates an matrix of ones (for including an intercept).
+- `one()` generates an matrix of ones (for including an intercept).
 - `fs()` generate Fourier series for modelling harmonic functions.
 - `bspline()` wraps the `bs()` function for generating base splines.
 - `AR()` generates auto-regressive model inputs.

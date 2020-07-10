@@ -38,7 +38,7 @@
 #' model <- forecastmodel$new()
 #' model$output <- "y"
 #' model$add_inputs(Ta = "Ta",
-#'                  mu = "ones()")
+#'                  mu = "one()")
 #' model$add_regprm("rls_prm(lambda=0.99)")
 #'
 #' # Before fitting the model, define which points to include in the evaluation of the score function
@@ -79,7 +79,7 @@ lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, pr
     # - If scorefun is given, e.g. rmse() then the value of this is returned
 
     if(printout){
-        # Should here actually only print the ones that were found and changed?
+        # Should here actually only print the one that were found and changed?
         cat("----------------\n")
         if(is.na(prm[1])){
             cat("prm=NA, so current parameters are used.\n")

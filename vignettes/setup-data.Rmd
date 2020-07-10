@@ -50,9 +50,9 @@ knitr::opts_chunk$set(
   comment = "##    ",
   prompt = FALSE,
   cache = TRUE,
-  cache.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.align="center",
-  fig.path = paste0("tmp-output/tmp-",vignettename,"/"),
+  fig.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
   fig.height = figheight,
   fig.width = figwidth,
   out.width = "100%"
