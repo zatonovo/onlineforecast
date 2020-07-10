@@ -28,7 +28,7 @@ lag_vector <- function(x, lag){
 #' @param x The vector to be lagged.
 #' @param lagseq The integer(s) setting the lag steps.
 #' @return A vector or a data.frame.
-#' @name lag
+#' @rdname lg
 #' @seealso \code{\link{lg.data.frame}} which is run when \code{x} is a data.frame.
 #' @examples
 #' # The values are simply shifted
@@ -95,7 +95,7 @@ lg.logical <- function(x, lagseq) {
 #' @param x The data.frame to have columns lagged
 #' @param lagseq The sequence of lags as an integer. Alternatively, as a character "+k", "-k", "+h" or "-h", e.g. "k12" will with "+k" be lagged 12.
 #' @return A data.frame with columns that are lagged
-#' @name lg.data.frame
+#' @rdname lg
 #' @examples
 #' 
 #' # dataframe of forecasts
