@@ -43,7 +43,7 @@ library(roxygen2)
 #use_test("newtest")
 
 # # Run all tests
-# test()
+test()
 
 # # Run the examples
 # run_examples()

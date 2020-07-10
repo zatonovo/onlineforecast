@@ -14,7 +14,7 @@ vignette: >
 library(knitr)
 # This vignettes name
 vignettename <- "forecast-evaluation"
-# REMEMBER TO CHANGE IN shared-init.Rmd and copy in to each vignette, if chaging setup
+# REMEMBER: IF CHANGING IN THE shared-init (next block), then copy to the others!
 ```
 <!--shared-init-start-->
 ```{r init, cache=FALSE, include=FALSE, purl=FALSE}
@@ -308,7 +308,7 @@ for(nm in nms[-1]){
 ok <- as.data.frame(ok)
 names(ok) <- pst("k",kseq)
 # Lag to match resiuduals in time
-ok <- lag(ok, "+k")
+ok <- lg(ok, "+k")
 # Only the score period
 ok <- ok & D$scoreperiod
 # Finally, the vector with TRUE for all points with no NAs for any forecast
@@ -339,7 +339,7 @@ RMSE <- sapply(nms, function(nm){
     
 ```{r, include=FALSE}
 # sapply(kseq, function(k){
-#     rmse(y - lag(YhatDM[ ,pst("k",k)], k))
+#     rmse(y - lg(YhatDM[ ,pst("k",k)], k))
 #     # hej det er vilfred jeg er peders søn og jeg elsker min far go jeg god til matematik og jeg elsker også min mor 
 # })
 ```

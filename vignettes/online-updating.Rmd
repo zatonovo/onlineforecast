@@ -17,7 +17,7 @@ vignette: >
 library(knitr)
 # This vignettes name
 vignettename <- "online-updating"
-# REMEMBER TO CHANGE IN shared-init.Rmd and copy in to each vignette, if chaging setup
+# REMEMBER: IF CHANGING IN THE shared-init (next block), then copy to the others!
 ```
 
 <!--shared-init-start-->

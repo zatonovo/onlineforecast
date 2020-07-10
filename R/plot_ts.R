@@ -136,7 +136,7 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
                             # Started with k, then it's forecasts and must be lagged to sync
                             if( prefix == "k" ){
                                 ks <- as.integer(gsub("k","",nams(DL[[nm]])[i]))
-                                X <- lag(X, lagseq=ks)
+                                X <- lg(X, lagseq=ks)
                             }
                             # Fix if it is a vector
                             if(is.null(dim(X))) {

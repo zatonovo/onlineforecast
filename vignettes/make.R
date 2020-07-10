@@ -1,4 +1,4 @@
-# REMEMBER TO CHANGE IN shared-init.Rmd and copy in to each vignette, if chaging setup
+# REMEMBER TO CHANGE IN shared-init in all
 
 library(knitr)
 library(rmarkdown)

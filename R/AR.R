@@ -79,7 +79,7 @@ AR <- function(lags){
         # Check if saved output values for AR exists
     	if(is.na(model$yAR[1])){
             # First time its called, so just use output values from data
-            val <- matrix(lag(data[[model$output]], lag), nrow=length(data$t), ncol=length(model$kseq))
+            val <- matrix(lg(data[[model$output]], lag), nrow=length(data$t), ncol=length(model$kseq))
     	}else{
             y <- c(model$yAR, data$y)
             # Find the seq for the new y lagged vector

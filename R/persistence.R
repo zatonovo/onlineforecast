@@ -38,7 +38,7 @@ persistence <- function(y, kseq, perlen=NA){
     }else{
         # A periodic persistence
         Yhat <- as.data.frame(sapply(kseq, function(k){
-            lag(y, (perlen-k)%%perlen)
+            lg(y, (perlen-k)%%perlen)
         }))
     }
     names(Yhat) <- pst("k",kseq)

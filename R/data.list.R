@@ -174,7 +174,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
     if(lagforecasts){
         val <- lapply(val, function(X){
             if(any(class(X) == "data.frame") & length(grep("^k[[:digit:]]+$",names(X))) > 0) {
-                return(lag.data.frame(X, lagseq="+k"))
+                return(lg.data.frame(X, lagseq="+k"))
             }else{
                 return(X)
             }
