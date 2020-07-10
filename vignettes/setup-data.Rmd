@@ -180,9 +180,9 @@ A helper function is provided with the `asp` function which can be called using 
 
 ```{r}
 ## Convert from a time stamp (tz="GMT" per default)
-asct("2019-01-01 11:00")
+act("2019-01-01 11:00")
 ## Convert from unix time
-asct(3840928387)
+act(3840928387)
 ```
 Note that for all functions where a time value as a character is given, the time
 zone is always "GMT" (or "UTC", but this can result in warnings, but they can be

@@ -18,7 +18,7 @@
 #' @keywords hourofday lags data.frame
 #' @examples
 #' # Create a time sequence
-#' tseq <- seq(asct("2019-01-01"), asct("2019-02-01 12:00"), by=1800)
+#' tseq <- seq(act("2019-01-01"), act("2019-02-01 12:00"), by=1800)
 #' 
 #' # Make the time of day sequence
 #' make_tday(tseq, 1:10)

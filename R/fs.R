@@ -9,7 +9,7 @@
 #' @return  Returns a list of dataframes (two for each i in \code{1:nharmonics}) with same number of columns as X.
 #' @examples
 #' # Make a data.frame with time of day in hours for different horizons
-#' tday <- make_tday(seq(asct("2019-01-01"), asct("2019-01-04"), by=3600), kseq=1:5)
+#' tday <- make_tday(seq(act("2019-01-01"), act("2019-01-04"), by=3600), kseq=1:5)
 #' # See whats in it
 #' str(tday)
 #' head(tday)

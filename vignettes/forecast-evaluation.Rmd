@@ -447,7 +447,7 @@ A pairs plot with residuals and inputs to see if patterns are left:
 ```{r plotpairs, fig.height=figwidth}
 kseq <- c(1,36)
 D$Residuals <- residuals(fit2)[ ,pst("h",kseq)]
-D$hour <- aslt(D$t)$hour
+D$hour <- anlt(D$t)$hour
 pairs(D, subset=D$scoreperiod, pattern="Residuals|Ta|I|hour|^t$", kseq=kseq)
 ```
 So inspecting the two upper rows, there are no clear patterns to be seen for the
