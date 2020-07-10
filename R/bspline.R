@@ -17,11 +17,13 @@
 #' 
 #' @param X data.frame (as part of data.list) with horizons as columns named \code{kxx} (i.e. one for each horizon)
 #' @param Boundary.knots The value is NA: then the boundaries are set to the range of each horizons (columns in X). See \code{?splines::bs}
-#' @param intercept Default value is TRUE: in an onlineforecast model there is no intercept per defauls (set by \code{one()}. See \code{?splines::bs}
+#' @param intercept Default value is TRUE: in an onlineforecast model there is no intercept per default (set by \code{one()}). It's default to FALSE in \code{?splines::bs}.
 #' @param df See \code{?splines::bs}
 #' @param knots See \code{?splines::bs}
 #' @param degree See \code{?splines::bs}
+#' @param bknots Is just a short for Boundary.knots and replace Boundary.knots (if Boundary.knots is not given)
 #' @return List of data frames with the computed base splines, each with columns for the same horizons as in X
+#' @rdname bs
 #' @examples
 #'
 #' # How to make a diurnal curve using splines
@@ -52,7 +54,11 @@
 #'
 #'
 #' @export
-bspline <- function(X, Boundary.knots = NA, intercept = TRUE, df = NULL, knots = NULL, degree = 3) {
+bspline <- function(X, Boundary.knots = NA, intercept = TRUE, df = NULL, knots = NULL, degree = 3, bknots = NA) {
+    # bknots is just a short for Boundary.knots and replace if Boundary.knots are not given.
+    if(is.na(Boundary.knots)){
+        Boundary.knots <- bknots
+    }
     # If a list, then call on each element
     if (class(X) == "list") {
         # Call again for each element

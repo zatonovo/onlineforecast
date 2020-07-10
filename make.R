@@ -9,8 +9,9 @@
 library(devtools)
 library(roxygen2)
 
-# pack <- as.package("../onlineforecast")
-# load_all(pack)
+## document()
+## pack <- as.package("../onlineforecast")
+## load_all(pack)
 
 # Update NAMESPACE, use this function to export all functions! (with @export, but S3methods (e.g. print.lm) will not get exported, so change it to export)
 ## docit <- function(){
@@ -43,8 +44,8 @@ library(roxygen2)
 #use_test("newtest")
 
 # # Run all tests
-document()
-test()
+#document()
+#test()
 
 # # Run the examples
 # run_examples()
@@ -63,7 +64,6 @@ test()
 document()
 build(".", vignettes=TRUE)
 
-
 # Install it
 install.packages("../onlineforecast_1.0.0.tar.gz")
 
@@ -77,3 +77,9 @@ library(onlineforecast)
 
 # # What is exported?
 # onlineforecast::
+
+
+# ----------------------------------------------------------------
+# On release
+
+# Test it on Windows with: https://win-builder.r-project.org/

@@ -53,6 +53,8 @@ setpar <- function(tmpl = "ts", mfrow = c(1,1), ...) {
         # prm <- as.list(match.call()[i]) p <- list() for(i in 1:length(prm)) { p$new <-
         # eval(prm[[i]]) nams(p)[i] <- nams(prm)[i] } par(p)
     }
+    # Only done to remove NOTE in "R CMD check", that R6 package is not used
+    if(FALSE){ R6::R6Class("temp", public = list(x=1)) }
     # Set par and return the original par options(warn = (-1)) options(warn = 1)
     invisible(p)
 }

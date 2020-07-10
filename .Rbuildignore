@@ -11,3 +11,4 @@
 ^tests
 ^misc-R$
 ^.*\.Rhistory$
+^cran-comments.md
