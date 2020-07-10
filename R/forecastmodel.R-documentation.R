@@ -26,7 +26,7 @@
 #'  - It can be manimulated directly in functions (without return). The code is written such that no external functions manipulate the model object, except for online updating.
 #'
 #' For online updating (i.e. receiving new data and updating the fit), then the model definition and the data becomes entangled, since transformation functions like low-pass filtering with \code{\link{lp}()} requires past values.
-#' See the vignette ??(ref to online vignette) and note that \code{\link{rls_fit}()} resets the state, which is also done in all \code{xxx_fit} functions (e.g. \code{\link{rls_fit}}.
+#' See the vignette ??(ref to online vignette, not yet available) and note that \code{\link{rls_fit}()} resets the state, which is also done in all \code{xxx_fit} functions (e.g. \code{\link{rls_fit}}.
 #'
 #' 
 #' @section Public fields used for setting up the model:
@@ -52,7 +52,7 @@
 #'
 #'     - Lfits = list(): The regression fits, one for each k in kseq (simply a list with the latest fit).
 #'
-#'     - datatr = NA: Transformed input data (data.list with all inputs; or local fitted models: ??data.frame with all data??)
+#'     - datatr = NA: Transformed input data (data.list with all inputs for regression)
 #'
 #'
 #----------------------------------------------------------------
@@ -151,13 +151,13 @@
 
 #----------------------------------------------------------------
 #' @section \code{$transform_data(data)}:
-#' Function for transforming the input data to the regression stage input data (see ??(ref to setup data and online updating vignette).
+#' Function for transforming the input data to the regression stage input data (see \code{vignette("setup-data", package = "onlineforecast")}).
 #'
 #----------------------------------------------------------------
 
 #----------------------------------------------------------------
 #' @section \code{$reset_state()}:
-#' Resets the input states and stored data for iterative fitting (datatr rows and yAR) (see ??(ref to online updating vignette).
+#' Resets the input states and stored data for iterative fitting (datatr rows and yAR) (see ??(ref to online updating vignette, not yet available).
 #'
 #----------------------------------------------------------------
 

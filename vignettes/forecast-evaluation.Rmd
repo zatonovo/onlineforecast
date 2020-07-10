@@ -237,7 +237,7 @@ model. This is however not at all trivial, since the suitable reference model
 depends on the particular case of forecasting, e.g. the suitable reference model
 for wind power forecasting is not the same as for solar power forecasting -
 even within the same application the suitable reference model can be different
-depending on particular conditions etc. <!-- ??(referencer) -->
+depending on particular conditions etc.
 
 In general the fundamental reference model should be the simplest reasonable
 model not relying on any inputs, hence either a model based on a mean

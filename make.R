@@ -52,19 +52,22 @@ library(roxygen2)
 # load_all(as.package("../onlineforecast"))
 # test_file("tests/testthat/test-rls-heat-load.R")
 
+# Add new vignette
+#usethis::use_vignette("setup-data")
+#usethis::use_vignette("setup-and-use-model")
+#usethis::use_vignette("forecast-evaluation")
 
 # ----------------------------------------------------------------
 # Build the package (remember to rebuild vignettes for release)
 document()
 build(".", vignettes=TRUE)
 
+
 # Install it
 install.packages("../onlineforecast_1.0.0.tar.gz")
 
 library(onlineforecast)
 
-# # Add new vignette
-#usethis::use_vignette("test")
 
 # # ----------------------------------------------------------------
 # # Load the current version directly from the folder

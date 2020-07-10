@@ -12,11 +12,11 @@
 #' @return A list of the parameters
 #' @examples
 #'
-#' # Take data (See vignette ??(ref) for better model and more details)
+#' # Take data
 #' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #' D$y <- D$heatload
 #' D$scoreperiod <- in_range("2010-12-20", D$t)
-#' # Define a model 
+#' # Define a simple model 
 #' model <- forecastmodel$new()
 #' model$add_inputs(Ta = "Ta", mu = "ones()")
 #' model$kseq <- 1:6

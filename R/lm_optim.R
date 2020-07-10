@@ -22,10 +22,10 @@
 #' @seealso \code{link{optim}} for how to control the optimization and \code{\link{rls_optim}} which works very similarly.
 #' @examples
 #'
-#' # Take data (See vignette ??(ref) for better model and more details)
+#' # Take data
 #' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #' D$y <- D$heatload
-#' # Define a model 
+#' # Define a simple model 
 #' model <- forecastmodel$new()
 #' model$add_inputs(Ta = "lp(Ta, a1=0.9)",
 #'                  mu = "ones()")
@@ -33,6 +33,7 @@
 #' D$scoreperiod <- in_range("2010-12-20", D$t)
 #' # And the sequence of horizons to fit for
 #' model$kseq <- 1:6
+#' 
 #' # Now we can fit the model and get the score, as it is
 #' lm_fit(model=model, data=D, scorefun=rmse, returnanalysis=FALSE)
 #' # Or we can change the low-pass filter coefficient

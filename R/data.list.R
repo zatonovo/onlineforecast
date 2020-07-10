@@ -9,7 +9,7 @@
 
 #' Make a data.list of the vectors and data.frames given.
 #'
-#' See the vignette ??{setup-data} on how a data.list must be setup.
+#' See the vignette 'setup-data' on how a data.list must be setup.
 #' 
 #' It's simply a list of class \code{data.list} holding:
 #'   - vector \code{t}

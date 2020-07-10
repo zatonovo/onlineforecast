@@ -8,7 +8,7 @@
 #'
 #' The function returns ones which can be used to generate ones, e.g. to be used as a intercept for a model.
 #'
-#' See ??(ref to mkodel vignette)
+#' See vignettes 'setup-data' and 'setup-and-use-model'.
 #'
 #' @title Create ones for model input intercept
 #' @return A data.frame of ones

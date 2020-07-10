@@ -1,6 +1,6 @@
 #' Use a fitted forecast model to predict its output variable with transformed data.
 #'
-#' See the ??ref(recursive updating vignette).
+#' See the ??ref(recursive updating vignette, not yet available).
 #'
 #' @title Prediction with an rls model.
 #' @param model Onlineforecast model object which has been fitted.
@@ -8,10 +8,10 @@
 #' @return The Yhat forecast matrix with a forecast for each model$kseq and for each time point in \code{datatr$t}.
 #' @examples
 #'
-#' # Take data (See vignette ??(ref) for better model and more details)
+#' # Take data
 #' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #' D$y <- D$heatload
-#' # Define a model 
+#' # Define a simple model 
 #' model <- forecastmodel$new()
 #' model$add_inputs(Ta = "Ta", mu = "ones()")
 #' model$add_regprm("rls_prm(lambda=0.99)")

@@ -1,6 +1,6 @@
 #' Use a fitted forecast model to predict its output variable with transformed data.
 #'
-#' See the ??ref(recursive updating vignette).
+#' See the ??ref(recursive updating vignette, not yet available).
 #'
 #' @title Prediction with an lm forecast model.
 #' @param model Onlineforecast model object which has been fitted.

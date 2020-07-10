@@ -5,7 +5,7 @@
 
 #' Calculates the RLS update of the model coefficients with the provived data.
 #'
-#' See vignette ??ref(recursive updating) on how to use the function. 
+#' See vignette ??ref(recursive updating, not yet finished) on how to use the function. 
 #' 
 #' @title Updates the model fits
 #' @param model A model object

@@ -23,9 +23,7 @@ Suggests:
     testthat (>= 2.1.0),
     data.table,
     plotly
-VignetteBuilder:
-    knitr,
-    R.rsp
+VignetteBuilder:knitr
 RoxygenNote: 7.1.0
 URL: http://onlineforecasting.org
 BugReports: https://lab.compute.dtu.dk/packages/onlineforecast/-/issues

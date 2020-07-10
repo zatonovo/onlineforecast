@@ -54,7 +54,7 @@
 #' # Plot for a short period with peaks
 #' plot_ts(fit, xlim=c("2011-01-05","2011-01-07"))
 #'
-#' # For online updating, see ??ref{vignette}:
+#' # For online updating, see ??ref{vignette, not yet available}:
 #' # the needed lagged output values are stored in the model for next time new data is available
 #' model$yAR
 #' # The maximum lag needed is also kept

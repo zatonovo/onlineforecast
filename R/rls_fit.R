@@ -47,10 +47,10 @@
 #' @examples
 #'
 #'
-#' # Take data (See vignette ??(ref) for better model and more details)
+#' # Take data
 #' D <- subset(Dbuilding, c("2010-12-15", "2011-01-01"))
 #' D$y <- D$heatload
-#' # Define a model 
+#' # Define a simple model 
 #' model <- forecastmodel$new()
 #' model$output <- "y"
 #' model$add_inputs(Ta = "Ta",

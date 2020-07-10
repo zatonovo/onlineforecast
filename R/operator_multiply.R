@@ -17,7 +17,7 @@
 #' and y, then only the columns with same names are used, hence the resulting matrices can be
 #' of lower dimensions.
 #'
-#' See the ??(solar forecast vignette) for example of use
+#' See the example \url{https://onlineforecasting/examples/solar-power-forecasting.html} where the operator is used.
 #' 
 #' @title Multiplication of list with y, elementwise
 #' @param x a list of matrices, data.frames, etc.
