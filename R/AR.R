@@ -50,7 +50,7 @@
 #' fit <- rls_fit(c(lambda=0.99), model, D, returnanalysis=TRUE)
 #'
 #' # Plot the result, see "?plot_ts.rls_fit"
-#' plot_ts(fit, xlim=c(act("2010-12-20"),max(D$t)))
+#' plot_ts(fit, xlim=c(ct("2010-12-20"),max(D$t)))
 #' # Plot for a short period with peaks
 #' plot_ts(fit, xlim=c("2011-01-05","2011-01-07"))
 #'

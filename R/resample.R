@@ -32,7 +32,7 @@
 #' @examples
 #'
 #' # Generate some test data with 10 minutes sampling frequency for one day
-#' X <- data.frame(t=seq(act("2019-01-01 00:10"),act("2019-01-02"), by=10*60))
+#' X <- data.frame(t=seq(ct("2019-01-01 00:10"),ct("2019-01-02"), by=10*60))
 #' 
 #' # A single sine over the day
 #' X$val <- sin(as.numeric(X$t)/3600*2*pi/(24))
@@ -73,8 +73,8 @@ resample.data.frame <- function(object, ts, tstart=NA, tend=NA, timename="t", fu
 
     # ----------------------------------------------------------------
     # Convert to POSIXct
-    tstart <- act(tstart)
-    tend <- act(tend)
+    tstart <- ct(tstart)
+    tend <- ct(tend)
     
     # ----------------------------------------------------------------
     # Cut out the time period

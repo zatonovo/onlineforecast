@@ -23,7 +23,7 @@
 #' @examples
 #' # Put together a data.list
 #' # The time vector
-#' time <- seq(act("2019-01-01"),act("2019-01-02"),by=3600)
+#' time <- seq(ct("2019-01-01"),ct("2019-01-02"),by=3600)
 #' # Observations time series (as vector)
 #' x.obs <- rnorm(length(time))
 #' # Forecast input as data.frame

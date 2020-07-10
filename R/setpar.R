@@ -2,7 +2,7 @@
 #library(devtools)
 #document()
 #load_all(as.package("../../onlineforecast"))
-#?anlt
+#?aslt
 
 #' Setting \code{\link{par}()} plotting parameters to a set of default values
 #'
@@ -18,7 +18,7 @@
 #' @examples
 #'
 #' # Make some data
-#' D <- data.frame(t=seq(act("2020-01-01"),act("2020-01-10"),len=100), x=rnorm(100), y=runif(100))
+#' D <- data.frame(t=seq(ct("2020-01-01"),ct("2020-01-10"),len=100), x=rnorm(100), y=runif(100))
 #'
 #' # Generate two stacked plots with same x-axis
 #' setpar("ts", mfrow=c(2,1))

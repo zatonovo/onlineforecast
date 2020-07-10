@@ -48,10 +48,10 @@
 
 in_range <- function(tstart, time, tend=NA) {
     if (class(tstart)[1] == "character") 
-        tstart <- act(tstart)
+        tstart <- ct(tstart)
     if (is.na(tend))
         tend <- time[length(time)]
     if (class(tend)[1] == "character") 
-        tend <- act(tend)
-    act(tstart) < time & time <= act(tend)
+        tend <- ct(tend)
+    ct(tstart) < time & time <= ct(tend)
 }

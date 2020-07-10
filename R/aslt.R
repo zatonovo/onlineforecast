@@ -2,8 +2,8 @@
 #library(devtools)
 #document()
 #load_all(as.package("../../onlineforecast"))
-#?anlt
-#?anlt.default
+#?aslt
+#?aslt.default
 
 #' The argument is converted into POSIXlt with tz="GMT".
 #'
@@ -18,56 +18,56 @@
 #' #' @examples
 #' 
 #' # Create a POSIXlt with tz="GMT"
-#' anlt("2019-01-01")
-#' class(anlt("2019-01-01"))
-#' anlt("2019-01-01 01:00:05")
+#' aslt("2019-01-01")
+#' class(aslt("2019-01-01"))
+#' aslt("2019-01-01 01:00:05")
 #'
 #' # Convert between time zones
-#' x <- anlt("2019-01-01", tz="CET")
-#' anlt(x,tz="GMT")
+#' x <- aslt("2019-01-01", tz="CET")
+#' aslt(x,tz="GMT")
 #'
 #' # To seconds and back again
-#' anlt(as.numeric(x, units="sec"))
+#' aslt(as.numeric(x, units="sec"))
 #' 
 #' @export
-anlt <- function(object, ...){
-    UseMethod("anlt")
+aslt <- function(object, ...){
+    UseMethod("aslt")
 }
 
-#' @rdname anlt
+#' @rdname aslt
 #' @section Methods:
-#'     - anlt.character: Simply a wrapper for \code{as.POSIXlt}
+#'     - aslt.character: Simply a wrapper for \code{as.POSIXlt}
 #' @export
-anlt.character <- function(object, tz = "GMT", ...){
+aslt.character <- function(object, tz = "GMT", ...){
     as.POSIXlt(object, tz = tz, ...)
 }
 
-#' @rdname anlt
+#' @rdname aslt
 #' @section Methods:
-#'     - anlt.POSIXct: Converts to POSIXct.
+#'     - aslt.POSIXct: Converts to POSIXct.
 #' @export
-anlt.POSIXct <- function(object, tz = NA, ...){
+aslt.POSIXct <- function(object, tz = NA, ...){
     if(!is.na(tz)){
         attr(object, "tzone") <- tz
     }
     as.POSIXlt(object, ...)
 }
 
-#' @rdname anlt
+#' @rdname aslt
 #' @section Methods:
-#'     - anlt.POSIXlt: Changes the time zone of the object if tz is given.
+#'     - aslt.POSIXlt: Changes the time zone of the object if tz is given.
 #' @export
-anlt.POSIXlt <- function(object, tz = NA, ...){
+aslt.POSIXlt <- function(object, tz = NA, ...){
     if(!is.na(tz)){
         attr(object, "tzone") <- tz
     }
     return(object)
 }
 
-#' @rdname anlt
+#' @rdname aslt
 #' @section Methods:
-#'     - anlt.numeric: Converts from UNIX time in seconds to POSIXlt.
+#'     - aslt.numeric: Converts from UNIX time in seconds to POSIXlt.
 #' @export
-anlt.numeric <- function(object, ...){
+aslt.numeric <- function(object, ...){
     as.POSIXlt(ISOdate(1970, 1, 1, 0, ...) + object)
 }

@@ -2,8 +2,8 @@
 #library(devtools)
 #document()
 #load_all(as.package("../../onlineforecast"))
-#?act
-#?act.default
+#?ct
+#?ct.default
 
 #' The object is converted into POSIXct with tz="GMT".
 #'
@@ -19,16 +19,16 @@
 #'
 #'
 #' # Create a POSIXct with tz="GMT"
-#' act("2019-01-01")
-#' class(act("2019-01-01"))
-#' act("2019-01-01 01:00:05")
+#' ct("2019-01-01")
+#' class(ct("2019-01-01"))
+#' ct("2019-01-01 01:00:05")
 #'
 #'
 #' # Convert to POSIXct
-#' class(act(as.POSIXlt("2019-01-01")))
+#' class(ct(as.POSIXlt("2019-01-01")))
 #' 
 #' # To seconds and back again
-#' act(as.numeric(1000, units="sec"))
+#' ct(as.numeric(1000, units="sec"))
 #'
 #'
 #' # --------
@@ -45,20 +45,20 @@
 #'          "2019-03-31 01:30",
 #'          "2019-03-31 03:00",
 #'          "2019-03-31 03:30")
-#' x <- act(txt, tz="CET")
+#' x <- ct(txt, tz="CET")
 #' x
-#' act(x, tz="GMT")
+#' ct(x, tz="GMT")
 #'
 #' # BE AWARE of this conversion of the 02:00: to 02:59:59 (exact time of shift) will lead to a
 #' # wrong conversion
 #' txt <- c("2019-03-31 01:30",
 #'          "2019-03-31 02:00",
 #'          "2019-03-31 03:30")
-#' x <- act(txt, tz="CET")
+#' x <- ct(txt, tz="CET")
 #' x
-#' act(x, tz="GMT")
+#' ct(x, tz="GMT")
 #' # Which a diff on the time can detect, since all steps are not equal
-#' plot(diff(act(x, tz="GMT")))
+#' plot(diff(ct(x, tz="GMT")))
 #' 
 #' # --------
 #' # Shift to winter time is more problematic
@@ -68,9 +68,9 @@
 #'          "2019-10-27 02:30",
 #'          "2019-10-27 03:00",
 #'          "2019-10-27 03:30")
-#' x <- act(txt, tz="CET")
+#' x <- ct(txt, tz="CET")
 #' x
-#' act(x, tz="GMT")
+#' ct(x, tz="GMT")
 #'
 #' # however, timestamps can be given like this
 #' txt <- c("2019-10-27 01:30",
@@ -80,35 +80,35 @@
 #'          "2019-10-27 02:30",
 #'          "2019-10-27 03:00",
 #'          "2019-10-27 03:30")
-#' x <- act(txt, tz="CET")
+#' x <- ct(txt, tz="CET")
 #' x
-#' act(x, tz="GMT")
+#' ct(x, tz="GMT")
 #' # Again can be detected, since all steps are not equal
-#' plot(diff(act(x, tz="GMT")))
+#' plot(diff(ct(x, tz="GMT")))
 #' # This can be fixed by (note that it can go wrong, e.g. with gaps around convertion etc.)
-#' act(x, tz="GMT", duplicatedadd=3600)
+#' ct(x, tz="GMT", duplicatedadd=3600)
 #'
 #' @export
 
-act <- function(object, ...){
-    UseMethod("act")
+ct <- function(object, ...){
+    UseMethod("ct")
 }
 
 
-#' @rdname act
+#' @rdname ct
 #' @section Methods:
-#'     - act.character: Simply a wrapper for \code{as.POSIXct} with default \code{tz}
+#'     - ct.character: Simply a wrapper for \code{as.POSIXct} with default \code{tz}
 #' @export
-act.character <- function(object, tz = "GMT", ...){
+ct.character <- function(object, tz = "GMT", ...){
     as.POSIXct(object, tz=tz, ...)
 }
 
-#' @rdname act
+#' @rdname ct
 #' @param duplicatedadd Seconds to be added to duplicated time stamps, to mitigate the problem of duplicated timestamps at the shift to winter time. So the second time a time stamp occurs (identified with \code{duplicated}) then the seconds will be added.
 #' @section Methods:
-#'     - act.POSIXct: Changes the time zone of the object if \code{tz} is given.
+#'     - ct.POSIXct: Changes the time zone of the object if \code{tz} is given.
 #' @export
-act.POSIXct <- function(object, tz = NA, duplicatedadd = NA, ...){
+ct.POSIXct <- function(object, tz = NA, duplicatedadd = NA, ...){
     if(!is.na(tz)){
         attr(object, "tzone") <- tz
     }
@@ -120,18 +120,18 @@ act.POSIXct <- function(object, tz = NA, duplicatedadd = NA, ...){
     return(object)
 }
 
-#' @rdname act
+#' @rdname ct
 #' @section Methods:
-#'     - act.POSIXlt: Converts to POSIXct.
+#'     - ct.POSIXlt: Converts to POSIXct.
 #' @export
-act.POSIXlt <- function(object, tz = NA, duplicatedadd = NA, ...){
-    as.POSIXct(act.POSIXct(object, tz, duplicatedadd), ...)
+ct.POSIXlt <- function(object, tz = NA, duplicatedadd = NA, ...){
+    as.POSIXct(ct.POSIXct(object, tz, duplicatedadd), ...)
 }
 
-#' @rdname act
+#' @rdname ct
 #' @section Methods:
-#'     - act.numeric: Converts from UNIX time in seconds to POSIXct with \code{tz} as GMT.
+#'     - ct.numeric: Converts from UNIX time in seconds to POSIXct with \code{tz} as GMT.
 #' @export
-act.numeric <- function(object, ...){
+ct.numeric <- function(object, ...){
     ISOdate(1970, 1, 1, 0, ...) + object
 }

@@ -16,7 +16,7 @@ load_all(pack)
 # Importing data # First unzip to get the .csv system('unzip
 # ../data/DataSoenderborg.zip')
 data_or <- fread("data_soenderborg.csv", sep = ",", header = TRUE)
-data_or[, `:=`(t, act(data_or$t))]
+data_or[, `:=`(t, ct(data_or$t))]
 setDF(data_or)
 names(data_or)[names(data_or) == "Ig.obs"] <- "I.obs"
 
@@ -56,7 +56,7 @@ data[["sunElevation"]] <- data_or[, "sunElevation.obs"]
 
 # # The time of day
 # ncol <- ncol(data$Ta)
-# tmp <- anlt(data$t)$hour
+# tmp <- aslt(data$t)$hour
 # tmp <- matrix(tmp, nrow = length(tmp), ncol = ncol)
 # tmp <- data.frame(t(t(tmp) + (0:(ncol - 1))))
 # names(tmp) <- pst("k", 0:(ncol - 1))
