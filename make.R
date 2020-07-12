@@ -82,7 +82,22 @@ system("R CMD check ../onlineforecast_1.0.0.tar.gz")
 # https://win-builder.r-project.org/
 
 
-# Run another version of R
+#-----------------
+# WINDOWS:
+# Install rtools
+# Run in R:
+#writeLines('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
+# Check if rtools are found:
+#Sys.which("make")
+
+# Must have Makevars and Makevars.win
+# Make the two files, find them and copy into "src"
+#library("RcppArmadillo")
+#RcppArmadillo.package.skeleton("tmp-pkg")
+
+
+#-----------------
+# Run another version of R (a linux in podman)
 # see https://hub.docker.com/u/rocker
 
 # Open terminal and "sudo su" (needed for podman to access files)
