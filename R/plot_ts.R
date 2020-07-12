@@ -62,13 +62,13 @@
 #'
 #' # Use plotly
 #' \donttest{library(plotly)
-#' L <- plot_ts(D, c("heatload","Ta"), kseq=c(1,24), usely=TRUE, xlab="Time",
-#'              ylabs=c("Heat (kW)","Temperature (C)"))
+#' #L <- plot_ts(D, c("heatload","Ta"), kseq=c(1,24), usely=TRUE, xlab="Time",
+#' #             ylabs=c("Heat (kW)","Temperature (C)"))
 #'
 #' # From plotly the figures are returned and can be further manipulated
 #' # e.g. put the legend in the top by
-#' L[[length(L)]] <- L[[length(L)]] %>% layout(legend = list(x = 100, y = 0.98))
-#' print(subplot(L, shareX=TRUE, nrows=length(L), titleY = TRUE))
+#' #L[[length(L)]] <- L[[length(L)]] %>% layout(legend = list(x = 100, y = 0.98))
+#' #print(subplot(L, shareX=TRUE, nrows=length(L), titleY = TRUE))
 #' }
 #'
 #' @rdname plot_ts

@@ -1,18 +1,114 @@
+#----------------------------------------------------------------
 # These packages must be installed
-
-# For building vignettes
-# install.packages("R.rsp")
-
+install.packages("Rcpp")
+install.packages("R6")
+install.packages("splines")
+install.packages("digest")
 # cpp matrix library
-# install.packages("RcppArmadillo")
+install.packages("RcppArmadillo")
+# For develop install
+install.packages("devtools")
+install.packages("roxygen2")
+# For testing and building vignettes
+install.packages("rmarkdown")
+install.packages("R.rsp")
+install.packages("data.table")
+install.packages("plotly")
 
+
+
+#----------------------------------------------------------------
+# Go
 library(devtools)
 library(roxygen2)
 
+# Load the package directly
 ## document()
 ## pack <- as.package("../onlineforecast")
 ## load_all(pack)
 
+
+# ----------------------------------------------------------------
+# Misc
+#
+# Add new vignette
+#usethis::use_vignette("setup-data")
+
+
+# ----------------------------------------------------------------
+# Running tests in folder "tests/testthat/"
+#
+# https://kbroman.org/pkg_primer/pages/tests.html
+# http://r-pkgs.had.co.nz/tests.html
+#
+# Initialize first time the the testing framework
+#use_testthat()
+# Init new test
+#use_test("newtest")
+
+# # Run all tests
+#document()
+#test()
+
+# # Run the examples
+#run_examples()
+
+# # Run tests in a single file
+# load_all(as.package("../onlineforecast"))
+# test_file("tests/testthat/test-rls-heat-load.R")
+
+
+# ----------------------------------------------------------------
+# Build the package (remember to rebuild vignettes for release)
+document()
+build(".", vignettes=TRUE)
+
+# Install it
+install.packages("../onlineforecast_1.0.0.tar.gz")
+
+library(onlineforecast)
+
+
+# ----------------------------------------------------------------
+# Test before release
+devtools::check()
+
+devtools::check_built("../onlineforecast_1.0.0.tar.gz")
+
+# Does give different results than check() above
+system("R CMD check ../onlineforecast_1.0.0.tar.gz")
+
+# Test it on Windows with:
+# https://win-builder.r-project.org/
+
+
+# Run another version of R
+# see https://hub.docker.com/u/rocker
+
+# Open terminal and "sudo su" (needed for podman to access files)
+# Run "podman run --rm -d -p 8787:8787 -e ROOT=TRUE -e PASSWORD=pw -v $(pwd):/home/rstudio rocker/rstudio"
+# In browser go to "localhost:8787"
+# login: rstudio and pw
+# Open make.R 
+# Set working directory to this files directory
+# Run installation of packages
+# Make a cup of coffee
+# Go to terminal and run:
+#    "sudo apt-get install xml2"
+#    "sudo apt-get install texlive"
+
+# Other versions with
+# "podman run --rm -p 8787:8787 -e PASSWORD=pw -v /home/pbac/g:/home/rstudio/g rocker/rstudio:3.6.1"
+
+
+
+
+
+
+
+# ----------------------------------------------------------------
+# OLD, not exporting everything anymore
+#
 # Update NAMESPACE, use this function to export all functions! (with @export, but S3methods (e.g. print.lm) will not get exported, so change it to export)
 ## docit <- function(){
 ##     document()
@@ -29,57 +125,3 @@ library(roxygen2)
 ##     write(x, nm)
 ## }
 ## docit()
-
-# ----------------------------------------------------------------
-# Do also "R CMD check ../onlineforecast_1.0.0.tar.gz", it does give some other results!
-#devtools::check()
-
-# ----------------------------------------------------------------
-# For running tests in folder "tests/testthat/"
-# https://kbroman.org/pkg_primer/pages/tests.html
-# http://r-pkgs.had.co.nz/tests.html
-# Initialize first time the the testing framework
-#use_testthat()
-# Init new test
-#use_test("newtest")
-
-# # Run all tests
-#document()
-#test()
-
-# # Run the examples
-# run_examples()
-
-# # Run tests in a single file
-# load_all(as.package("../onlineforecast"))
-# test_file("tests/testthat/test-rls-heat-load.R")
-
-# Add new vignette
-#usethis::use_vignette("setup-data")
-#usethis::use_vignette("setup-and-use-model")
-#usethis::use_vignette("forecast-evaluation")
-
-# ----------------------------------------------------------------
-# Build the package (remember to rebuild vignettes for release)
-document()
-build(".", vignettes=TRUE)
-
-# Install it
-install.packages("../onlineforecast_1.0.0.tar.gz")
-
-library(onlineforecast)
-
-
-# # ----------------------------------------------------------------
-# # Load the current version directly from the folder
-# docit()
-# load_all(as.package("../../onlineforecast"), export_all=FALSE)
-
-# # What is exported?
-# onlineforecast::
-
-
-# ----------------------------------------------------------------
-# On release
-
-# Test it on Windows with: https://win-builder.r-project.org/

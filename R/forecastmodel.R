@@ -183,10 +183,10 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
             # Evaluate the expression (input$expr)
             L <- input$evaluate(data)
             # Must return a list
-            if(class(L)=="matrix"){ return(list(as.data.frame(L))) }
-            if(class(L)=="data.frame"){ return(list(L)) }
-            if(class(L)!="list"){ stop(pst("The value returned from evaluating: ",input$expr,", was not a matrix, data.frame or a list of them."))}
-            if(class(L[[1]])=="matrix"){ return(lapply(L, function(mat){ return(as.data.frame(mat)) })) }
+            if(class(L)[1]=="matrix"){ return(list(as.data.frame(L))) }
+            if(class(L)[1]=="data.frame"){ return(list(L)) }
+            if(class(L)[1]!="list"){ stop(pst("The value returned from evaluating: ",input$expr,", was not a matrix, data.frame or a list of them."))}
+            if(class(L[[1]])[1]=="matrix"){ return(lapply(L, function(mat){ return(as.data.frame(mat)) })) }
             return(L)
         })
         # Put together in one data.list

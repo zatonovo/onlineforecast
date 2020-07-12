@@ -51,14 +51,13 @@
 #' getse(x, 2)
 #'
 #' # Will give an error when indexed (with integer) if the element is not there
-#' \donttest{
-#' x <- strsplit(c("x.k1","y.k2","x2"), "\\.")
-#' getse(x, 1)
-#' getse(x, 2)
-#'
+#' \donttest{x <- strsplit(c("x.k1","y.k2","x2"), "\\.")
+#' #getse(x, 1)
+#' #getse(x, 2)
+#' }
 #' # Use regex pattern for returning elements matching in the specified layer
 #' getse(L, "^te", depth=2, useregex=TRUE)
-#' }
+#' 
 #' @export
 
 getse <- function(L, inm = NA, depth = 2, useregex = FALSE, fun = NA) {

@@ -118,7 +118,7 @@ lg.logical <- function(x, lagseq) {
 #' lg(X, "-h")
 #'
 #' # If not same length as columns in X, then it doesn't know how to lag
-#' \donttest{lg(X, 1:2)}
+#' \donttest{#lg(X, 1:2)}
 #'
 #' \dontshow{
 #' if(!class(lg(data.frame(k1=1:10), 2)) == "data.frame"){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}

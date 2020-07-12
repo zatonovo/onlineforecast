@@ -67,7 +67,7 @@ data.list <- function(...) {
 #' subset(D, c("2010-12-15 02:00","2010-12-15 04:00"))
 #' 
 #' # Cannot request a variable not there
-#' \donttest{subset(D, nms=c("x","Ta"))}
+#' \donttest{#subset(D, nms=c("x","Ta"))}
 #' 
 #' # Take specific horizons
 #' subset(D, nms=c("I","Ta"), kseq = 1:2)
@@ -410,7 +410,6 @@ check.data.list <- function(object){
 #'
 #' @examples
 #'
-#' \donttest{
 #' Dbuilding == Dbuilding
 #'
 #' D <- Dbuilding
@@ -421,8 +420,9 @@ check.data.list <- function(object){
 #' names(D)[5] <- "I"
 #' names(D)[6] <- "Ta"
 #' Dbuilding == D
-#' }
 #' 
+#' 
+#' @export
 
 "==.data.list" <- function(x, y) {
     if(length(x) != length(y)){

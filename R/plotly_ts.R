@@ -17,10 +17,10 @@
 #' @examples
 #'
 #' \donttest{
-#' D <- Dbuilding
-#' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
-#' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
-#' plotly_ts(D, c("heatload","Ta$|Ta.obs$"), kseq=c(1,24))
+#' #D <- Dbuilding
+#' #plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
+#' #plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
+#' #plotly_ts(D, c("heatload","Ta$|Ta.obs$"), kseq=c(1,24))
 #' }
 #'
 #' @export
