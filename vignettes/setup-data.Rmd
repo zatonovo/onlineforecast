@@ -291,7 +291,7 @@ legend("topright", c("8-step forecasts","Observations"), bg="white", lty=1, col=
 Notice how the are not aligned, since the forecasts are 8 hours ahead. To align
 them the forecasts must be lagged 8 steps by:
 ```{r}
-plot(D$t[i], lg(D$I$k8[i], 8), type="l", col=2, xlab="Time", ylab="Global radiation (W/m²)")
+plot(D$t[i], lagvec(D$I$k8[i], 8), type="l", col=2, xlab="Time", ylab="Global radiation (W/m²)")
 lines(D$t[i], D$I.obs[i])
 legend("topright", c("8-step forecasts lagged","Observations"), bg="white", lty=1, col=2:1)
 ```
@@ -334,7 +334,7 @@ example the heatload vs. ambient temperature 8-step forecast:
 ```{r, fig.width=2*fhs, fig.height=fhs, out.width=ows2}
 par(mfrow=c(1,2))
 plot(D$Ta$k8, D$heatload)
-plot(lg(D$Ta$k8, 8), D$heatload)
+plot(lagvec(D$Ta$k8, 8), D$heatload)
 ```
 So lagging (thus aligning in time) makes less slightly less scatter.
 
@@ -350,7 +350,7 @@ Just as a quick side note: This is the principle used for fitting onlineforecast
 models, simply shift forecasts to align with the observations:
 ```{r, fig.width=fhs, fig.height=fhs, out.width=ows}
 ## Lag the 8-step forecasts to be aligned with the observations
-x <- lg(D$I$k8, 8)
+x <- lagvec(D$I$k8, 8)
 ## Take a smaller range
 x <- x[i]
 ## Take the observations

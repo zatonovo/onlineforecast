@@ -104,7 +104,7 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete =
         #abscv <- abs(s/m)
         # # An AR1 coefficient can tell a bit about the behaviour of the coefficient
         # x <- c(val)
-        # xl1 <- lg(x,1)
+        # xl1 <- lagdf(x,1)
         #
         c(mean=m, sd=s, min=min(val,na.rm=TRUE), max=max(val,na.rm=TRUE)) #coefvar=abscv, skewness=skewness(val, na.rm=TRUE))#, ar1=unname(lm(x ~ xl1)$coefficients[2]))
     }))

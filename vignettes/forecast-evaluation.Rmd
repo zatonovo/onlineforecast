@@ -308,7 +308,7 @@ for(nm in nms[-1]){
 ok <- as.data.frame(ok)
 names(ok) <- pst("k",kseq)
 # Lag to match resiuduals in time
-ok <- lg(ok, "+k")
+ok <- lagdf(ok, "+k")
 # Only the score period
 ok <- ok & D$scoreperiod
 # Finally, the vector with TRUE for all points with no NAs for any forecast
@@ -339,7 +339,7 @@ RMSE <- sapply(nms, function(nm){
     
 ```{r, include=FALSE}
 # sapply(kseq, function(k){
-#     rmse(y - lg(YhatDM[ ,pst("k",k)], k))
+#     rmse(y - lagdf(YhatDM[ ,pst("k",k)], k))
 #     # hej det er vilfred jeg er peders søn og jeg elsker min far go jeg god til matematik og jeg elsker også min mor 
 # })
 ```

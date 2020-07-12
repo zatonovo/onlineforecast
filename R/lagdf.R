@@ -2,88 +2,70 @@
 #library(devtools)
 #document()
 #load_all(as.package("../../onlineforecast"))
-#?lg
+#?lagdf
 
-lag_vector <- function(x, lag){
-    if (lag > 0) {
-        ## Lag x, i.e. delay x lag steps
-        return(c(rep(NA, lag), x[1:(length(x) - lag)]))
-    }else if(lag < 0) {
-        ## Lag x, i.e. delay x lag steps
-        return(c(x[(abs(lag) + 1):length(x)], rep(NA, abs(lag))))
-    }else{
-        ## lag = 0, return x
-        return(x)
-    }
-}
-
-#' Lagging of a vector by simply the values back or fourth.
+#' Lagging by shifting the values back or fourth always returning a data.frame.
 #'
-#' This function lags (shifts) the values of the vector. If \code{lagseq} is a single integer value, then a
-#' vector is returned. If \code{lagseq} is an integer vector, then a data.frame is returned with the columns
-#' as the vectors lagged with the values in lagseq.
+#' This function lags (shifts) the values of the vector. A data.frame is always returned with the columns
+#' as the vectors lagged with the values in lagseq. The column names are set to "kxx", where xx are the lag of the column.
 #'
 #' 
-#' @title Lagging of a vector
+#' @title Lagging which returns a data.frame
 #' @param x The vector to be lagged.
 #' @param lagseq The integer(s) setting the lag steps.
-#' @return A vector or a data.frame.
-#' @rdname lg
-#' @seealso \code{\link{lg.data.frame}} which is run when \code{x} is a data.frame.
+#' @return A data.frame.
+#' @rdname lagdf
+#' @seealso \code{\link{lagdf.data.frame}} which is run when \code{x} is a data.frame.
 #' @examples
 #' # The values are simply shifted
 #' # Ahead in time
-#' lg(1:10, 3)
+#' lagdf(1:10, 3)
 #' # Back in time
-#' lg(1:10, -3)
+#' lagdf(1:10, -3)
 #' # Works but returns a numric
-#' lg(as.factor(1:10), 3)
+#' lagdf(as.factor(1:10), 3)
 #' # Works and returns a character
-#' lg(as.character(1:10), 3)
+#' lagdf(as.character(1:10), 3)
 #' # Giving several lag values
-#' lg(1:10, c(1:3))
-#' lg(1:10, c(5,3,-1))
+#' lagdf(1:10, c(1:3))
+#' lagdf(1:10, c(5,3,-1))
 #'
 #' # See also how to lag a forecast data.frame
-#' ?lg.data.frame
+#' ?lagdf.data.frame
 #'
 #'
 #'@export
 
-lg <- function(x, lagseq){
-    UseMethod("lg")
+lagdf <- function(x, lagseq){
+    UseMethod("lagdf")
 }
 
 
 #' @export
-lg.numeric <- function(x, lagseq) {
-    if(length(lagseq) == 1){
-        return(lag_vector(x, lagseq))
-    }else{
-        ## Return a data.frame
-        tmp <- lapply_cbind_df(lagseq, function(lag){
-            return(lag_vector(x, lag))
-        })
-        names(tmp) <- pst("k",lagseq)
-        return(tmp)
-    }
+lagdf.numeric <- function(x, lagseq) {
+    ## Return a data.frame
+    tmp <- lapply_cbind_df(lagseq, function(lag){
+        return(lagvec(x, lag))
+    })
+    names(tmp) <- pst("k",lagseq)
+    return(tmp)
 }
 
 
 #' @export
-lg.factor <- function(x, lagseq) {
-    lg.numeric(x, lagseq)
+lagdf.factor <- function(x, lagseq) {
+    lagdf.numeric(x, lagseq)
 }
 
 
 #' @export
-lg.character <- function(x, lagseq) {
-    lg.numeric(x, lagseq)
+lagdf.character <- function(x, lagseq) {
+    lagdf.numeric(x, lagseq)
 }
 
 #' @export
-lg.logical <- function(x, lagseq) {
-    lg.numeric(x, lagseq)
+lagdf.logical <- function(x, lagseq) {
+    lagdf.numeric(x, lagseq)
 }
 
 
@@ -95,7 +77,7 @@ lg.logical <- function(x, lagseq) {
 #' @param x The data.frame to have columns lagged
 #' @param lagseq The sequence of lags as an integer. Alternatively, as a character "+k", "-k", "+h" or "-h", e.g. "k12" will with "+k" be lagged 12.
 #' @return A data.frame with columns that are lagged
-#' @rdname lg
+#' @rdname lagdf
 #' @examples
 #' 
 #' # dataframe of forecasts
@@ -103,30 +85,30 @@ lg.logical <- function(x, lagseq) {
 #' X
 #'
 #' # Lag all columns
-#' lg(X, 1)
-#' \dontshow{if(!all(is.na(lg(X, 1)[1, ]))){stop("Lag all columns didn't work")}}
+#' lagdf(X, 1)
+#' \dontshow{if(!all(is.na(lagdf(X, 1)[1, ]))){stop("Lag all columns didn't work")}}
 #'
 #' # Lag each column different steps
-#' lg(X, 1:3)
+#' lagdf(X, 1:3)
 #' # Lag each columns with its k value from the column name
-#' lg(X, "+k")
+#' lagdf(X, "+k")
 #' \dontshow{
-#'     if(any(lg(X, 1:3) != lg(X, "+k"),na.rm=TRUE)){stop("Couldn't lag +k")}
+#'     if(any(lagdf(X, 1:3) != lagdf(X, "+k"),na.rm=TRUE)){stop("Couldn't lag +k")}
 #' }
 #' # Also works for columns named hxx
 #' names(X) <- gsub("k", "h", names(X))
-#' lg(X, "-h")
+#' lagdf(X, "-h")
 #'
 #' # If not same length as columns in X, then it doesn't know how to lag
-#' \donttest{#lg(X, 1:2)}
+#' \donttest{#lagdf(X, 1:2)}
 #'
 #' \dontshow{
-#' if(!class(lg(data.frame(k1=1:10), 2)) == "data.frame"){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}
-#' if(!all(dim(lg(data.frame(k1=1:10), "+k")) == c(10,1))){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}
+#' if(!class(lagdf(data.frame(k1=1:10), 2)) == "data.frame"){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}
+#' if(!all(dim(lagdf(data.frame(k1=1:10), "+k")) == c(10,1))){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}
 #' }
 #'
 #' @export
-lg.data.frame <- function(x, lagseq) {
+lagdf.data.frame <- function(x, lagseq) {
     X <- x
     nms <- nams(X)
     if (length(lagseq) == 1) {
@@ -148,7 +130,7 @@ lg.data.frame <- function(x, lagseq) {
         }else{
             ## lagseq has length equal to the number of columns in X
             X <- as.data.frame(sapply(1:length(lagseq), function(i) {
-                lag_vector(X[, i], lagseq[i])
+                lagvec(X[, i], lagseq[i])
             }))
             nams(X) <- nms
          }
@@ -157,7 +139,7 @@ lg.data.frame <- function(x, lagseq) {
         lag <- lagseq
         ## If only one row in X given, then X it is a not a data.frame anymore (code above has changed it)
         if(is.vector(X)){
-          X <- as.data.frame(lag_vector(X, lag))
+          X <- as.data.frame(lagvec(X, lag))
           nams(X) <- nms
         } else {
             if (lag > 0) {
@@ -174,22 +156,22 @@ lg.data.frame <- function(x, lagseq) {
 }
 
 #' @export
-lg.matrix <- function(x, lagseq){
-    lg.data.frame(x, lagseq)
+lagdf.matrix <- function(x, lagseq){
+    lagdf.data.frame(x, lagseq)
 }
 
 ## ## Test
 ## x <- data.frame(k1=1:5,k2=6:10)
 ## ##
-## lg(x, lagseq=1)
+## lagdf(x, lagseq=1)
 ## source("nams.R")
-## lg(as.matrix(x), lagseq=c(1,2))
+## lagdf(as.matrix(x), lagseq=c(1,2))
 ## ##
-## lg(x, lagseq="+k")
-## lg(x, "+k")
-## lg(x, "-k")
+## lagdf(x, lagseq="+k")
+## lagdf(x, "+k")
+## lagdf(x, "-k")
 
-## lg.data.table <- function(x, nms, lagseq, per_reference = FALSE) {
+## lagdf.data.table <- function(x, nms, lagseq, per_reference = FALSE) {
 ##     DT <- x
 ##     if (!per_reference) {
 ##         ## Don't do it per reference

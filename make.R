@@ -1,19 +1,19 @@
 #----------------------------------------------------------------
-# These packages must be installed
-install.packages("Rcpp")
-install.packages("R6")
-install.packages("splines")
-install.packages("digest")
-# cpp matrix library
-install.packages("RcppArmadillo")
-# For develop install
-install.packages("devtools")
-install.packages("roxygen2")
-# For testing and building vignettes
-install.packages("rmarkdown")
-install.packages("R.rsp")
-install.packages("data.table")
-install.packages("plotly")
+## # These packages must be installed
+## install.packages("Rcpp")
+## install.packages("R6")
+## install.packages("splines")
+## install.packages("digest")
+## # cpp matrix library
+## install.packages("RcppArmadillo")
+## # For develop install
+## install.packages("devtools")
+## install.packages("roxygen2")
+## # For testing and building vignettes
+## install.packages("rmarkdown")
+## install.packages("R.rsp")
+## install.packages("data.table")
+## install.packages("plotly")
 
 
 
@@ -87,10 +87,10 @@ system("R CMD check ../onlineforecast_1.0.0.tar.gz")
 # Install rtools
 # Run in R:
 #writeLines('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
-# Check if rtools are found:
+# Restart R and check if rtools are found:
 #Sys.which("make")
 
-# Must have Makevars and Makevars.win
+# Must have Makevars and Makevars.win in "src"
 # Make the two files, find them and copy into "src"
 #library("RcppArmadillo")
 #RcppArmadillo.package.skeleton("tmp-pkg")

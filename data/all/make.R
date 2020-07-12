@@ -35,7 +35,7 @@ for (ii in 1:length(nms)) {
     i <- i[grep("k[[:digit:]]+$", names(data_or)[i])]
     # 
     #
-    data[[nms[ii]]] <- lg(data_or[ ,i], -1:-length(i))
+    data[[nms[ii]]] <- lagdf(data_or[ ,i], -1:-length(i))
     names(data[[nms[ii]]]) <- pst("k", 1:length(i))
     row.names(data[[nms[ii]]]) <- NULL
     data[[nms[ii]]] <- as.data.frame(data[[nms[ii]]])

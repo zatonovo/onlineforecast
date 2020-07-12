@@ -43,7 +43,7 @@
 residuals.data.frame <- function(object, y, ...){
     Yhat <- object
     # Add some checking at some point
-    Residuals <- y - lg(Yhat, "+k")
+    Residuals <- y - lagdf(Yhat, "+k")
     # Named with hxx (it's not a forecast, but an observation available at t)
     names(Residuals) <- gsub("k","h",names(Residuals))
     #
