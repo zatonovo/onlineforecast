@@ -7,7 +7,7 @@
 #' R6 class for a forecastmodel
 #' 
 #' This class holds the variables and functions needed for defining and setting up a forecast model - independent of the fitting scheme.
-#' See the vignettes on how to setup and use a model and the website \url{onlineforecasting.org} for more info.
+#' See the vignettes on how to setup and use a model and the website \url{https://onlineforecasting.org} for more info.
 #'
 #' @title Class for forecastmodels
 #' @name forecastmodel

@@ -16,5 +16,5 @@
 #'   \item{Ta}{Weather forecasts of ambient temperature up to 36 hours ahead from DMI in Celcius}
 #'   \item{Ta}{Weather forecasts of global radiation up to 36 hours ahead from DMI in W/m^2}
 #' }
-#' @source See \url{onlineforecasting.org/datasets}.
+#' @source See \url{https://onlineforecasting.org/examples/datasets.html}.
 "Dbuilding"

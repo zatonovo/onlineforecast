@@ -463,10 +463,9 @@ so running it again will read the cache instead of calculating the optimization:
 rls_optim(model, D, cachedir="cache")$par
 ```
 
-Remove the cache by:
+Remove the cache directory by:
 ```{r}
-file.remove(dir("cache", full.names=TRUE))
-file.remove("cache")
+unlink("cache", recursive=TRUE)
 ```
 
 

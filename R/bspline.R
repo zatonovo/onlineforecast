@@ -11,7 +11,7 @@
 #'
 #' See the help for all arguments with \code{?splines::bs}. NOTE that two arguments have different default values.
 #'
-#' See the example \url{https://onlineforecasting/examples/solar-power-forecasting.html} where the function is used in a model.
+#' See the example \url{https://onlineforecasting.org/examples/solar-power-forecasting.html} where the function is used in a model.
 #' 
 #' @family Transform stage functions
 #' 

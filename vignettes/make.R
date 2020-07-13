@@ -7,8 +7,7 @@ library(rmarkdown)
 dirnam <- "../tmp/vignettes/"
 dir.create("../tmp")
 dir.create(dirnam)
-file.remove(dir("cache", full.names=TRUE))
-file.remove("cache")
+unlink("cache", recursive=TRUE)
 
 makeit <- function(nam, openit=FALSE, clean=TRUE){
     namrmd <- paste0(nam,".Rmd")
@@ -19,17 +18,17 @@ makeit <- function(nam, openit=FALSE, clean=TRUE){
 }
 
 #
-file.remove(dir(paste0(dirnam,"tmp-setup-data/"), full.names=TRUE))
+unlink(paste0(dirnam,"tmp-setup-data/"), recursive=TRUE)
 makeit("setup-data", openit=FALSE)
 
 #
-file.remove(dir(paste0(dirnam,"tmp-setup-and-use-model/"), full.names=TRUE))
+unlink(paste0(dirnam,"tmp-setup-and-use-model/"), recursive=TRUE)
 makeit("setup-and-use-model", openit=FALSE, clean=TRUE)
 
 #
-file.remove(dir(paste0(dirnam,"tmp-output/tmp-forecast-evaluation/"), full.names=TRUE))
+unlink(paste0(dirnam,"tmp-output/tmp-forecast-evaluation/"), recursive=TRUE)
 makeit("forecast-evaluation", openit=FALSE)
 
 # Finish and include it!!
-## file.remove(dir(paste0(dirnam,"tmp-output/tmp-online-updating/"), full.names=TRUE))
+## unlink(paste0(dirnam,"tmp-output/tmp-online-updating/"), recursive=TRUE)
 ## makeit("online-updating", openit=FALSE)

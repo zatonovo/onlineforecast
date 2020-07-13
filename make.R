@@ -59,12 +59,12 @@ library(roxygen2)
 
 
 # ----------------------------------------------------------------
-# Build the package (remember to rebuild vignettes for release)
+# Build the package
 document()
 build(".", vignettes=TRUE)
 
 # Install it
-install.packages("../onlineforecast_1.0.0.tar.gz")
+install.packages("../onlineforecast_0.9.0.tar.gz")
 
 library(onlineforecast)
 
@@ -73,13 +73,15 @@ library(onlineforecast)
 # Test before release
 devtools::check()
 
-devtools::check_built("../onlineforecast_1.0.0.tar.gz")
+devtools::check_built("../onlineforecast_0.9.0.tar.gz")
 
 # Does give different results than check() above
-system("R CMD check ../onlineforecast_1.0.0.tar.gz")
+system("R CMD check ../onlineforecast_0.9.0.tar.gz")
+unlink("onlineforecast.Rcheck/", recursive=TRUE)
 
-# Test it on Windows with:
-# https://win-builder.r-project.org/
+# Use for more checking:
+# https://docs.r-hub.io/
+
 
 
 #-----------------
@@ -109,8 +111,7 @@ system("R CMD check ../onlineforecast_1.0.0.tar.gz")
 # Run installation of packages
 # Make a cup of coffee
 # Go to terminal and run:
-#    "sudo apt-get install xml2"
-#    "sudo apt-get install texlive"
+#    "sudo apt-get install xml2 qpdf texlive"
 
 # Other versions with
 # "podman run --rm -p 8787:8787 -e PASSWORD=pw -v /home/pbac/g:/home/rstudio/g rocker/rstudio:3.6.1"
