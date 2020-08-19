@@ -67,7 +67,7 @@ data.list <- function(...) {
 #' subset(D, c("2010-12-15 02:00","2010-12-15 04:00"))
 #' 
 #' # Cannot request a variable not there
-#' \donttest{#subset(D, nms=c("x","Ta"))}
+#' \donttest{try(subset(D, nms=c("x","Ta")))}
 #' 
 #' # Take specific horizons
 #' subset(D, nms=c("I","Ta"), kseq = 1:2)
@@ -325,7 +325,7 @@ check.data.list <- function(object){
     if(!"t" %in% names(D)){ stop("'t' is missing in the data.list: It must be a vector of equidistant time points (can be an integer, but preferably POSIXct class with tz 'GMT' or 'UTC'.)") }
 
     if(length(unique(diff(D$t))) != 1){ stop("'t' is not equidistant and have no NA values")}
-    cat("\nTime t is fine: Length ",length(D$t),"\n\n")
+    message("\nTime t is fine: Length ",length(D$t),"\n")
 
     # Which is data.frame or matrix?
     dfOrMat <- sapply(D, function(x){ (class(x) %in% c("matrix","data.frame"))[1] })
@@ -388,9 +388,9 @@ check.data.list <- function(object){
         }
     }
     #
-    cat("Observation vectors:\n")
+    message("Observation vectors:")
     print(Observations)
-    cat("\nForecast data.frames or matrices:\n")
+    message("\nForecast data.frames or matrices:")
     print(Forecasts)
 
     invisible(list(Observations=Observations, Forecasts=Forecasts))

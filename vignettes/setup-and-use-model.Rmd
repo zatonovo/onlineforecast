@@ -450,23 +450,9 @@ model$add_inputs(Tao = "lp(Tao, a1=0.99)")
 
 Working with time consuming calculations caching can be very
 valuable. The optimization results can be cached by providing a path to a
-directory:
-```{r, output.lines=15}
-rls_optim(model, D, cachedir="cache")$par
-```
-where cache files are saved:
-```{r}
-dir("cache")
-```
-so running it again will read the cache instead of calculating the optimization:
-```{r}
-rls_optim(model, D, cachedir="cache")$par
-```
-
-Remove the cache directory by:
-```{r}
-unlink("cache", recursive=TRUE)
-```
+directory, by setting the argument 'cachedir' to e.g. "cache". See the vignette
+[nice-tricks](https://onlineforecast.org/vignettes/nice-tricks.html) for an
+example with code.
 
 
 ## Deep clone model

@@ -7,7 +7,7 @@ library(rmarkdown)
 dirnam <- "../tmp/vignettes/"
 dir.create("../tmp")
 dir.create(dirnam)
-unlink("cache", recursive=TRUE)
+
 
 makeit <- function(nam, openit=FALSE, clean=TRUE){
     namrmd <- paste0(nam,".Rmd")

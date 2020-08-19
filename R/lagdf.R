@@ -99,8 +99,8 @@ lagdf.logical <- function(x, lagseq) {
 #' names(X) <- gsub("k", "h", names(X))
 #' lagdf(X, "-h")
 #'
-#' # If not same length as columns in X, then it doesn't know how to lag
-#' \donttest{#lagdf(X, 1:2)}
+#' # If not same length as columns in X, then it doesn't know how to lag, so an error is thrown
+#' \donttest{try(lagdf(X, 1:2))}
 #'
 #' \dontshow{
 #' if(!class(lagdf(data.frame(k1=1:10), 2)) == "data.frame"){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}

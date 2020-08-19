@@ -128,11 +128,11 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
 
     if(printout){
         # Should here actually only print the ones that were found and changed?
-        cat("----------------\n")
+        message("----------------")
         if(is.na(prm[1])){
-            cat("prm=NA, so current parameters are used.\n")
+            message("prm=NA, so current parameters are used.")
         }else{
-            print(prm)
+            print_to_message(prm)
         }
     }
 
@@ -207,7 +207,9 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
         # Only the summed score returned
         val <- sum(scoreval, na.rm = TRUE)
         if(is.na(val)){ stop("Cannot calculate the scorefunction for any horizon") }
-        if(printout){ print(c(scoreval,sum=val))}
+        if(printout){
+            print_to_message(c(scoreval,sum=val))
+        }
         return(val)
     }
 }

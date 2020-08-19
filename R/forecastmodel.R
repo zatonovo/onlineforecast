@@ -303,7 +303,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
             # Insert the prm value and return
             expr <- pst(substr(expr,1,pos-1), "=", value, substr(expr,pos+pos2-1,nchar(expr)))
             # Print? Not used now
-            #if(printout){ cat(names(value),"=",value,", ",sep="")}
+            #if(printout){ message(names(value),"=",value,", ",sep="")}
         }
         return(expr)
     },
@@ -343,7 +343,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
 print.forecastmodel <- function(x, ...){
     model <- x
     #    cat("\nObject of class forecastmodel (R6::class)\n\n")
-    cat("\nOutput:",model$output,"\n")
+    cat("\nOutput:",model$output)
     cat("Inputs: ")
     if(length(model$inputs) == 0 ){
         cat("No inputs\n")

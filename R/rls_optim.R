@@ -8,12 +8,18 @@
 #' Optimize parameters (transformation stage) of RLS model
 #'
 #' This is a wrapper for \code{\link{optim}} to enable easy use of bounds and caching in the optimization.
+#'
+#' One smart trick, is to cache the optimization results. Caching can be done by providing a path to the
+#' \code{cachedir} argument (relative to the current working directory).
+#' E.g. \code{rls_optim(model, D, cachedir="cache")} will write a file in the folder 'cache', such that
+#' next time the same call is carried out, then the file is read instead of running the optimization again.
+#' See the example in url{https://onlineforecasting.org/vignettes/nice-tricks.html}.
 #' 
 #' @title Optimize parameters for onlineforecast model fitted with RLS
 #' @param model The onlineforecast model, including inputs, output, kseq, p
 #' @param data The data.list including the variables used in the model.
 #' @param scorefun The function to be score used for calculating the score to be optimized.
-#' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written.
+#' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written. See \url{https://onlineforecasting.org/vignettes/nice-tricks.html} for examples.
 #' @param printout A logical determining if the score function is printed out in each iteration of the optimization.
 #' @param method The method argument for \code{\link{optim}}.
 #' @param ... Additional parameters to \code{\link{optim}}
@@ -51,17 +57,6 @@
 #' val <- rls_optim(model, D)
 #' val
 #' 
-#' # Caching can be done by providing a path (try rerunning and see the file in "cache" folder)
-#' val <- rls_optim(model, D, cachedir="cache")
-#' val
-#'
-#' # If anything affecting the results are changed, then the cache is not loaded
-#' model$add_prmbounds(lambda = c(0.89, 0.98, 0.999))
-#' val <- rls_optim(model, D, cachedir="cache")
-#' 
-#' # To delete the cache
-#' file.remove(dir("cache", full.names=TRUE))
-#' file.remove("cache")
 #' 
 #' @export
 rls_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, method="L-BFGS-B", ...){

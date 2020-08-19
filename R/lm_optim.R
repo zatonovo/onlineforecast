@@ -13,7 +13,7 @@
 #' @param model The onlineforecast model, including inputs, output, kseq, p
 #' @param data The data.list including the variables used in the model.
 #' @param scorefun The function to be score used for calculating the score to be optimized.
-#' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written.
+#' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written. See \url{https://onlineforecasting.org/vignettes/nice-tricks.html} for examples.
 #' @param printout A logical determining if the score function is printed out in each iteration of the optimization.
 #' @param method The method argument for \code{\link{optim}}.
 #' @param ... Additional parameters to \code{\link{optim}}
@@ -52,17 +52,6 @@
 #' val <- lm_optim(model, D)
 #' val
 #'
-#' # Caching can be done by providing a path (try rerunning and see the file in "cache" folder)
-#' val <- lm_optim(model, D, cachedir="cache")
-#' val
-#'
-#' # If anything affecting the results are changed, then the cache is not loaded
-#' model$add_prmbounds(Ta__a1 = c(0.7, 0.98, 0.999))
-#' val <- lm_optim(model, D, cachedir="cache")
-#'
-#' # To delete the cache
-#' file.remove(dir("cache", full.names=TRUE))
-#' file.remove("cache")
 #'
 #' @importFrom stats optim
 #' @export

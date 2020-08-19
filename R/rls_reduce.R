@@ -15,10 +15,11 @@ rls_reduce <- function(model, data, preduce=list(NA), scorefun = rmse){
     ##
     while(TRUE){
         ##
-        cat("------------------------------------\nReference score value",valref,"\n")
+        message("------------------------------------")
+        message("Reference score value",valref)
         ## --------
         ## Remove inputs one by one
-        cat("\nRemoving inputs one by one\n")
+        message("\nRemoving inputs one by one")
         valsrm <- mclapply(1:length(model$inputs), function(i){
             mr <- m$clone_deep()
             mr$inputs[[i]] <- NULL
@@ -26,12 +27,12 @@ rls_reduce <- function(model, data, preduce=list(NA), scorefun = rmse){
         })
         valsrm <- unlist(valsrm)
         names(valsrm) <- names(m$inputs)
-        cat("Scores\n")
+        message("Scores")
         print(valsrm)
         ## --------
         ## Reduce parameter values if specified
         if(!is.na(pr[1])){
-            cat("\nReducing prm with -1 one by one\n")
+            message("\nReducing prm with -1 one by one")
             valspr <- mclapply(1:length(pr), function(i){
                 mr <- m$clone_deep()
                 p <- pr
@@ -46,7 +47,7 @@ rls_reduce <- function(model, data, preduce=list(NA), scorefun = rmse){
             })
             valspr <- unlist(valspr)
             names(valspr) <- names(pr)
-            cat("Scores\n")
+            message("Scores")
             print(valspr)
         }
         ## Is one the reduced smaller than the current ref?
@@ -54,19 +55,19 @@ rls_reduce <- function(model, data, preduce=list(NA), scorefun = rmse){
             if(which.min(c(min(valsrm),min(valspr))) == 1){
                 ## One of the models with one of the inputs removed is best
                 imin <- which.min(valsrm)
-                cat("Removing input",names(m$inputs)[imin],"\n")
+                message("Removing input",names(m$inputs)[imin])
                 m$inputs[[imin]] <- NULL
             }else{
                 ## One of the models with reduced parameter values is best
                 imin <- which.min(valspr)
                 pr[imin] <- pr[imin] - 1
                 m$insert_prm(pr)
-                cat("Reduced parameter",names(pr)[imin],"to:",pr[imin],"\n")
+                message("Reduced parameter",names(pr)[imin],"to:",pr[imin])
             }
             valref <- min(c(valsrm,valspr))
         }else{
             ## No improvement obtained from reduction, so return the current model
-            cat("------------------------------------\n\nDone\n")
+            message("------------------------------------\n\nDone")
             return(m)
         }
     }
