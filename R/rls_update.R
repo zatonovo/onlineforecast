@@ -133,7 +133,7 @@ rls_update <- function(model, datatr = NA, y = NA, runcpp=TRUE) {
             }
             #
             # Give names to the matrices
-            colnames(P) <- names(datatr)
+            colnames(R) <- names(datatr)
             colnames(Theta) <- names(datatr)
             # Return the fit and result
             return(list(fit=list(k=k, theta=theta, R=R, yhat=yhat[(n-kmax+1):n]),

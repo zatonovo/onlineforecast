@@ -19,7 +19,7 @@ makeit <- function(nam, openit=FALSE, clean=TRUE){
 
 #
 unlink(paste0(dirnam,"tmp-setup-data/"), recursive=TRUE)
-makeit("setup-data", openit=FALSE)
+makeit("setup-data", openit=TRUE)
 
 #
 unlink(paste0(dirnam,"tmp-setup-and-use-model/"), recursive=TRUE)

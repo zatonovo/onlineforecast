@@ -11,8 +11,8 @@
 #'   \item{t}{Time in GMT as POSIXct}
 #'   \item{heatload}{The heatload of a single family building in W}
 #'   \item{heatloadtotal}{The average heatload of a 16 single family buildings in W}
-#'   \item{Ta.obs}{Observed ambient temperature at the weather station in Celcius}
-#'   \item{I.obs}{Observed global radiation at the weather station in W/m^2}
+#'   \item{Taobs}{Observed ambient temperature at the weather station in Celcius}
+#'   \item{Iobs}{Observed global radiation at the weather station in W/m^2}
 #'   \item{Ta}{Weather forecasts of ambient temperature up to 36 hours ahead from DMI in Celcius}
 #'   \item{Ta}{Weather forecasts of global radiation up to 36 hours ahead from DMI in W/m^2}
 #' }

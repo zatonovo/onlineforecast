@@ -441,7 +441,7 @@ See the help `?make_tday` for more details.
 
 If we want to use observations in inputs to a model, we can use e.g.:
 ```{r}
-D$Tao <- make_input(D$Ta.obs, kseq=1:36)
+D$Tao <- make_input(D$Taobs, kseq=1:36)
 model$add_inputs(Tao = "lp(Tao, a1=0.99)")
 ```
 

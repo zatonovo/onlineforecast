@@ -202,7 +202,7 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
         # The estimated coefficients
         Lfitval <- getse(Lresult, "Theta", fun=as.data.frame)
         # Return the model validation data
-        invisible(structure(list(Yhat = Yhat, model = model$clone_deep(), data = data, Lfitval = Lfitval, scoreval = scoreval), class = c("forecastmodel_fit","rls_fit")))
+        invisible(structure(list(Yhat = Yhat, model = model$clone_deep(), data = data, datatr = datatr, Lfitval = Lfitval, scoreval = scoreval), class = c("forecastmodel_fit","rls_fit")))
     }else{
         # Only the summed score returned
         val <- sum(scoreval, na.rm = TRUE)

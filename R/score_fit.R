@@ -8,7 +8,7 @@
 #' @param scoreperiod as an index (logical or integer) defining which points to inlude in the score calculation. If NA, the \code{scoreperiod} from the \code{fit$model} object is used.
 #' @param usecomplete Only use points where 
 #' @param scorefun The score function applied, per default \code{\link{rmse}}.
-#' @seealso \code{\link{rmse}} and \code{\link{score_for_k}} which are used in this function.
+#' @seealso \code{\link{rmse}} and \code{\link{score}} which are used in this function.
 #' @return A list with:
 #'   - \code{scoreval} is the score value
 #'   - \code{scoreperiod} is the score period used (can be different that the one in arguments \code{fit} or \code{scoreperiod})
@@ -41,7 +41,7 @@ score_fit <- function(fit, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse
     }
 
     # Calculate the score
-    tmp <- score_for_k(Residuals, scoreperiod, usecomplete)
+    tmp <- score(Residuals, scoreperiod, usecomplete)
     scoreval <- tmp$scoreval
     scoreperiod <- tmp$scoreperiod
     

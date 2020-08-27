@@ -13,7 +13,7 @@
 #' @title Computes the RMSE score.
 #' @param x a numerical vector of residuals.
 #' @return The RMSE score.
-#' @seealso \code{\link{score_for_k}()} for calculation of a score for the k'th horizon, and \code{\link{score_fit}()} which takes a forecastmodel fit and returns score taking scoreperiod etc. into account.
+#' @seealso \code{\link{score}()} for calculation of a score for the k'th horizon, and \code{\link{score_fit}()} which takes a forecastmodel fit and returns score taking scoreperiod etc. into account.
 #' @name rmse
 #' @examples
 #'

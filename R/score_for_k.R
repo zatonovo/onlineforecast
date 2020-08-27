@@ -2,7 +2,7 @@
 #library(devtools)
 #document()
 #load_all(as.package("../../onlineforecast"))
-#?score_for_k
+#?score
 
 #' Calculates the score for each horizon for a matrix with residuals for each horizon.
 #'
@@ -24,15 +24,15 @@
 #' Resid <- residuals(Yhat, y)
 #'
 #' # Calculate the score for the k1 horizon
-#' score_for_k(Resid)$scoreval
+#' score(Resid)$val
 #'
 #' # The first values were excluded, since there are NAs
 #' head(Resid)
-#' score_for_k(Resid)$scoreperiod
+#' score(Resid)$scoreperiod
 #'
 #' @importFrom stats complete.cases
 #' @export
-score_for_k <- function(Residuals, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse){
+score <- function(Residuals, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse){
     # If no scoreperiod is given, then use all
     if(is.na(scoreperiod[1])){
         scoreperiod <- rep(TRUE,nrow(Residuals))
@@ -50,10 +50,10 @@ score_for_k <- function(Residuals, scoreperiod = NA, usecomplete = TRUE, scorefu
         scoreperiod <- scoreperiod & complete.cases(Residuals)
     }
     # Calculate the objective function for each horizon
-    scoreval <- sapply(1:ncol(Residuals), function(i){
+    val <- sapply(1:ncol(Residuals), function(i){
         scorefun(Residuals[scoreperiod,i])
     })
-    nams(scoreval) <- gsub("h","k",nams(Residuals))
+    nams(val) <- gsub("h","k",nams(Residuals))
     # 
-    return(list(scoreval=scoreval,scoreperiod=scoreperiod))
+    return(list(val=val,scoreperiod=scoreperiod))
 }

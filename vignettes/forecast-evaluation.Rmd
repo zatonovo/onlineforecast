@@ -326,14 +326,14 @@ Now the residuals can be calculated and the score:
 # Use the residuals function
 R <- residuals(D$Yhat1, D$y)
 # And the score as a function of the horizon
-score_for_k(R, scoreperiod=ok)$scoreval
+score(R, scoreperiod=ok)$val
 ```
 
 
 Calculated the score (default is RMSE) for all models:
 ```{r}
 RMSE <- sapply(nms, function(nm){
-    score_for_k(residuals(D[[nm]],D$y), ok)$scoreval
+    score(residuals(D[[nm]],D$y), ok)$val
 })
 ```
     
@@ -386,7 +386,7 @@ fittmp <- rls_fit(model$prm, model, D)
 
 Finally, the score can be calculated on the period following the train period by:
 ```{r scorefit}
-score_fit(fittmp, !D$trainperiod)$scoreval
+score_fit(fittmp, !D$trainperiod)$val
 ```
 
 In this way it's rather easy to set up different schemes, like optimizing the

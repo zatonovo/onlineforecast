@@ -25,12 +25,12 @@
 #' # The time vector
 #' time <- seq(ct("2019-01-01"),ct("2019-01-02"),by=3600)
 #' # Observations time series (as vector)
-#' x.obs <- rnorm(length(time))
+#' xobs <- rnorm(length(time))
 #' # Forecast input as data.frame
 #' X <- data.frame(matrix(rnorm(length(time)*3), ncol=3))
 #' names(X) <- pst("k",1:3)
 #' 
-#' D <- data.list(t=time, x.obs=x.obs, X=X)
+#' D <- data.list(t=time, xobs=xobs, X=X)
 #'
 #' # Check it
 #' check(D)
@@ -58,7 +58,7 @@ data.list <- function(...) {
 #' # Use the data.list with building heat load 
 #' D <- Dbuilding
 #' # Take a subset for the example
-#' D <- subset(D, 1:10, nms=c("t","Ta.obs","Ta","I.obs","I"), kseq=1:3)
+#' D <- subset(D, 1:10, nms=c("t","Taobs","Ta","Iobs","I"), kseq=1:3)
 #' 
 #' # Take subset index 2:4
 #' subset(D, 2:4)
@@ -74,7 +74,7 @@ data.list <- function(...) {
 #' subset(D, nms=c("I","Ta"), kseq = 1)
 #' 
 #' # Lag the forecasts such that they are aligned in time with observations
-#' subset(D, nms=c("Ta.obs","Ta"), kseq = 2:3, lagforecasts = TRUE)
+#' subset(D, nms=c("Taobs","Ta"), kseq = 2:3, lagforecasts = TRUE)
 #' 
 #' # The order follows the order in nms
 #' subset(D, nms=c("Ta","I"), kseq = 2)
@@ -87,10 +87,10 @@ data.list <- function(...) {
 #' 
 #' # A scatter plot between the forecast and the observations
 #' # (try lagforecasts = FALSE and see the difference)
-#' plot(X$Ta$k10, X$Ta.obs)
+#' plot(X$Ta$k10, X$Taobs)
 #'
 #' # Fit a model for the 10-step horizon
-#' abline(lm(Ta.obs ~ Ta.k10, X), col=2)
+#' abline(lm(Taobs ~ Ta.k10, X), col=2)
 #'
 #' @export
 subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = FALSE, pattern = NA, ...) {
@@ -200,7 +200,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
 #' #' # Use the data.list with building heat load 
 #' D <- Dbuilding
 #' # Take a subset
-#' D <- subset(D, 1:5, nms=c("t","Ta.obs","Ta","I.obs","I"), kseq=1:3)
+#' D <- subset(D, 1:5, nms=c("t","Taobs","Ta","Iobs","I"), kseq=1:3)
 #'
 #' # Convert to a data.frame, note the names of the forecasts are appended .kxx (i.e. for Ta and I)
 #' as.data.frame(D)

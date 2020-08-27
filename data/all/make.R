@@ -53,6 +53,8 @@ names(data[["Heatload"]]) <- pst("house", 1:16)
 data[["cosAoi"]] <- data_or[, "cosAoi.obs"]
 data[["sunElevation"]] <- data_or[, "sunElevation.obs"]
 
+# .obs to obs
+names(data) <- gsub("\\.","",names(data))
 
 # # The time of day
 # ncol <- ncol(data$Ta)
@@ -78,9 +80,9 @@ data$totaln <- sapply(1:nrow(data$Heatload), function(i){
 plot(data$t, data$totaln)
 
 # Write for building heat load forecasting
-#Dbuilding <- subset(data, c("2010-12-15","2011-03-01"), nms=c("t","Heatload","Ta","I","Ws","Wd","Ta.obs","I.obs","Wd.obs","Ws.obs","cosAoi","sunElevation","tday"))
+#Dbuilding <- subset(data, c("2010-12-15","2011-03-01"), nms=c("t","Heatload","Ta","I","Ws","Wd","Taobs","Iobs","Wdobs","Wsobs","cosAoi","sunElevation","tday"))
 data$heatload <- data$Heatload$house9
-Dbuilding <- subset(data, c("2010-12-15","2011-03-01"), nms=c("t","heatload","heatloadtotal","Ta.obs","I.obs","Ta","I"))
+Dbuilding <- subset(data, c("2010-12-15","2011-03-01"), nms=c("t","heatload","heatloadtotal","Taobs","Iobs","Ta","I"))
 rownames(Dbuilding$Ta) <- NULL
 Dbuilding$Ta <- Dbuilding$Ta[ ,1:36]
 rownames(Dbuilding$I) <- NULL

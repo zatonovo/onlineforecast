@@ -44,7 +44,7 @@
 #' # Make two plots (and set the space for the legend)
 #' plot_ts(D, c("heatload","Ta"), kseq=c(1,24), legendspace=11)
 #' # Only the Ta observations 
-#' plot_ts(D, c("heatload","Ta.obs$"), kseq=c(1,24), legendspace=11)
+#' plot_ts(D, c("heatload","Taobs$"), kseq=c(1,24), legendspace=11)
 #'
 #' # Give labels
 #' plot_ts(D, c("heatload","Ta"), kseq=c(1,24), xlab="Time", ylabs=c("Heat (kW)","Temperature (C)"))

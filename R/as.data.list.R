@@ -48,7 +48,7 @@ as.data.list <- function(object){
 #' as.data.list(X)
 #'
 #' # Convert a dataframe with time, forecast and an observed variable
-#' X <- data.frame(t=1:10, x.k1=1:10, x.k2=10:1, y.obs=1:10, y.k1=1:10, y.k2=1:10)
+#' X <- data.frame(t=1:10, x.k1=1:10, x.k2=10:1, yobs=1:10, y.k1=1:10, y.k2=1:10)
 #' as.data.list(X)
 #'
 #' # Can be converted back and forth
