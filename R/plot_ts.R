@@ -60,17 +60,6 @@
 #' names(L[[2]])
 #'
 #'
-#' # Use plotly
-#' \donttest{library(plotly)
-#' L <- plot_ts(D, c("heatload","Ta"), kseq=c(1,24), usely=TRUE, xlab="Time",
-#'              ylabs=c("Heat (kW)","Temperature (C)"))
-#'
-#' # From plotly the figures are returned and can be further manipulated
-#' # e.g. put the legend in the top by
-#' L[[length(L)]] <- L[[length(L)]] %>% layout(legend = list(x = 100, y = 0.98))
-#' print(subplot(L, shareX=TRUE, nrows=length(L), titleY = TRUE))
-#' }
-#'
 #' @rdname plot_ts
 #' @export
 plot_ts <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
@@ -473,11 +462,6 @@ plot_ts_series <- function(data, pattern, iplot = 1,
 #'
 #' # Plot it
 #' plot_ts(fit1)
-#'
-#' # Plot it with plotly
-#' \donttest{
-#' plot_ts(fit1, usely=TRUE)
-#' }
 #'
 #' # Return the data
 #' Dplot <- plot_ts(fit1)

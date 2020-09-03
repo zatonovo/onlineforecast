@@ -9,20 +9,17 @@
 #'
 #' Simply the same as \code{\link{plot_ts}()} with \code{usely=TRUE}, such that plotly is used.
 #'
-#' The \code{plotly} package must be loaded.
+#' The \code{plotly} package must be installed and loaded.
 #'
 #' Note that the plot parameters set with \code{\link{par_ts}()} have no effect on the \code{plotly} plots.
 #'
+#' See \url{http://https://onlineforecasting.org/vignettes/nice-tricks.html}.
+#' 
 #' @rdname plot_ts
 #' @examples
 #'
-#' \donttest{
-#' D <- Dbuilding
-#' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
-#' plotly_ts(D, c("heatload","Ta"), kseq=c(1,24))
-#' plotly_ts(D, c("heatload","Ta$|Taobs$"), kseq=c(1,24))
-#' }
-#'
+#' # See the website link above
+#' 
 #' @export
 
 plotly_ts <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,

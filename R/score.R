@@ -24,7 +24,7 @@
 #' Resid <- residuals(Yhat, y)
 #'
 #' # Calculate the score for the k1 horizon
-#' score(Resid)$val
+#' score(Resid)$scoreval
 #'
 #' # The first values were excluded, since there are NAs
 #' head(Resid)
@@ -50,10 +50,10 @@ score <- function(Residuals, scoreperiod = NA, usecomplete = TRUE, scorefun = rm
         scoreperiod <- scoreperiod & complete.cases(Residuals)
     }
     # Calculate the objective function for each horizon
-    val <- sapply(1:ncol(Residuals), function(i){
+    scoreval <- sapply(1:ncol(Residuals), function(i){
         scorefun(Residuals[scoreperiod,i])
     })
-    nams(val) <- gsub("h","k",nams(Residuals))
+    nams(scoreval) <- gsub("h","k",nams(Residuals))
     # 
-    return(list(val=val,scoreperiod=scoreperiod))
+    return(list(scoreval=scoreval,scoreperiod=scoreperiod))
 }
