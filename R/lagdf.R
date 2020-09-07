@@ -30,8 +30,7 @@
 #' lagdf(1:10, c(1:3))
 #' lagdf(1:10, c(5,3,-1))
 #'
-#' # See also how to lag a forecast data.frame
-#' ?lagdf.data.frame
+#' # See also how to lag a forecast data.frame with: ?lagdf.data.frame
 #'
 #'
 #'@export
@@ -99,9 +98,9 @@ lagdf.logical <- function(x, lagseq) {
 #' names(X) <- gsub("k", "h", names(X))
 #' lagdf(X, "-h")
 #'
-#' # If not same length as columns in X, then it doesn't know how to lag, so an error is thrown
-#' \donttest{try(lagdf(X, 1:2))}
-#'
+#' # If lagseq must have length as columns in X, it doesn't know how to lag and an error is thrown
+#' try(lagdf(X, 1:2))
+#' 
 #' \dontshow{
 #' if(!class(lagdf(data.frame(k1=1:10), 2)) == "data.frame"){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}
 #' if(!all(dim(lagdf(data.frame(k1=1:10), "+k")) == c(10,1))){stop("Trying to lag data.frame with 1 column, but return is not class data.frame")}

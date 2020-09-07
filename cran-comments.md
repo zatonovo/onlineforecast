@@ -1,5 +1,63 @@
 #----------------------------------------------------------------
-# v0.9.1
+# v0.9.3
+
+#--------
+REQUEST:
+> 1) Yes, a few times I want to show an error in the examples, should the e.g. "try(getse(x, 1))" be inside \donttest{ } ?
+
+Not needed, you can simply run try() in zthe examples.
+
+
+RESPONSE:
+Fixed.
+#--------
+
+
+
+#--------
+REQUEST:
+> 2) I do see the point about setting back par() and options(). It's actually one function which sets par (options are not set in any functions):
+>
+>      - setpar() is just a wrapper for changing the par values to certain values, it's only used in plot_ts(), where the par is reset on exit. So in setpar() it can't really reset the par, since then it would make sense to have it. setpar() returns the current parameters, so they can be reset after plotting. So I think it makes sense to have it, if allowed!?
+
+If you do
+
+op <- setpar()
+on.exit(setpar(op))
+
+it should be fine.
+
+
+RESPONSE:
+Fixed.
+#--------
+
+
+
+#--------
+REQUEST:
+> 3) I see also the point about not writing files, however the demonstration of caching e.g. "val <- lm_optim(model, D, cachedir=tempdir())" really needs a constant path, it can't be tempdir(), since it changes the returned value between R sessions.
+
+Yes, between R sessions, but within the session a user can inpsect the
+files. Users may well change the path(). See the CRAN policies.
+
+
+>  So it's only meaningful to use a constant path, like "cache" and let the user see where the cache files ends up (such that they can also understand how to remove them etc.). It's inspired by the knitr package, which does exactly the same. I can't right now figure out how to fix that in a nice way...I could comment it out and let the user uncomment, args, not a good idea ;D...well, I could remove it in the help and in the included vignettes, and put a link to the website and describe it there, do you have a better solution?
+
+
+Simply always use the tempdir() in example, that way <you won't pollute
+the user filespace nor overwrite fiels in user filespace.
+
+
+RESPONSE:
+Fixed. Only one example now write a file (in function R/cache_name.R), and it uses tempdir().
+#--------
+#----------------------------------------------------------------
+
+
+
+#----------------------------------------------------------------
+# v0.9.1 and v0.9.2
 Response to review of v0.9.0 by Swetlana Herbrandt:
 
 #--------

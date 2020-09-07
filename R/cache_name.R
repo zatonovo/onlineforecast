@@ -23,7 +23,7 @@
 #' # A function for demonstrating the using caching
 #' fun <- function(x, y){
 #'     # Generate the cache name (no argument given, so both x and y is used)
-#'     nm <- cache_name()
+#'     nm <- cache_name(cachedir=cachedir)
 #'     # If the result is cached, then just return it
 #'     if(file.exists(nm)){ return(readRDS(nm)) }
 #'     # Do the calculation
@@ -35,6 +35,10 @@
 #'     # Return
 #'     return(res)
 #' }
+#'
+#' # For this example use a temporary directory 
+#' # In real use this should not be temporary! (changes between R sessions with tempdir())
+#' cachedir <- tempdir()
 #' 
 #' # First time it takes at least 1 sec.
 #' fun(x=2,y=2)
@@ -43,9 +47,9 @@
 #' # Try changing the arguments (x,y) and run again
 #'
 #' # See the cache file(s)
-#' dir("cache")
-#' # Delete the cache
-#' file.remove(dir("cache", full.names=TRUE))
+#' dir(cachedir)
+#' # Delete the cache folder
+#' unlink(cachedir, recursive=TRUE)
 #'
 #' # Demonstrate how cache_name() is functioning
 #' # Cache using the all objects given in the function calling, i.e. both x and y
@@ -59,10 +63,6 @@
 #' fun(y=2,x=1)
 #' # But this one is different
 #' fun(x=2,y=1)
-#' \dontshow{
-#' # Testing
-#' if(fun(1,2) != fun(x=1,y=2) | fun(1,2) != fun(y=2,x=1)){ stop("A problem with cache_name() exists.") }
-#' }
 #'
 #' # Test: cache using the values specified in the cache_name call
 #' fun2 <- function(x,y){
@@ -76,7 +76,6 @@
 #' # But this one is different 
 #' fun2(3,3)
 #' # And the function named changed the name
-#'
 #'
 #' @export
 cache_name <- function(..., cachedir = "cache"){
