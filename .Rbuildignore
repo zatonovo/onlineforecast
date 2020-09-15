@@ -12,3 +12,4 @@
 ^misc-R$
 ^.*\.Rhistory$
 ^cran-comments.md
+^README\.Rmd$
