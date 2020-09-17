@@ -8,7 +8,8 @@
 #'
 #' A simple function, which sets the \code{\link{par}()} plotting parameters to a default set of values.
 #'
-#' Actually, only really used for setting useful \code{par} values for multiple time series plots with same x-axis. Give \code{tmpl="ts"} and \code{mfrow=c(x,1)}, where x is the number of plots.
+#' Actually, only really used for setting useful \code{par} values for multiple time series plots with same x-axis.
+#' Give \code{tmpl="ts"} and \code{mfrow=c(x,1)}, where x is the number of plots.
 #' 
 #' @title Setting \code{\link{par}()} plotting parameters
 #' @param tmpl The name of the parameter template, give "ts" as default
@@ -19,6 +20,8 @@
 #'
 #' # Make some data
 #' D <- data.frame(t=seq(ct("2020-01-01"),ct("2020-01-10"),len=100), x=rnorm(100), y=runif(100))
+#' # Remember the currect par values
+#' oldpar <- setpar()
 #'
 #' # Generate two stacked plots with same x-axis
 #' setpar("ts", mfrow=c(2,1))
@@ -26,8 +29,12 @@
 #' plot(D$t, D$y, type="l")
 #' # Note xaxt="s" must be set
 #' axis.POSIXct(1, D$t, xaxt="s", format="%Y-%m-%d")
+#'
+#' # Set back the par to the previous
+#' par(oldpar)
 #' 
-#' # In a function, where this is used and a plot is generated, do like this to reset on exit
+#' # In a function, where this is used and a plot is generated,
+#' # then do like this in order to automatically reset on exit
 #' oldpar <- setpar(mfrow=c(2,1))
 #' on.exit(par(oldpar))        
 #'

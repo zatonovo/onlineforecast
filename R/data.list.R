@@ -67,7 +67,7 @@ data.list <- function(...) {
 #' subset(D, c("2010-12-15 02:00","2010-12-15 04:00"))
 #' 
 #' # Cannot request a variable not there
-#' \donttest{try(subset(D, nms=c("x","Ta")))}
+#' try(subset(D, nms=c("x","Ta")))
 #' 
 #' # Take specific horizons
 #' subset(D, nms=c("I","Ta"), kseq = 1:2)

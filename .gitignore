@@ -23,3 +23,5 @@ vignettes/*genfig*
 vignettes/*_files*
 
 tmp/
+
+onlineforecast.Rcheck

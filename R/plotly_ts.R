@@ -13,7 +13,7 @@
 #'
 #' Note that the plot parameters set with \code{\link{par_ts}()} have no effect on the \code{plotly} plots.
 #'
-#' See \url{http://https://onlineforecasting.org/vignettes/nice-tricks.html}.
+#' See \url{https://onlineforecasting.org/vignettes/nice-tricks.html}.
 #' 
 #' @rdname plot_ts
 #' @examples
