@@ -362,6 +362,7 @@ There are quite a few functions available for input transformations:
 - `one()` generates an matrix of ones (for including an intercept).
 - `fs()` generate Fourier series for modelling harmonic functions.
 - `bspline()` wraps the `bs()` function for generating base splines.
+- `pbspline()` wraps the `pbs()` function for generating periodic base splines.
 - `AR()` generates auto-regressive model inputs.
 
 and they can even be combined, see more details in [onlineforecasting] and in their help

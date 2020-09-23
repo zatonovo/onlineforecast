@@ -330,68 +330,73 @@ check.data.list <- function(object){
     # Which is data.frame or matrix?
     dfOrMat <- sapply(D, function(x){ (class(x) %in% c("matrix","data.frame"))[1] })
     # Vectors check
-    vecchecks <- c("ok","NAs","length","class")
     vecseq <- which(!dfOrMat & names(dfOrMat) != "t")
-    Observations <- data.frame(matrix("", nrow=length(vecseq), ncol=length(vecchecks), dimnames=list(names(vecseq),vecchecks)), stringsAsFactors=FALSE)
-    Observations$ok <- "V"
-    #
-    for(i in 1:length(vecseq)){
+    Observations <- NA
+    if(length(vecseq) > 0){
+        cat("Observation vectors:\n")
+        vecchecks <- c("ok","NAs","length","class")
+        Observations <- data.frame(matrix("", nrow=length(vecseq), ncol=length(vecchecks), dimnames=list(names(vecseq),vecchecks)), stringsAsFactors=FALSE)
+        Observations$ok <- "V"
         #
-        nm <- names(vecseq)[i]
-        # NAs
-        NAs <- round(max(sum(is.na(D[nm])) / length(D[nm])))
-        Observations$NAs[i] <- pst(NAs,"%")
-        # Check the length
-        if(length(D[[nm]]) != length(D$t)){
-            Observations$length[i] <- length(D[[nm]])
+        for(i in 1:length(vecseq)){
+            #
+            nm <- names(vecseq)[i]
+            # NAs
+            NAs <- round(max(sum(is.na(D[nm])) / length(D[nm])))
+            Observations$NAs[i] <- pst(NAs,"%")
+            # Check the length
+            if(length(D[[nm]]) != length(D$t)){
+                Observations$length[i] <- length(D[[nm]])
+            }
+            # Its class
+            Observations$class[i] <- class(D[[nm]])
+            # Not ok?
+            if(sum(Observations[i, 3] == "") < 1){
+                Observations$ok[i] <- ""
+            }
         }
-        # Its class
-        Observations$class[i] <- class(D[[nm]])
-        # Not ok?
-        if(sum(Observations[i, 3] == "") < 1){
-            Observations$ok[i] <- ""
-        }
+        print(Observations)
     }
     #
     # For forecasts
     dfseq <- which(dfOrMat)
-    dfchecks <- c("ok","maxNAs","meanNAs","nrow","colnames","sameclass","class")
-    Forecasts <- data.frame(matrix("", nrow=length(dfseq), ncol=length(dfchecks), dimnames=list(names(dfseq),dfchecks)), stringsAsFactors=FALSE)
-    Forecasts$ok <- "V"
-    #
-    for(i in 1:length(dfseq)){
+    Forecasts <- NA
+    if(length(dfseq) > 0){
+        cat("\nForecast data.frames or matrices:\n")
+        dfchecks <- c("ok","maxNAs","meanNAs","nrow","colnames","sameclass","class")
+        Forecasts <- data.frame(matrix("", nrow=length(dfseq), ncol=length(dfchecks), dimnames=list(names(dfseq),dfchecks)), stringsAsFactors=FALSE)
+        Forecasts$ok <- "V"
         #
-        nm <- names(dfseq)[i]
-        colnms <- nams(D[[nm]])
-        # max NAs
-        maxNAs <- round(max(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
-        Forecasts$maxNAs[i] <- pst(maxNAs,"%")
-        # Mean NAs
-        meanNAs <- round(mean(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
-        Forecasts$meanNAs[i] <- pst(meanNAs,"%")
-        # Check the number of rows
-        if(nrow(D[[nm]]) != length(D$t)){
-            Forecasts$nrow[i] <- nrow(D[[nm]])
+        for(i in 1:length(dfseq)){
+            #
+            nm <- names(dfseq)[i]
+            colnms <- nams(D[[nm]])
+            # max NAs
+            maxNAs <- round(max(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
+            Forecasts$maxNAs[i] <- pst(maxNAs,"%")
+            # Mean NAs
+            meanNAs <- round(mean(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
+            Forecasts$meanNAs[i] <- pst(meanNAs,"%")
+            # Check the number of rows
+            if(nrow(D[[nm]]) != length(D$t)){
+                Forecasts$nrow[i] <- nrow(D[[nm]])
+            }
+            # Check the colnames, are they unique and all k+integer?
+            if(!length(unique(grep("^k[[:digit:]]+$",colnms,value=TRUE))) == length(colnms)){
+                Forecasts$colnames[i] <- "X"
+            }
+            if(!length(unique(sapply(colnms, function(colnm){ class(D[[nm]][ ,colnm]) }))) == 1){
+                Forecasts$sameclass[i] <- "X"
+            }else{
+                Forecasts$class[i] <- class(D[[nm]][ ,1])
+            }
+            # Not ok?
+            if(sum(Forecasts[i, ] == "") < (length(dfchecks)-4)){
+                Forecasts$ok[i] <- ""
+            }
         }
-        # Check the colnames, are they unique and all k+integer?
-        if(!length(unique(grep("^k[[:digit:]]+$",colnms,value=TRUE))) == length(colnms)){
-            Forecasts$colnames[i] <- "X"
-        }
-        if(!length(unique(sapply(colnms, function(colnm){ class(D[[nm]][ ,colnm]) }))) == 1){
-            Forecasts$sameclass[i] <- "X"
-        }else{
-            Forecasts$class[i] <- class(D[[nm]][ ,1])
-        }
-        # Not ok?
-        if(sum(Forecasts[i, ] == "") < (length(dfchecks)-4)){
-            Forecasts$ok[i] <- ""
-        }
+        print(Forecasts)
     }
-    #
-    message("Observation vectors:")
-    print(Observations)
-    message("\nForecast data.frames or matrices:")
-    print(Forecasts)
 
     invisible(list(Observations=Observations, Forecasts=Forecasts))
 }
