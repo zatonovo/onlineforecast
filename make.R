@@ -63,7 +63,7 @@ document()
 build(".", vignettes=TRUE)
 
 # Install it
-install.packages("../onlineforecast_0.9.1.tar.gz")
+install.packages("../onlineforecast_0.9.3.tar.gz")
 
 library(onlineforecast)
 # ----------------------------------------------------------------
@@ -71,7 +71,7 @@ library(onlineforecast)
 
 # ----------------------------------------------------------------
 # Build binary package
-#system("R CMD INSTALL --build ../onlineforecast_0.9.1.tar.gz")
+#system("R CMD INSTALL --build ../onlineforecast_0.9.3.tar.gz")
 # ----------------------------------------------------------------
 
 
@@ -80,10 +80,11 @@ library(onlineforecast)
 # Test before release
 devtools::check()
 
-devtools::check_built("../onlineforecast_0.9.1.tar.gz")
+devtools::check_built("../onlineforecast_0.9.3.tar.gz")
 
 # Does give different results than check() above
-system("R CMD check ../onlineforecast_0.9.1.tar.gz")
+#system("R CMD check --as-cran ../onlineforecast_0.9.3.tar.gz")
+system("R CMD check ../onlineforecast_0.9.3.tar.gz")
 unlink("onlineforecast.Rcheck/", recursive=TRUE)
 
 # Use for more checking:

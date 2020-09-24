@@ -169,11 +169,11 @@
 #' 
 #' # Check if the model is setup and can be used with a given data.list
 #' # An error is thrown
-#' \donttest{try(model$check(Dbuilding))}
+#' try(model$check(Dbuilding))
 #' # Add the model output
 #' model$output <- "heatload"
 #' # Still not error free
-#' \donttest{try(model$check(Dbuilding))}
+#' try(model$check(Dbuilding))
 #' # Add the horizons to fit for
 #' model$kseq <- 1:4
 #' # Finally, no errors :)

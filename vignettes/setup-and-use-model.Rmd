@@ -451,7 +451,7 @@ model$add_inputs(Tao = "lp(Tao, a1=0.99)")
 Working with time consuming calculations caching can be very
 valuable. The optimization results can be cached by providing a path to a
 directory, by setting the argument 'cachedir' to e.g. "cache". See the vignette
-[nice-tricks](https://onlineforecast.org/vignettes/nice-tricks.html) for an
+[nice-tricks](https://onlineforecasting.org/vignettes/nice-tricks.html) for an
 example with code.
 
 
