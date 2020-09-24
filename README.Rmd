@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# onlineforecast <img src='man/figures/logo.png' align="right" height="139" />
+# onlineforecast <img src='misc-R/figures/onlineforecast.png' align="right" height="139" />
 <!--
 usethis::use_cran_badge()
 usethis::use_lifecycle_badge("stable")
