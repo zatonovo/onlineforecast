@@ -3,11 +3,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# onlineforecast
+# onlineforecast <img src='man/figures/logo.png' align="right" height="139" />
 
 <!--
 usethis::use_cran_badge()
 usethis::use_lifecycle_badge("stable")
+usethis::use_logo("misc-R/figures/onlineforecast.png")
 -->
 
 <!-- badges: start -->
