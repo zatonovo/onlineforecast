@@ -19,6 +19,7 @@
 #' @param tstart The start of the period.
 #' @param time The timestamps as POSIX.
 #' @param tend The end of the period. If not given then the period will have no end. 
+#' @param timezone The timezone of the timestamps, time.
 #' @return A logical vector indicating the selected period with TRUE
 #' @name in_range
 #' @examples
@@ -46,12 +47,16 @@
 #'
 #' @export
 
-in_range <- function(tstart, time, tend=NA) {
+in_range <- function(tstart, time, tend=NA, timezone=NA) {
     if (class(tstart)[1] == "character") 
         tstart <- ct(tstart)
     if (is.na(tend))
         tend <- time[length(time)]
     if (class(tend)[1] == "character") 
         tend <- ct(tend)
-    ct(tstart) < time & time <= ct(tend)
+    if (is.na(timezone)){
+        timezone <- attr(D$t, "tzone")
+    }
+
+    ct(tstart, tz = timezone) < time & time <= ct(tend, tz = timezone)
 }
