@@ -23,22 +23,22 @@
 #' @export
 
 plotly_ts <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                    mains = "", mainouter="", legendtexts = NA, xat = NA, usely = FALSE, p = NA, ...){
+                    mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely = FALSE, p = NA, ...){
     UseMethod("plotly_ts")
 }
 
 #' @export
 plotly_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                              mains = "", mainouter="", legendtexts = NA, xat = NA, usely=TRUE, p=NA, kseq = NA, ...) {
+                              mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=TRUE, p=NA, kseq = NA, ...) {
     plot_ts.data.list(object=object, patterns=patterns, xlim = xlim, ylims = ylims, xlab = xlab, ylabs = ylabs,
-                      mains = mains, mainouter=mainouter, legendtexts = legendtexts, xat = xat, usely = usely, p = p, kseq=kseq, ...)
+                      mains = mains, mainouter=mainouter, legendtexts = legendtexts, colormaps = colormaps, xat = xat, usely = usely, p = p, kseq=kseq, ...)
 }
 
 #' @export
 plotly_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                              mains = "", mainouter="", legendtexts = NA, xat = NA, usely=TRUE, p=NA, namesdata=NA, ...) {
+                              mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=TRUE, p=NA, namesdata=NA, ...) {
     plot_ts.data.frame(object=object, patterns=patterns, xlim = xlim, ylims = ylims, xlab = xlab, ylabs = ylabs,
-                      mains = mains, mainouter=mainouter, legendtexts = legendtexts, xat = xat, usely = usely, p = p, namesdata=namesdata, ...)
+                      mains = mains, mainouter=mainouter, legendtexts = legendtexts, colormaps = colormaps, xat = xat, usely = usely, p = p, namesdata=namesdata, ...)
 }
 
 ## plotly_ts.rls_fit <- function(fit, xlim=NA, kseq=NA, plotit=TRUE){

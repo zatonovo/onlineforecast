@@ -136,7 +136,7 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
         }
     }
 
-    # First insert the prm into the model input expressions
+    # First insert the prm into the model input expressions (if prm is NA nothing is inserted)
     model$insert_prm(prm)
 
     # Since rls_fit is run from scratch, the init the stored inputs data (only needed when running iteratively)

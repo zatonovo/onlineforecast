@@ -63,7 +63,7 @@
 #' @rdname plot_ts
 #' @export
 plot_ts <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                    mains = "", mainouter="", legendtexts = NA, xat = NA, usely = FALSE, plotit = TRUE, p = NA, ...){
+                    mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely = FALSE, plotit = TRUE, p = NA, ...){
     UseMethod("plot_ts")
 }
 
@@ -73,7 +73,7 @@ plot_ts <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", yla
 #' @rdname plot_ts
 #' @export
 plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                              mains = "", mainouter="", legendtexts = NA, xat = NA, usely=FALSE, plotit = TRUE, p=NA, kseq = NA, ...) {
+                              mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=FALSE, plotit = TRUE, p=NA, kseq = NA, ...) {
     # Take par_ts setup parameters from options if there
     p <- par_ts(fromoptions=TRUE, p=p, ...)
     #
@@ -163,7 +163,7 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
     namesdata <- unlist(getse(strsplit(nams(X), "_k|_h"), 1))
     # Use the plot_ts function which takes the data.frame
     plot_ts.data.frame(X, patterns, ylims = ylims, xlab = xlab, ylabs = ylabs, mains = mains, mainouter = mainouter,
-                       legendtexts = legendtexts, xat = xat, usely=usely, plotit = plotit, p=p, namesdata=namesdata, ...)
+                       legendtexts = legendtexts, colormaps=colormaps, xat = xat, usely=usely, plotit = plotit, p=p, namesdata=namesdata, ...)
 }
 
 
@@ -173,7 +173,7 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
 #' @importFrom graphics par title
 #' @export
 plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                               mains = NA, mainouter="", legendtexts = NA, xat = NA, usely=FALSE, plotit = TRUE, p = NA, namesdata=NA, ...) {
+                               mains = NA, mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=FALSE, plotit = TRUE, p = NA, namesdata=NA, ...) {
     # Take par_ts setup parameters from options if there
     p <- par_ts(fromoptions=TRUE, p=p, ...)
     #
@@ -183,19 +183,20 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
     if(is.null(data[ ,p$xnm])){ warning("No 't' or xnm found. If time is not in 't', then specify it in xnm (either as argument or in options(\"par_ts\").")}
     #
     if(!is.null(data[ ,p$xnm])){
-        if(is.na(xlim[1])) { xlim[1] <- data[1,p$xnm] }
+        if(is.na(xlim[1])) { xlim[1] <- data[1,p$xnm]-1 } # if the xlim min is na, then take all points, so -1 since time point is always end of sampling (assumed in in_range)
         if(length(xlim)==1) { xlim[2] <- data[nrow(data),p$xnm] }
         data <- data[in_range(xlim[1], data[ ,p$xnm], xlim[2]), ]
     }
     # More checking
     if(nrow(data) == 0){ stop(pst("No data in the time range. ",xlim[1]," to ",xlim[2]))}
     # Extend all individual plots vars, if not set
-    if(is.na(mains[1])){ mains <- rep(NA,length(patterns)) }
+    if(is.na(mains[1]) & length(mains)==1){ mains <- rep(NA,length(patterns)) }
     mainsline <- p$mainsline
-    if(is.na(mainsline[1])){ mainsline <- rep(NA,length(patterns)) }
-    if(is.na(ylims[1])){ ylims  <- as.list(rep(NA,length(patterns))) }
-    if(is.na(ylabs[1])){ ylabs  <- rep(NA,length(patterns)) }
-    if(is.na(legendtexts[1])){ legendtexts <- as.list(rep(NA,length(patterns))) }
+    if(is.na(mainsline[1]) & length(mainsline)==1){ mainsline <- rep(NA,length(patterns)) }
+    if(is.na(ylims[1]) & length(ylims)==1){ ylims  <- as.list(rep(NA,length(patterns))) }
+    if(is.na(ylabs[1]) & length(ylabs)==1){ ylabs  <- rep(NA,length(patterns)) }
+    if(is.na(legendtexts[1]) & length(legendtexts)==1){ legendtexts <- as.list(rep(NA,length(patterns))) }
+    if(is.na(colormaps[1]) & length(colormaps)==1){ colormaps  <- as.list(rep(NA,length(patterns))) }
     #
     if(usely){
         # with plotly
@@ -256,7 +257,7 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
         #
         L <- lapply(1:length(patterns), function(i){
             df <- plot_ts_series(data, patterns[i], iplot=i, ylim=ylims[[i]], xlab=xlab, legendtext = legendtexts[[i]],
-                           main=mains[i], mainline=mainsline[i], xat = xat, plotit=plotit, p=p, namesdata=namesdata,
+                           main=mains[i], mainline=mainsline[i], colormap=colormaps[[i]], xat = xat, plotit=plotit, p=p, namesdata=namesdata,
                            xaxis=(i==length(patterns)), ...)
             title(mainouter, outer=TRUE)
             if (!is.na(ylabs[1])){
@@ -300,7 +301,7 @@ plot_ts_iseq <- function(data, pattern, xnm, namesdata){
 # Plot all columns found with regex pattern
 #' @importFrom graphics plot lines axis title axis.POSIXct mtext par legend
 plot_ts_series <- function(data, pattern, iplot = 1,
-                           ylim = NA, xlab = "", main = "", mainline = -1.2, legendtext = NA, xat = NA, plotit = TRUE, p = NA, namesdata = NA, xaxis = TRUE, ...) {
+                           ylim = NA, xlab = "", main = "", mainline = -1.2, colormap = NA, legendtext = NA, xat = NA, plotit = TRUE, p = NA, namesdata = NA, xaxis = TRUE, ...) {
     #
     # Take par_ts setup parameters from options or defaults
     p <- par_ts(fromoptions=TRUE, p=p, ...)
@@ -333,7 +334,7 @@ plot_ts_series <- function(data, pattern, iplot = 1,
                     ylim <- c(0,1)
                 }else{
                     ylim <- range(data[, iseq], na.rm = TRUE)
-                    if(any(is.na(ylim))){
+                    if(any(is.na(ylim)) | any(is.infinite(ylim))){
                         legendtext <- pst(pattern," all NA")
                         colormap <- 1
                         ylim <- c(0,1)
@@ -342,7 +343,9 @@ plot_ts_series <- function(data, pattern, iplot = 1,
                 }
             }
             #
-            colormap <- p$colorramp(length(iseq))
+            if(is.na(colormap[1])){
+                colormap <- p$colorramp(length(iseq))
+            }
             #
             # EXTEND THE YLIM: to make room for multiple plots
             ylim <- ylim + c(-1,1) * diff(ylim) * p$ylimextend
