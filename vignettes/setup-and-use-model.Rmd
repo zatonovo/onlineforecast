@@ -148,7 +148,7 @@ model$add_regprm("rls_prm(lambda=0.9)")
 # Optimization bounds for parameters
 model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 # Set the horizons for which the model will be fitted
-model$kseq <- c(3,18)
+model$kseq <- 1:36
 ```
 
 
@@ -206,7 +206,7 @@ model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 Finally, we set the horizons for which to fit:
 ```{r}
 # Set the horizons for which the model will be fitted
-model$kseq <- c(3,18)
+model$kseq <- 1:36
 ```
 The horizons to fit for is actually not directly related to the model, but
 rather the fitting of the model. In principle, it would be more "clean" if the
@@ -220,25 +220,24 @@ We have set up the model and can now tune the `lambda` with the `rls_optim()`,
 which is a wrapper for the `optim()` function:
 ```{r, output.lines=15}
 # Call the optim() wrapper
-model$prm <- rls_optim(model, D)$par
+rls_optim(model, D, kseq = c(3,18))
 ```
 Note, how it only calculated a score for the 3 and 18 steps
-horizons - as we specified with `model$kseq` above. The parameters could be
+horizons - since we gave it `kseq` as an argument, which then overwrites
+`model$kseq` for the optimization only. The parameters could be
 optimized separately for each horizon, for example it is often such that for the
 first horizons a very low forgetting factor is optimal (e.g. 0.9). Currently,
 however, the parameters can only be optimized together. By optimizing for a
 short (3 steps) and a long horizon (18 steps), we obtain a balance - using less computations compared to optimizing on all horizons.
 
-The optimization converge and the tuned parameter becomes:
+The optimization converge and the tuned parameter was inserted:
 ```{r}
 # Optimized lambda
 model$prm
 ```
 
-Now we can fit with the optimized `lambda` on all horizons over the entire period:
+Now we can fit with the optimized `lambda` on the horizons in `model$kseq` over the entire period:
 ```{r}
-# Set to fit for all horizons
-model$kseq <- 1:36
 # Fit for all on entire period in D
 fit1 <- rls_fit(model$prm, model, D)
 ```

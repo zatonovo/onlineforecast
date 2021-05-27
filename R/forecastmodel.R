@@ -398,8 +398,10 @@ print.forecastmodel <- function(x, ...){
         cat("\nNo inputs")
     }else{
         cat(names(model$inputs)[1],"=",model$inputs[[1]]$expr,"\n")
-        for(i in 2:length(model$inputs)){
-            cat("       ",names(model$inputs)[i],"=",model$inputs[[i]]$expr,"\n")
+        if(length(model$inputs) > 1){
+            for(i in 2:length(model$inputs)){
+                cat("        ",names(model$inputs)[i],"=",model$inputs[[i]]$expr,"\n")
+            }
         }
         cat("\n")
     }
