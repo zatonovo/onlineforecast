@@ -80,7 +80,7 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete =
     if(!printit){
         return(retval)
     }
-    # Insert the optimized parameters
+    # Insert the optimized parameters (or actually $prm are just the last parameters given to insert_prm())
     m <- fit$model$clone_deep()
     m$prm[names(m$prm)] <- signif(m$prm, digits=3)
     m$insert_prm(m$prm)

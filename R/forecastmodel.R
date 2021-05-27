@@ -23,7 +23,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
     #
     # The horizons to fit for
     kseq = NA,
-    # The (transformation stage) parameters used for the fit
+    # The (transformation stage) parameters (only the ones set in last call of insert_prm())
     prm = NA,
     # Stores the maximum lag for AR terms
     maxlagAR = NA,
@@ -83,7 +83,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
 
 
     #----------------------------------------------------------------
-    # Get the transformation parameters
+    # Get the transformation parameters (set for optimization)
     get_prmbounds = function(nm){
         if(nm == "init"){
             if(is.null(dim(self$prmbounds))){
@@ -130,8 +130,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
         }
         # MUST INCLUDE SOME checks here and print useful messages if something is not right
         if(any(is.na(prm))){ stop(pst("None of the parameters (in prm) must be NA: prm=",prm)) }
-
-        # Keep the prm
+        # Keep the prm given
         self$prm <- prm
         # Find if any opt parameters, first the one with "__" hence for the inputs
         pinputs <- prm[grep("__",nams(prm))]
@@ -152,7 +151,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
                     # Find if the input i have prefix match with the opt. parameter ii
                     if(pnms[ii]==nams(self$inputs)[i]){
                         # if the opt. parameter is in the expr, then replace
-                        self$inputs[[i]]$expr <- private$replace_value(name = pprm[ii],
+                        self$inputs[[i]]$expr <- private$replace_prmvalue(name = pprm[ii],
                                                                        value = pinputs[ii],
                                                                        expr = self$inputs[[i]]$expr)
                     }
@@ -160,12 +159,12 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
             }
         }
         # ################
-        # For the fit parameters, insert from prm if any found
+        # For the regression parameters, insert from prm if any found
         if (length(preg) & any(!is.na(self$regprmexpr))) {
             nams(preg)
             for(i in 1:length(preg)){
                 # if the opt. parameter is in the expr, then replace
-                self$regprmexpr <- private$replace_value(name = nams(preg)[i],
+                self$regprmexpr <- private$replace_prmvalue(name = nams(preg)[i],
                                                          value = preg[i],
                                                          expr = self$regprmexpr)
             }
@@ -174,6 +173,32 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
     },
     #----------------------------------------------------------------
 
+
+    #----------------------------------------------------------------
+    # Return the values of the parameter names given
+    get_prmvalues = function(prmnames){
+        #
+        regprm <- eval(parse(text = self$regprmexpr))
+        # From the input parameters
+        val <- sapply(prmnames, function(nm){
+            if(length(grep("__",nm))){
+                tmp <- strsplit(nm, "__")[[1]]
+                if(tmp[1] %in% names(self$inputs)){
+                    return(as.numeric(private$get_exprprmvalue(tmp[2], self$inputs[[tmp[1]]]$expr)))
+                }else{
+                    return(NA)
+                }
+            }else{
+                if(nm %in% names(regprm)){
+                    return(as.numeric(regprm[nm]))
+                }else{
+                    return(NA)
+                }
+            }
+        })
+        return(val)
+    },
+    #----------------------------------------------------------------
 
     #----------------------------------------------------------------
     # Function for transforming the input data to the regression data
@@ -289,7 +314,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
 
     #----------------------------------------------------------------
     # Replace the value in "name=value" in expr
-    replace_value = function(name, value, expr){
+    replace_prmvalue = function(name, value, expr){
         # First make regex
         pattern <- gsub("\\.", ".*", name)
         # Try to find it in the input
@@ -298,7 +323,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
         if(pos>0){
             pos <- c(pos+attr(pos,"match.length"))
             # Find the substr to replace with the prm value
-            (tmp <- substr(expr, pos, nchar(expr)))
+            tmp <- substr(expr, pos, nchar(expr))
             pos2 <- regexpr(",|)", tmp)
             # Insert the prm value and return
             expr <- pst(substr(expr,1,pos-1), "=", value, substr(expr,pos+pos2-1,nchar(expr)))
@@ -309,6 +334,30 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
     },
     #----------------------------------------------------------------
 
+    #----------------------------------------------------------------
+    get_exprprmvalue = function(name, expr){
+        #name <- "degree"
+        #expr <- "bspline(tday, Boundary.knots = c(start=6,18), degree = 5, intercept=TRUE) %**% ones() + 2 + ones()"
+        #expr <- "one()"
+        expr <- gsub(" ", "", expr)
+        
+        # First make regex
+        pattern <- gsub("\\.", ".*", name)
+        # Try to find it in the input
+        pos <- regexpr(pattern, expr)
+        # Only replace if prm was found
+        if(pos>0){
+            pos <- c(pos+attr(pos,"match.length"))
+            # Find the substr to replace with the prm value
+            (tmp <- substr(expr, pos, nchar(expr)))
+            pos2 <- regexpr(",|)", tmp)
+            return(substr(tmp, 2, pos2-1))
+        }else{
+            return(NA)
+        }
+    },
+    #----------------------------------------------------------------
+    
     #----------------------------------------------------------------
     # For deep cloning, in order to get the inputs list of R6 objects copied
     deep_clone = function(name, value) {
@@ -344,9 +393,9 @@ print.forecastmodel <- function(x, ...){
     model <- x
     #    cat("\nObject of class forecastmodel (R6::class)\n\n")
     cat("\nOutput:",model$output)
-    cat("Inputs: ")
+    cat("\nInputs: ")
     if(length(model$inputs) == 0 ){
-        cat("No inputs\n")
+        cat("\nNo inputs")
     }else{
         cat(names(model$inputs)[1],"=",model$inputs[[1]]$expr,"\n")
         for(i in 2:length(model$inputs)){

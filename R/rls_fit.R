@@ -174,7 +174,7 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
     Yhat <- lapply_cbind_df(Lresult, function(x){
         x$yhat
     })
-    nams(Yhat) <- pst("k",model$kseq)
+    nams(Yhat) <- pst("k", model$kseq)
 
     # Maybe crop the output
     if(!is.na(model$outputrange[1])){ Yhat[Yhat < model$outputrange[1]] <- model$outputrange[1] }

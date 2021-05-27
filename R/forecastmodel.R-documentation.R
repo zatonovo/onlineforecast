@@ -135,7 +135,7 @@
 
 #----------------------------------------------------------------
 #' @section \code{$insert_prm(prm)}:
-#' Insert the transformation parameters prm in the input expressions and regression expressions, and keep them (simply string manipulation).
+#' Insert the transformation parameters prm in the input expressions and regression expressions, and keep them in $prm (simply string manipulation).
 #'
 #' @examples
 #' 
