@@ -47,7 +47,7 @@ fhs <- figwidth * owsval
 # Set the knitr options
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "##    ",
+  comment = "##!!    ",
   prompt = FALSE,
   cache = TRUE,
   cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
@@ -59,25 +59,33 @@ knitr::opts_chunk$set(
 )
 options(digits=3)
 
-hook_output <- knit_hooks$get("output")
-knit_hooks$set(output = function(x, options) {
+
+# For cropping output and messages
+cropfun <- function(x, options, func){
   lines <- options$output.lines
-  if (is.null(lines)) {
-    return(hook_output(x, options))  # pass to default hook
+  ## if (is.null(lines)) {
+  ##   return(func(x, options))  # pass to default hook
+  ## }
+  if(!is.null(lines)){
+      x <- unlist(strsplit(x, "\n"))
+      i <- grep("##!!",x)
+      if(length(i) > lines){
+          # truncate the output, but add ....
+          #x <- c(x[-i[(lines+1):length(i)]], "```", "## ...output cropped", "```")
+          x <- x[-i[(lines+1):length(i)]]
+          x[i[lines]] <- pst(x[i[lines]], "\n\n## ...output cropped")
+      }
+      # paste these lines together
+      x <- paste(c(x, ""), collapse = "\n")
   }
-  x <- unlist(strsplit(x, "\n"))
-  more <- "## ...output cropped"
-  if (length(lines)==1) {        # first n lines
-    if (length(x) > lines) {
-      # truncate the output, but add ....
-      x <- c(head(x, lines), more)
-    }
-  } else {
-    x <- c(more, x[lines], more)
-  }
-  # paste these lines together
-  x <- paste(c(x, ""), collapse = "\n")
-  hook_output(x, options)
+  x <- gsub("!!","",x)
+  func(x, options)
+}
+
+hook_chunk <- knit_hooks$get("chunk")
+
+knit_hooks$set(chunk = function(x, options) {
+    cropfun(x, options, hook_chunk)
 })
 
 ```

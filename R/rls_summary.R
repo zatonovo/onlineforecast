@@ -27,7 +27,6 @@
 #' @param object of class \code{rls_fit}, so a fit calculated by \code{\link{rls_fit}}.
 #' @param scoreperiod logical (or index). If this scoreperiod is given, then it will be used over the one in the fit.
 #' @param scorefun The score function to be applied on each horizon.
-#' @param usecomplete Use on the set of observations which is complete on all horizons.
 #' @param printit Print the result.
 #' @param ... Not used.
 #' @return A list of:
@@ -67,15 +66,18 @@
 #'
 #' @importFrom stats sd
 #' @export
-rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete = TRUE, printit = TRUE, ...){
+rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, printit = TRUE, ...){
     fit <- object
     #
+    if(is.na(scoreperiod[1])){
+        scoreperiod <- fit$data$scoreperiod
+    }
+    #
     scipen <- options(scipen=10)$scipen
-    # 
-    tmp <- score_fit(fit, scoreperiod, usecomplete, scorefun)
-    scoreval <- tmp$scoreval
-    scoreperiodused <- tmp$scoreperiod
-    retval <- list(scorefun = scorefun, scoreval = scoreval, scoreperiod = scoreperiodused)
+    # Calculate the score for each horizon
+    scoreval <- score(residuals(fit), scoreperiod, scorefun=scorefun)
+    # The result to return
+    retval <- list(scorefun = scorefun, scoreval = scoreval, scoreperiod = scoreperiod)
     # Return the result before print?
     if(!printit){
         return(retval)
@@ -91,12 +93,12 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete =
         cat("    ",names(m$regprm)[i],"=",unlist(m$regprm[i]),"\n")
     }
     #
-    cat("\nScoreperiod:",sum(scoreperiodused),"observations are included.\n")
+    cat("\nScoreperiod:",sum(scoreperiod),"observations are included.\n")
     #
     cat("\nRLS coeffients summary stats (cannot be used for significance tests):\n")
     coef <- t(sapply(1:length(fit$Lfitval[[1]]), function(i){
         val <- sapply(fit$Lfitval, function(Theta){
-            Theta[scoreperiodused,i]
+            Theta[scoreperiod,i]
         })
         #
         m <- mean(val,na.rm=TRUE)
@@ -126,7 +128,7 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, usecomplete =
     cat(pst("\n",toupper(scorename),":\n"))
     print(tmp)
     cat("\n")
-    invisible(list(scorefun = scorefun, scoreval = scoreval, scoreperiod = scoreperiodused))
+    invisible(list(scorefun = scorefun, scoreval = scoreval, scoreperiod = scoreperiod))
 }
 
 #' @importFrom stats sd

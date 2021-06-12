@@ -86,7 +86,7 @@ bspline <- function(X, Boundary.knots = NA, intercept = FALSE, df = NULL, knots 
     # First find the horizons, they are used in the end
     nms <- nams(X)
     # All columns must be like "k12"
-    #if(length(grep("^[k|h][[:digit:]]+$", nms)) != length(nms)){ stop("All column names must indicate a horizon, so start with k and then an integer") }
+    #if(length(grep("[k|h][[:digit:]]+$", nms)) != length(nms)){ stop("All column names must indicate a horizon, so start with k and then an integer") }
     # Run for each horizon and calculate the basis splines
     L <- lapply(1:ncol(X), function(i) {
       if (is.na(Boundary.knots[1])) {

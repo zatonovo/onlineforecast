@@ -395,7 +395,7 @@ print.forecastmodel <- function(x, ...){
     cat("\nOutput:",model$output)
     cat("\nInputs: ")
     if(length(model$inputs) == 0 ){
-        cat("\nNo inputs")
+        cat("\nNo inputs\n\n")
     }else{
         cat(names(model$inputs)[1],"=",model$inputs[[1]]$expr,"\n")
         if(length(model$inputs) > 1){

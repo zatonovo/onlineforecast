@@ -17,10 +17,11 @@
 #' 
 #' @title Optimize parameters for onlineforecast model fitted with RLS
 #' @param model The onlineforecast model, including inputs, output, kseq, p
-#' @param data The data.list including the variables used in the model.
+#' @param data The data.list which holds the data on which the model is fitted.
 #' @param kseq The horizons to fit for (if not set, then model$kseq is used)
 #' @param scorefun The function to be score used for calculating the score to be optimized.
 #' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written. See \url{https://onlineforecasting.org/vignettes/nice-tricks.html} for examples.
+#' @param cacheload A logical controlling whether to load the cache if it exists.
 #' @param printout A logical determining if the score function is printed out in each iteration of the optimization.
 #' @param method The method argument for \code{\link{optim}}.
 #' @param ... Additional parameters to \code{\link{optim}}
@@ -60,7 +61,7 @@
 #' 
 #' 
 #' @export
-rls_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cachererun=FALSE, printout=TRUE, method="L-BFGS-B", ...){
+rls_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cacheload=FALSE, printout=TRUE, method="L-BFGS-B", ...){
     # Take the parameters bounds from the parameter bounds set in the model
     init <- model$get_prmbounds("init")
     lower <- model$get_prmbounds("lower")
@@ -85,7 +86,7 @@ rls_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cach
         # This is maybe smarter, don't have to calculate the transformation of the data: cnm <- cache_name(m$regprm, getse(m$inputs, nms="expr"), m$output, m$prmbounds, m$kseq, data, objfun, init, lower, upper, cachedir = cachedir)
         cnm <- cache_name(rls_fit, rls_optim, m$outputrange, m$regprm, m$transform_data(data), data[[m$output]], scorefun, init, lower, upper, kseq, cachedir = cachedir)
         # Load the cached result if it exists
-        if(file.exists(cnm) & !cachererun){
+        if(file.exists(cnm) & !cacheload){
             res <- readRDS(cnm)
             # Set the optimized parameters into the model
             model$insert_prm(res$par)

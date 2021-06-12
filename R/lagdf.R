@@ -114,12 +114,12 @@ lagdf.data.frame <- function(x, lagseq) {
         if (lagseq %in% c("+k","+h")) {
             lagseq <- rep(0, length(nms))
             ## lagseq according to the k value of the columnnames
-            i <- grep("^[k|h][[:digit:]]+$", nms)
+            i <- grep("[k|h][[:digit:]]+$", nms)
             lagseq[i] <- as.integer(sapply(strsplit(nms[i], "[k|h]"), function(x){ x[length(x)] }))
         } else if (lagseq %in% c("-k","-h")) {
             lagseq <- rep(0, length(nms))
             ## lagseq according to the negative k value of the columnnames
-            i <- grep("^[k|h][[:digit:]]+$", nms)
+            i <- grep("[k|h][[:digit:]]+$", nms)
             lagseq[i] <- -as.integer(sapply(strsplit(nms[i], "[k|h]"), function(x){ x[length(x)] }))
         }
     }

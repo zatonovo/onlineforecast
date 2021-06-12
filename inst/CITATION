@@ -22,5 +22,6 @@ citEntry(
   author   = "Peder Bacher and Hjörleifur G. Bergsteinsson",
   year     = "2020",
   note     = "R package version 0.9.3",
-  url      = "https://onlineforecasting.org"
-)
+  url      = "https://onlineforecasting.org",
+  textVersion = paste("The manual.")
+  )

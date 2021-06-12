@@ -10,19 +10,18 @@
 #'
 #' 
 #' @title Lagging which returns a data.list
-#' @param x The data.list to be lagged.
+#' @param DL The data.list to be lagged.
 #' @param lagseq The integer(s) setting the lag steps.
 #' @return A data.list.
-#' @seealso \code{\link{lagdl.data.frame}} which is run when \code{x} is a data.frame.
 #' @examples
 #' # The values are simply shifted in each data.frame with lagdf
 #'
 #'@export
 
-lagdl <- function(D, lagseq){
-    iseq <- which(sapply(D,class) %in% c("data.frame","matrix"))
-    D[iseq] <- lapply(iseq, function(i){
-        lagdf(D[[i]], lagseq)
+lagdl <- function(DL, lagseq){
+    iseq <- which(sapply(DL,class) %in% c("data.frame","matrix"))
+    DL[iseq] <- lapply(iseq, function(i){
+        lagdf(DL[[i]], lagseq)
     })
-    return(D)
+    return(DL)
 }

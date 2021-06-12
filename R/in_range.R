@@ -48,15 +48,21 @@
 #' @export
 
 in_range <- function(tstart, time, tend=NA, timezone=NA) {
-    if (class(tstart)[1] == "character") 
-        tstart <- ct(tstart)
-    if (is.na(tend))
+    if (is.na(tend)){
         tend <- time[length(time)]
-    if (class(tend)[1] == "character") 
-        tend <- ct(tend)
-    if (is.na(timezone)){
-        timezone <- attr(D$t, "tzone")
     }
-
-    ct(tstart, tz = timezone) < time & time <= ct(tend, tz = timezone)
+    if(is.numeric(time)){
+        return(tstart < time & time <= tend)
+    }else{
+        if (class(tstart)[1] == "character"){
+            tstart <- ct(tstart)
+        }
+        if (class(tend)[1] == "character"){
+            tend <- ct(tend)
+        }
+        if (is.na(timezone)){
+            timezone <- attr(time, "tzone")
+        }
+        return(ct(tstart, tz = timezone) < time & time <= ct(tend, tz = timezone))
+    }
 }

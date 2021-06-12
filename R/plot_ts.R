@@ -24,6 +24,7 @@
 #' @param mains A character vector with the main for each plot.
 #' @param mainouter A character with the main at the top of the plot (can also be added afterwards with \code{title(main, outer=TRUE)}).
 #' @param legendtexts A list with the legend texts for each plot (replaces the names of the variables).
+#' @param colormaps A list of colormaps, which will be used in each plot.
 #' @param xat POSIXt specifying where the ticks on x-axis should be put.
 #' @param usely If TRUE then plotly will be used.
 #' @param plotit If FALSE then the plot will not be generated, only data returned.
@@ -91,7 +92,7 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
     # set kseq if not specified
     if( is.na(kseq[1]) ){
         tmp <- unique(unlist(lapply(DL, function(x){names(x)})))
-        tmp <- tmp[grep("^[k|h][[:digit:]]+$", tmp)]
+        tmp <- tmp[grep("[k|h][[:digit:]]+$", tmp)]
         if( length(tmp) > 0 ){ kseq <- sort(as.integer(gsub("[k|h]","",tmp))) }
     }
     # Generate a data.frame with the series to be plotted
@@ -173,7 +174,8 @@ plot_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab
 #' @importFrom graphics par title
 #' @export
 plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
-                               mains = NA, mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=FALSE, plotit = TRUE, p = NA, namesdata=NA, ...) {
+                               mains = NA, mainouter="", legendtexts = NA, colormaps = NA, xat = NA,
+                               usely=FALSE, plotit = TRUE, p = NA, namesdata=NA, ...) {
     # Take par_ts setup parameters from options if there
     p <- par_ts(fromoptions=TRUE, p=p, ...)
     #
@@ -196,7 +198,7 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
     if(is.na(ylims[1]) & length(ylims)==1){ ylims  <- as.list(rep(NA,length(patterns))) }
     if(is.na(ylabs[1]) & length(ylabs)==1){ ylabs  <- rep(NA,length(patterns)) }
     if(is.na(legendtexts[1]) & length(legendtexts)==1){ legendtexts <- as.list(rep(NA,length(patterns))) }
-    if(is.na(colormaps[1]) & length(colormaps)==1){ colormaps  <- as.list(rep(NA,length(patterns))) }
+    if(is.na(colormaps[1]) & length(colormaps)==1){ colormaps <- as.list(rep(NA,length(patterns))) }
     #
     if(usely){
         # with plotly
@@ -301,7 +303,8 @@ plot_ts_iseq <- function(data, pattern, xnm, namesdata){
 # Plot all columns found with regex pattern
 #' @importFrom graphics plot lines axis title axis.POSIXct mtext par legend
 plot_ts_series <- function(data, pattern, iplot = 1,
-                           ylim = NA, xlab = "", main = "", mainline = -1.2, colormap = NA, legendtext = NA, xat = NA, plotit = TRUE, p = NA, namesdata = NA, xaxis = TRUE, ...) {
+                           ylim = NA, xlab = "", main = "", mainline = -1.2, colormap = NA, legendtext = NA,
+                           xat = NA, plotit = TRUE, p = NA, namesdata = NA, xaxis = TRUE, ...) {
     #
     # Take par_ts setup parameters from options or defaults
     p <- par_ts(fromoptions=TRUE, p=p, ...)
@@ -476,7 +479,7 @@ plot_ts_series <- function(data, pattern, iplot = 1,
 #' @export
 plot_ts.rls_fit <- function(object, patterns = c("^y$|^Yhat$","^Residuals$","CumAbsResiduals$",pst("^",names(fit$Lfitval[[1]]),"$")),
                           xlim = NA, ylims = NA, xlab = "", ylabs = NA, mains = "", mainouter="", legendtexts = NA,
-                          xat = NA, usely=FALSE, plotit=TRUE, p=NA, kseq = NA, ...){
+                          colormaps = NA, xat = NA, usely=FALSE, plotit=TRUE, p=NA, kseq = NA, ...){
     fit <- object
     # Calculate the residuals
     Residuals <- residuals(fit)
@@ -531,7 +534,7 @@ plot_ts.rls_fit <- function(object, patterns = c("^y$|^Yhat$","^Residuals$","Cum
         #patterns[patterns == "!!RLSinputs!!"] <- pst("^",nmsinput,"$"))
         # Make a plot of the RLS coefficients for each horizon
         plot_ts(data, patterns, xlim = xlim, ylims = ylims, xlab = xlab, ylabs = ylabs,
-                mains = mains, mainouter=mainouter, legendtexts = legendtexts, xat = xat, usely=usely, p=p, kseq = kseq, ...)
+                mains = mains, mainouter=mainouter, legendtexts = legendtexts, colormaps=colormaps, xat = xat, usely=usely, p=p, kseq = kseq, ...)
     }
     # Return the data
     invisible(data)

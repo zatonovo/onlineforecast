@@ -96,7 +96,7 @@
 #' # See rmse as a function of horizon
 #' fit <- rls_fit(val$par, model, D, scorefun = rmse)
 #' plot(fit$scoreval, xlab="Horizon k", ylab="RMSE")
-#' # See ?score_fit for a little more consistent way of calculating this
+#' # See ?score for a little more consistent way of calculating this
 #'
 #'
 #' # Try adding a low-pass filter to Ta

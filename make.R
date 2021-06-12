@@ -41,7 +41,7 @@ library(roxygen2)
 # http://r-pkgs.had.co.nz/tests.html
 #
 # Initialize first time the the testing framework
-#use_testthat()
+# use_testthat()
 # Init new test
 #use_test("newtest")
 
@@ -50,17 +50,17 @@ library(roxygen2)
 #test()
 
 # # Run the examples
+#load_all(as.package("../onlineforecast"))
 #run_examples()
 
 # # Run tests in a single file
-# load_all(as.package("../onlineforecast"))
 # test_file("tests/testthat/test-rls-heat-load.R")
 
 
 # ----------------------------------------------------------------
 # Build the package
 document()
-build(".", vignettes=FALSE)
+build(".", vignettes=TRUE)
 
 # Install it
 install.packages("../onlineforecast_0.9.4.tar.gz")
@@ -80,11 +80,11 @@ library(onlineforecast)
 # Test before release
 devtools::check()
 
-devtools::check_built("../onlineforecast_0.9.3.tar.gz")
+devtools::check_built("../onlineforecast_0.9.4.tar.gz")
 
 # Does give different results than check() above
-#system("R CMD check --as-cran ../onlineforecast_0.9.3.tar.gz")
-system("R CMD check ../onlineforecast_0.9.3.tar.gz")
+#system("R CMD check --as-cran ../onlineforecast_0.9.4.tar.gz")
+system("R CMD check ../onlineforecast_0.9.4.tar.gz")
 unlink("onlineforecast.Rcheck/", recursive=TRUE)
 
 # Use for more checking:

@@ -21,10 +21,11 @@ Suggests:
     knitr,
     rmarkdown,
     R.rsp,
-    testthat (>= 2.1.0),
+    testthat (>= 3.0.0),
     data.table,
     plotly
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 URL: https://onlineforecasting.org
 BugReports: https://lab.compute.dtu.dk/packages/onlineforecast/-/issues
+Config/testthat/edition: 3
