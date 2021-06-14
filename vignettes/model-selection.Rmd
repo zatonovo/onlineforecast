@@ -1,0 +1,227 @@
+---
+title: "Model selection"
+author: "Peder Bacher"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_debth: 3
+vignette: >
+  %\VignetteIndexEntry{Model selection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r external-code, cache=FALSE, include=FALSE, purl = FALSE}
+# Have to load the knitr to use hooks
+library(knitr)
+# This vignettes name
+vignettename <- "model-selection"
+# REMEMBER: IF CHANGING IN THE shared-init (next block), then copy to the others!
+```
+
+<!--shared-init-start-->
+```{r init, cache=FALSE, include=FALSE, purl=FALSE}
+# Width will scale all
+figwidth <- 12
+# Scale the wide figures (100% out.width)
+figheight <- 4
+# Heights for stacked time series plots
+figheight1 <- 5
+figheight2 <- 6.5
+figheight3 <- 8
+figheight4 <- 9.5
+figheight5 <- 11
+
+# Set the size of squared figures (same height as full: figheight/figwidth)
+owsval <- 0.35
+ows <- paste0(owsval*100,"%")
+ows2 <- paste0(2*owsval*100,"%")
+# 
+fhs <- figwidth * owsval
+
+# Set for square fig: fig.width=fhs, fig.height=fhs, out.width=ows}
+# If two squared the:  fig.width=2*fhs, fig.height=fhs, out.width=ows2
+
+# Check this: https://bookdown.org/yihui/rmarkdown-cookbook/chunk-styling.html
+# Set the knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##!!    ",
+  prompt = FALSE,
+  cache = TRUE,
+  cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
+  fig.align="center",
+  fig.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
+  fig.height = figheight,
+  fig.width = figwidth,
+  out.width = "100%"
+)
+options(digits=3)
+
+
+# For cropping output and messages
+cropfun <- function(x, options, func){
+  lines <- options$output.lines
+  ## if (is.null(lines)) {
+  ##   return(func(x, options))  # pass to default hook
+  ## }
+  if(!is.null(lines)){
+      x <- unlist(strsplit(x, "\n"))
+      i <- grep("##!!",x)
+      if(length(i) > lines){
+          # truncate the output, but add ....
+          x <- x[-i[(lines+1):length(i)]]
+          x[i[lines]] <- pst(x[i[lines]], "\n\n## ...output cropped")
+      }
+      # paste these lines together
+      x <- paste(c(x, ""), collapse = "\n")
+  }
+  x <- gsub("!!","",x)
+  func(x, options)
+}
+
+hook_chunk <- knit_hooks$get("chunk")
+
+knit_hooks$set(chunk = function(x, options) {
+    cropfun(x, options, hook_chunk)
+})
+
+```
+
+[onlineforecasting]: https://onlineforecasting.org/articles/onlineforecasting.pdf
+[building heat load forecasting]: https://onlineforecasting.org/examples/building-heat-load-forecasting.html
+[onlineforecasting.org]: https://onlineforecasting.org
+<!--shared-init-end-->
+
+
+
+## Intro
+This vignette provides a short overview on the functionalities for model
+selection in the onlineforecast package. It follows up on the
+vignettes [setup-data](setup-data.html) and
+[setup-and-use-model](setup-and-use-model.html), and continues the building load
+forecast modelling presented there. If something is introduced in the present
+text, but not explained, then have a look in the two preceding vignettes to find an explanation.
+
+## Load forecasts
+
+First Load the package, setup the model and calculate the forecasts:
+```{r, echo=1:2, purl=1:2}
+# Load the package
+library(onlineforecast)
+#library(devtools)
+#load_all(as.package("../../onlineforecast"))
+```
+
+Just start by taking a rather short data set:
+```{r}
+# The data, just a rather short period to keep running times short
+D <- subset(Dbuilding, c("2010-12-15", "2011-02-01"))
+# Set the score period
+D$scoreperiod <- in_range("2010-12-22", D$t)
+#
+D$tday <- make_tday(D$t, 1:36)
+```
+
+As a test we generate a random sequence and will use that as an input. In the
+model selection this should not be selected in the final model:
+```{r}
+# Generate an input which is just random noise, i.e. should be removed in the selection
+set.seed(83792)
+D$noise <- make_input(rnorm(length(D$t)), 1:36)
+```
+
+Set up a model, which will serve as the full model in the selection:
+```{r}
+# The full model
+model <- forecastmodel$new()
+# Set the model output
+model$output = "heatload"
+# Inputs (transformation step)
+model$add_inputs(Ta = "Ta",
+                 noise = "noise",
+                 mu_tday = "fs(tday/24, nharmonics=4)",
+                 mu = "one()")
+# Regression step parameters
+model$add_regprm("rls_prm(lambda=0.9)")
+# Optimization bounds for parameters
+model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
+```
+Finally, set the horizons to run (just keep a vector for later use):
+```{r}
+# Select a model, just run it for a single horizon
+kseq <- 5
+```
+
+Now we can use the `step_optim()` function for the selection.  In each step new models are generated, with either one removed input or one added input, and     then all the generated models are optimized and their scores compared. If     any new model have an improved score compared to the currently selected     model, then the new is selected and the process is repeated until no new     improvement is achieved.
+
+In addition to selecting inputs, then integer parameters can also
+be stepped through, e.g. the order of basis splined or the number
+of harmonics in Fourier series. Set which parameters to change in the step:
+```{r}
+# The range to select the number of harmonics parameter in
+prm <- list(mu_tday__nharmonics = c(min=2, max=6))
+```
+
+Several stepping procedures are implemented:
+
+- If the direction is "both", which is default (same as "backwardboth") then the
+stepping is: 
+  - In first step inputs are removed one-by-one.
+  - In following steps, inputs still in the model are removed one-by-one, and inputs not in the model are added one-by-one.
+- If the direction is "backwards": 
+  - Inputs are only removed in each step.
+- If the direction is "forwardboth": 
+  - In the first step all inputs are removed.
+  - In following steps (same as "both").
+- If the direction is "forward": 
+  - In the first step all inputs are removed and from there inputs are only added.
+
+
+The default procedure is backward selection with stepping in both directions:
+```{r, message=FALSE, results="hide"}
+# Run the default selection, which is "both" and equivalent to "backwadboth"
+# Note the control argument, which is passed to optim, it's now set to few
+# iterations in the prm optimization
+Lboth <- step_optim(model, D, kseq, prm, direction="both", control=list(maxit=1))
+```
+We now have the models selected in each step in and we see that the final model
+is decreased:
+```{r}
+getse(Lboth, "model")
+```
+
+Forward selection:
+```{r, message=FALSE, results="hide"}
+Lforward <- step_optim(model, D, kseq, prm, "forward", control=list(maxit=1))
+```
+```{r}
+getse(Lforward, "model")
+```
+Same model is selected, which is also the case in backwards selection:
+```{r, message=FALSE, results="hide"}
+Lbackward <- step_optim(model, D, kseq, prm, "backward", control=list(maxit=1))
+```
+```{r}
+getse(Lbackward, "model")
+```
+
+
+Give a starting model. The selection will start from this model:
+```{r, message=FALSE, results="hide"}
+# Clone the model to make a starting model
+modelstart <- model$clone_deep()
+# Remove two inputs
+modelstart$inputs[2:3] <- NULL
+# Run the selection
+L <- step_optim(model, D, kseq, prm, modelstart=modelstart, control=control)
+```
+```{r}
+getse(L, "model")
+```
+
+Note, that caching can be really smart (the cache files are located in the
+cachedir folder (folder in current working directory, can be removed with
+`unlink(foldername))`. See e.g. `?rls_optim` for how the caching works. Give the
+arguments 'cachedir="cache", cachererun=FALSE)', which will be passed on to `rls_optim()`.

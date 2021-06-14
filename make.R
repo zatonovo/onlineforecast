@@ -31,7 +31,7 @@ library(roxygen2)
 # Misc
 #
 # Add new vignette
-#usethis::use_vignette("setup-data")
+# Don't use name of existing file, it will overwrite! usethis::use_vignette("model-selection")
 
 
 # ----------------------------------------------------------------

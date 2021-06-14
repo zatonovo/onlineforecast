@@ -9,6 +9,10 @@
 #' This function takes a model and carry out a model selection by stepping
 #' backward, forward or in both directions.
 #'
+#' Note that mclapply is used. In order to control the number of cores to use,
+#' then set it, e.g. to one core `options(mc.cores=1)`, which is needed for
+#' debugging to work.
+#' 
 #' The full model containing all inputs must be given. In each step new models
 #' are generated, with either one removed input or one added input, and then all
 #' the generated models are optimized and their scores compared. If any new
@@ -37,8 +41,9 @@
 #'  - In the first step all inputs are removed
 #'  - In following steps (same as "both")
 #'
-#' If the direction is "forward": - In the first step all inputs are removed and
-#'  from there inputs are only added
+#' If the direction is "forward":
+#' - In the first step all inputs are removed and from there inputs are only added
+#'  
 #'
 #' For stepping through integer variables in the transformation stage, then
 #' these have to be set in the "prm" argument. The stepping process will follow
@@ -96,12 +101,22 @@
 #' # 
 #' prm <- list(mu_tday__nharmonics = c(min=3, max=7))
 #' 
+#' # Note the control argument, which is passed to optim, it's now set to few
+#' # iterations in the prm optimization (must be increased in real applications)
+#' control <- list(maxit=1)
+#'
 #' # Run all selection schemes
-#' Lboth <- step_optim(model, D, kseq, prm, "forward")
-#' Lforward <- step_optim(model, D, kseq, prm, "forward")
-#' Lbackward <- step_optim(model, D, kseq, prm, "backward")
-#' Lbackwardboth <- step_optim(model, D, kseq, prm, "backwardboth")
-#' Lforwardboth <- step_optim(model, D, kseq, prm, "forwardboth")
+#' Lboth <- step_optim(model, D, kseq, prm, "forward", control=control)
+#' Lforward <- step_optim(model, D, kseq, prm, "forward", control=control)
+#' Lbackward <- step_optim(model, D, kseq, prm, "backward", control=control)
+#' Lbackwardboth <- step_optim(model, D, kseq, prm, "backwardboth", control=control)
+#' Lforwardboth <- step_optim(model, D, kseq, prm, "forwardboth", control=control)
+#'
+#' # Give a starting model
+#' modelstart <- model$clone_deep()
+#' modelstart$inputs[2:3] <- NULL
+#' Lboth <- step_optim(model, D, kseq, prm, modelstart=modelstart, control=control)
+#' 
 #' 
 #' # Note that caching can be really smart (the cache files are located in the
 #' # cachedir folder (folder in current working directory, can be removed with
@@ -113,7 +128,7 @@
 #'
 #' @export
 
-step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("both","backward","forward","backwardboth","forwardboth"), modelstart=NA, optimfun = rls_optim, scorefun = rmse, ...){
+step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("both","backward","forward","backwardboth","forwardboth"), modelstart=NA, optimfun = rls_optim, scorefun = rmse, printout = FALSE, ...){
     # Do:
     # - checking of input, model, ...
     # - change all lapply to mclapply
@@ -164,7 +179,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
             res <- list(value=Inf, par=m$get_prmbounds("init"))
         }else{
             # Optimize from the full model
-            res <- optimfun(m, data, kseq, printout=TRUE, ...)
+            res <- optimfun(m, data, kseq, printout=printout, ...)
             # Keep it
             istep <- 1
             L[[istep]] <- list(model = m$clone_deep(), result = res)
@@ -174,7 +189,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
         mfull <- modelfull
         m <- modelstart$clone()
         # Optimize from the model
-        res <- optimfun(m, data, kseq, printout=TRUE, ...)
+        res <- optimfun(m, data, kseq, printout=printout, ...)
         # Keep it
         istep <- 1
         L[[istep]] <- list(model = m$clone_deep(), result = res)
@@ -203,7 +218,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
         if(length(grep("backward|both", direction))){
             # Remove input from the current model one by one
             if(length(m$inputs) > 1){
-                tmp <- lapply(1:length(m$inputs), function(i){
+                tmp <- mclapply(1:length(m$inputs), function(i){
                     ms <- m$clone_deep()
                     # Remove one input
                     ms$inputs[[i]] <- NULL
@@ -216,7 +231,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
             # Add input one by one
             iin <- which(!names(mfull$inputs) %in% names(m$inputs))
             if(length(iin)){
-                tmp <- lapply(iin, function(i){
+                tmp <- mclapply(iin, function(i){
                     ms <- m$clone_deep()
                     # Add one input
                     ms$inputs[[length(ms$inputs) + 1]] <- mfull$inputs[[i]]
@@ -231,7 +246,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
         if(!is.na(prm[1])){
             if(length(grep("backward|both", direction))){
                 # Count down the parameters one by one
-                tmp <- lapply(1:length(prm), function(i){
+                tmp <- mclapply(1:length(prm), function(i){
                     p <- m$get_prmvalues(names(prm[i]))
                     # If the input is not in the current model, then p is NA, so don't include it for fitting
                     if(!is.na(p)){
@@ -250,7 +265,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
             }
             if(length(grep("forward|both", direction))){
                 # Count up the parameters one by one
-                tmp <- lapply(1:length(prm), function(i){
+                tmp <- mclapply(1:length(prm), function(i){
                     p <- m$get_prmvalues(names(prm[i]))
                     # If the input is not in the current model, then p is NA, so don't include it for fitting
                     if(!is.na(p)){
@@ -269,9 +284,9 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
             }
         }
         
-        # Optimize all the step models
-        resStep <- lapply(1:length(mStep), function(i, ...){
-            res <- optimfun(mStep[[i]], data, kseq, printout=FALSE, ...)
+        # Optimize all the new models
+        resStep <- mclapply(1:length(mStep), function(i, ...){
+            res <- optimfun(mStep[[i]], data, kseq, printout=printout, ...)
 #            res <- try()
 #            if(class(res) == "try-error"){ browser() }
             message(names(mStep)[[i]], ": ", res$value)

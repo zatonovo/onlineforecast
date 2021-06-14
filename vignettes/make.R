@@ -28,6 +28,10 @@ makeit("setup-and-use-model", openit=FALSE, clean=TRUE)
 unlink(paste0(dirnam,"tmp-forecast-evaluation/"), recursive=TRUE)
 makeit("forecast-evaluation", openit=FALSE)
 
+#
+unlink(paste0(dirnam,"tmp-model-selection/"), recursive=TRUE)
+makeit("model-selection", openit=FALSE)
+
 # 
 unlink(paste0(dirnam,"tmp-output/tmp-online-updating/"), recursive=TRUE)
 makeit("online-updating", openit=FALSE)
