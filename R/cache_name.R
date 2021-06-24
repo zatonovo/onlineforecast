@@ -83,13 +83,16 @@ cache_name <- function(..., cachedir = "cache"){
     # Get the name, definition and arguments of the function from which cache_name was called
     funname <- strsplit(deparse(sys.calls()[[sys.nframe()-1]]), "\\(")[[1]][1]
     # Find the function in the nearest environment in the stack (i.e. parent calls)
-    for(i in rev(sys.parents())){
-        if(funname %in% ls(parent.frame(i+1))){
-            val <- mget(funname, parent.frame(i+1))
-            break
-        }
-    }
-    fundef <- digest::digest(attr(eval(val[[funname]]), "srcref"))
+    ## for(i in rev(sys.parents())){
+    ##     browser()
+    ##     if(funname %in% ls(parent.frame(i+1))){
+    ##         val <- mget(funname, parent.frame(i+1))
+    ##         break
+    ##     }
+    ## }
+    ## fundef <- digest::digest(attr(eval(val[[funname]]), "srcref"))
+    # Somehow the above stopped working, don't know why! just take it, this should do the same I guess
+    fundef <- digest::digest(get(funname))
     # if no arguments were given, then use the arguments function from which cache_name was called
     if(length(list(...)) == 0){
         funargs <- digest::digest(as.list( match.call(definition = sys.function( -1 ), call = sys.call(-1)))[-1])

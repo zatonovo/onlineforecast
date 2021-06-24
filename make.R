@@ -60,7 +60,7 @@ library(roxygen2)
 # ----------------------------------------------------------------
 # Build the package
 document()
-build(".", vignettes=TRUE)
+build(".", vignettes=FALSE)
 
 # Install it
 install.packages("../onlineforecast_0.9.4.tar.gz")

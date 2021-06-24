@@ -15,7 +15,7 @@
 #' @param kseq The horizons to fit for (if not set, then model$kseq is used)
 #' @param scorefun The function to be score used for calculating the score to be optimized.
 #' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written. See \url{https://onlineforecasting.org/vignettes/nice-tricks.html} for examples.
-#' @param cacheload A logical controlling whether to load the cache if it exists.
+#' @param cachererun A logical controlling whether to run the optimization even if the cache exists.
 #' @param printout A logical determining if the score function is printed out in each iteration of the optimization.
 #' @param method The method argument for \code{\link{optim}}.
 #' @param ... Additional parameters to \code{\link{optim}}
@@ -57,7 +57,7 @@
 #'
 #' @importFrom stats optim
 #' @export
-lm_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cacheload=FALSE, printout=TRUE, method="L-BFGS-B", ...){
+lm_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cachererun=FALSE, printout=TRUE, method="L-BFGS-B", ...){
     ## Take the parameters bounds from the parameter bounds set in the model
     init <- model$get_prmbounds("init")
     lower <- model$get_prmbounds("lower")
@@ -81,7 +81,7 @@ lm_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cache
         cnm <- cache_name(lm_fit, lm_optim, m$outputrange, m$regprm, m$transform_data(data),
                           data[[m$output]], scorefun, init, lower, upper, cachedir = cachedir)
         # Load the cached result if it exists
-        if(file.exists(cnm) & !cacheload){
+        if(file.exists(cnm) & !cachererun){
             res <- readRDS(cnm)
             # Set the optimized parameters into the model
             model$insert_prm(res$par)
