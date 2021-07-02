@@ -49,35 +49,39 @@
 #' @export
 
 "%**%" <- function(x, y) {
-    if( is.null(dim(y)) ){
-        ## y is not matrix like
-        lapply(x, function(xx) {
-            xx * y
-        })
+    # If any of them is a list: do recursive calls 
+    if( class(x)[1] == "list" ){
+        return(flattenlist(lapply(x, "%**%", y=y)))
+    }else if(class(y)[1] == "list"){
+        return(flattenlist(lapply(y, "%**%", y=x)))
+    }
+
+    # Do the multiplication
+    # If either is just a vector
+    if(is.null(dim(x)) | is.null(dim(y))){
+        return(x * y)
     }else{
-        ## y is matrix like
-        lapply(x, function(xx) {
-            ## Check if different horizon k columns
-            colmatch <- TRUE
-            if (ncol(xx) != ncol(y)) {
-                colmatch <- FALSE
-            }else if(any(nams(xx) != nams(y))){
-                colmatch <- FALSE
-            }
-            if(!colmatch){
-                ## Not same columns, take only the k in both
-                nms <- nams(xx)[nams(xx) %in% nams(y)]
-                xx <- xx[, nms]
-                y <- y[, nms]
-            }
-            ## Now multiply
-            val <- xx * y
-            ## Must be data.frame
-            if( is.null(dim(val)) ){
-                val <- data.frame(val)
-                nams(val) <- nms
-            }
-            return(val)
-        })
+        # Both are matrices
+        # Check if they have different horizon k columns
+        colmatch <- TRUE
+        if (ncol(x) != ncol(y)) {
+            colmatch <- FALSE
+        }else if(any(nams(x) != nams(y))){
+            colmatch <- FALSE
+        }
+        if(!colmatch){
+            # Not same columns, take only the k in both
+            nms <- nams(x)[nams(x) %in% nams(y)]
+            x <- x[, nms]
+            y <- y[, nms]
+        }
+        # Now multiply
+        val <- x * y
+        # Must be data.frame
+        if( is.null(dim(val)) ){
+            val <- data.frame(val)
+            nams(val) <- nms
+        }
+        return(val)
     }
 }

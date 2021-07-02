@@ -212,11 +212,11 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
             if(class(L)[1]=="data.frame"){ return(list(L)) }
             if(class(L)[1]!="list"){ stop(pst("The value returned from evaluating: ",input$expr,", was not a matrix, data.frame or a list of them."))}
             if(class(L[[1]])[1]=="matrix"){ return(lapply(L, function(mat){ return(as.data.frame(mat)) })) }
-            return(L)
+            return(flattenlist(L))
         })
-        # Put together in one data.list
-        L <- structure(do.call(c, L), class="data.list")
-        #
+        # Make it a data.list with no subsubelements (it's maybe not a data.list, since it miss "t", however to take subsets etc., it must be a data.list)
+        L <- flattenlist(L)
+        class(L) <- "data.list"
         return(L)
     },
     #----------------------------------------------------------------
