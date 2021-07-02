@@ -44,25 +44,30 @@
 #' # since it's covering to "2010-12-25 23:00:00" to "2010-12-26 00:00:00"
 #' D$t[in_range("2010-12-26", D$t, "2010-12-27")]
 #'
+#' # When characters are given, then they are translated to the time zone of the time vector
+#' D <- subset(Dbuilding, c("2010-12-15", "2010-12-16"))
+#' D$t <- ct(D$t, tz="CET")
+#' D$t[in_range("2010-12-15 02:00", D$t, "2010-12-15 05:00")]
 #'
 #' @export
 
-in_range <- function(tstart, time, tend=NA, timezone=NA) {
+in_range <- function(tstart, time, tend=NA) {
     if (is.na(tend)){
         tend <- time[length(time)]
     }
     if(is.numeric(time)){
         return(tstart < time & time <= tend)
     }else{
+        # Use the time zone of the time when converting from character
+        tz <- attr(time, "tzone")
+        #
         if (class(tstart)[1] == "character"){
-            tstart <- ct(tstart)
+            tstart <- ct(tstart, tz=tz)
         }
         if (class(tend)[1] == "character"){
-            tend <- ct(tend)
+            tend <- ct(tend, tz=tz)
         }
-        if (is.na(timezone)){
-            timezone <- attr(time, "tzone")
-        }
-        return(ct(tstart, tz = timezone) < time & time <= ct(tend, tz = timezone))
+        #timezone <- attr(time, "tzone")
+        return(tstart < time & time <= tend)
     }
 }

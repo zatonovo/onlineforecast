@@ -120,7 +120,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
                 if(length(grep("k[[:digit:]]+$", names(X))) > 0){
                     # If it holds forecasts, check that they are all there
                     if( !all(pst("k",kseq) %in% names(X)) ){
-                        warning(pst("The variable ",nms[i]," contain ",pst(names(X),collapse=",")," hence doesn't contain all k in kseq = ",pst(kseq,collapse=",")))
+                        warning(pst("The variable ",nms[i]," contains ",pst(names(X),collapse=",")," hence doesn't contain all k in kseq = ",pst(kseq,collapse=",")))
                     }
                 }
             }
