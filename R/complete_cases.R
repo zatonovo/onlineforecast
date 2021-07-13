@@ -63,8 +63,9 @@ complete_cases.list <- function(object, kseq=NA){
         kseq <- as.integer(gsub(prefix, "", nams(object[[1]])))
     }
     # Check that they all have kseq horizons
-    ok <- rep(TRUE, nrow(object[[1]]))
-    # 
+    # Init a logical matrix with each point
+    ok <- matrix(TRUE, nrow(object[[1]]), length(kseq))
+    #
     for(i in 1:length(object)){
         if(!all(kseq %in% as.integer(gsub(prefix, "", nams(object[[i]]))))){
             stop("Not all forecast matrices have kseq horizons: ",kseq)

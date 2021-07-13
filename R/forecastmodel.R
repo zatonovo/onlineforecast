@@ -130,6 +130,14 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
         }
         # MUST INCLUDE SOME checks here and print useful messages if something is not right
         if(any(is.na(prm))){ stop(pst("None of the parameters (in prm) must be NA: prm=",prm)) }
+        # If given without names, then set in same order as in the prm_bounds
+        if(is.null(nams(prm))){
+            if(length(prm) != nrow(self$prmbounds)){
+                stop("prm was given without names and length not same as prmbounds, so don't know what to do")
+            }else{
+                nams(prm) <- row.names(self$prmbounds)
+            }
+        }
         # Keep the prm given
         self$prm <- prm
         # Find if any opt parameters, first the one with "__" hence for the inputs
@@ -400,7 +408,7 @@ print.forecastmodel <- function(x, ...){
         cat(names(model$inputs)[1],"=",model$inputs[[1]]$expr,"\n")
         if(length(model$inputs) > 1){
             for(i in 2:length(model$inputs)){
-                cat("        ",names(model$inputs)[i],"=",model$inputs[[i]]$expr,"\n")
+                cat("       ",names(model$inputs)[i],"=",model$inputs[[i]]$expr,"\n")
             }
         }
         cat("\n")

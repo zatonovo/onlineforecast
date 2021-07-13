@@ -50,6 +50,10 @@ score <- function(object, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse,
 #' @rdname score
 #' @export
 score.list <- function(object, scoreperiod = NA, usecomplete = TRUE, scorefun = rmse, ...){
+    # If only on element
+    if(length(object) == 1){
+        return(as.matrix(score(object[[1]], scoreperiod, usecomplete, scorefun, ...)))
+    }
     # Use only complete cases
     if(usecomplete){
         tmp <- complete_cases(object)
@@ -62,7 +66,7 @@ score.list <- function(object, scoreperiod = NA, usecomplete = TRUE, scorefun = 
         scoreperiod <- tmp
     }
     # Run on each element, usecomplete has been dealt with
-    sapply(object, score, usecomplete=FALSE, scoreperiod=scoreperiod, scorefun=scorefun, ...=...)
+    lapply_cbind(object, score, usecomplete=FALSE, scoreperiod=scoreperiod, scorefun=scorefun, ...=...)
 }
 
 

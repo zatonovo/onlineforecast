@@ -8,8 +8,8 @@
 #' @param X object to apply on
 #' @param FUN function to apply
 #' @export
-lapply_cbind <- function(X, FUN){
-  val <- lapply(X, FUN)
+lapply_cbind <- function(X, FUN, ...){
+  val <- lapply(X, FUN, ...)
   return(do.call("cbind", val))
 }
 
@@ -17,8 +17,8 @@ lapply_cbind <- function(X, FUN){
 #' @param X object to apply on
 #' @param FUN function to apply
 #' @export
-lapply_rbind <- function(X, FUN){
-  val <- lapply(X, FUN)
+lapply_rbind <- function(X, FUN, ...){
+  val <- lapply(X, FUN, ...)
   return(do.call("rbind", val))
 }
 
@@ -26,8 +26,8 @@ lapply_rbind <- function(X, FUN){
 #' @param X object to apply on
 #' @param FUN function to apply
 #' @export
-lapply_cbind_df <- function(X, FUN){
-  val <- lapply(X, FUN)
+lapply_cbind_df <- function(X, FUN, ...){
+  val <- lapply(X, FUN, ...)
   return(as.data.frame(do.call("cbind", val)))
 }
 
@@ -35,8 +35,8 @@ lapply_cbind_df <- function(X, FUN){
 #' @param X object to apply on
 #' @param FUN function to apply
 #' @export
-lapply_rbind_df <- function(X, FUN){
-  val <- lapply(X, FUN)
+lapply_rbind_df <- function(X, FUN, ...){
+  val <- lapply(X, FUN, ...)
   return(as.data.frame(do.call("rbind", val)))
 }
 
