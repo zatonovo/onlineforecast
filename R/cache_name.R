@@ -92,7 +92,8 @@ cache_name <- function(..., cachedir = "cache"){
     ## }
     ## fundef <- digest::digest(attr(eval(val[[funname]]), "srcref"))
     # Somehow the above stopped working, don't know why! just take it, this should do the same I guess
-    fundef <- digest::digest(get(funname))
+    fundef <- try(get(funname), silent=TRUE)
+    fundef <- digest::digest(fundef)
     # if no arguments were given, then use the arguments function from which cache_name was called
     if(length(list(...)) == 0){
         funargs <- digest::digest(as.list( match.call(definition = sys.function( -1 ), call = sys.call(-1)))[-1])

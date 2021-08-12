@@ -21,15 +21,13 @@
 #' @title Convert to data.list class
 #' @param object The object to be converted into a data.list
 #' @return a value of class data.list
-#' @seealso \code{For specific detailed info see the children, e.g. \link{as.data.list.data.frame} }
-#' @family as.data.list
+#' @seealso \code{For specific detailed info see the children, e.g. \link{onlinefocast:::as.data.list.data.frame} }
 #' 
+#' @rdname as.data.list
 #' @export
 as.data.list <- function(object){
     UseMethod("as.data.list")
 }
-
-
 
 
 #' Convert a data.frame into a data.list
@@ -41,7 +39,6 @@ as.data.list <- function(object){
 #' @param object The data.frame to be converted.
 #' @return a data.list
 #' @seealso as.data.list
-#' @family as.data.list
 #' @examples
 #' # Convert a dataframe with time and two observed variables
 #' X <- data.frame(t=1:10, x=1:10, y=1:10)
@@ -55,7 +52,9 @@ as.data.list <- function(object){
 #' X
 #' as.data.frame(as.data.list(X))
 #'
+#' @rdname as.data.list
 #' @export
+
 as.data.list.data.frame <- function(object) {
     X <- object
     #TEST

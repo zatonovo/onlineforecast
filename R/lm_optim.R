@@ -70,7 +70,10 @@ lm_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cache
     m <- model$clone_deep()
     if(!is.na(kseq[1])){
         m$kseq <- kseq
+    }else if(!is.na(m$kseqopt[1])){
+        m$kseq <- m$kseqopt
     }
+
     ## Caching the results based on some of the function arguments
     if(cachedir != ""){
         # Have to insert the parameters in the expressions to get the right state of the model for unique checksum

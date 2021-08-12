@@ -48,6 +48,8 @@
 #'
 #'     - kseq = NA: The horizons to fit for.
 #'
+#'     - kseqopt = NA: The horizons to fit for when optimizing.
+#' 
 #'     - p = NA: The (transformation stage) parameters used for the fit.
 #'
 #'     - Lfits = list(): The regression fits, one for each k in kseq (simply a list with the latest fit).

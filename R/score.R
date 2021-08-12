@@ -85,7 +85,7 @@ score.data.frame <- function(object, scoreperiod = NA, usecomplete = TRUE, score
     if( length(scoreperiod) != nrow(object) ){
         stop("scoreperiod is not same length as nrow(object): ",txt)
     }else{
-        if( all(is.na(scoreperiod)) ){ stop("scoreperiod is all NA: ",txt) }
+        if( all(is.na(scoreperiod)) ){ stop("At least one forecast horizon or scoreperiod is all NA: ",txt) }
     }
     # Calculate the objective function for each horizon
     scoreval <- sapply(1:ncol(object), function(i){

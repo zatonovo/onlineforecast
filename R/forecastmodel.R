@@ -23,6 +23,8 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
     #
     # The horizons to fit for
     kseq = NA,
+    # The horizons to optimize for
+    kseqopt = NA,
     # The (transformation stage) parameters (only the ones set in last call of insert_prm())
     prm = NA,
     # Stores the maximum lag for AR terms

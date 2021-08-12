@@ -116,8 +116,8 @@
 #' # Optimization bounds for parameters
 #' model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 #' 
-#' # Select a model, just run it for a single horizon
-#' kseq <- 5
+#' # Select a model, in the optimization just run it for a single horizon
+#' model$kseqopt <- 5
 #' # 
 #' prm <- list(mu_tday__nharmonics = c(min=3, max=7))
 #' 
@@ -126,7 +126,7 @@
 #' control <- list(maxit=1)
 #'
 #' # Run the default selection scheme, which is "both" (same as "backwardboth" if no start model is given)
-#' L <- step_optim(model, D, kseq, prm, control=control)
+#' L <- step_optim(model, D, prm, control=control)
 #'
 #' # The optim value from each step is returned
 #' getse(L, "optimresult")
@@ -136,26 +136,26 @@
 #' L$final$model
 #'
 #' # Other selection schemes
-#' Lforward <- step_optim(model, D, kseq, prm, "forward", control=control)
-#' Lbackward <- step_optim(model, D, kseq, prm, "backward", control=control)
-#' Lbackwardboth <- step_optim(model, D, kseq, prm, "backwardboth", control=control)
-#' Lforwardboth <- step_optim(model, D, kseq, prm, "forwardboth", control=control, mc.cores=1)
+#' Lforward <- step_optim(model, D, prm, "forward", control=control)
+#' Lbackward <- step_optim(model, D, prm, "backward", control=control)
+#' Lbackwardboth <- step_optim(model, D, prm, "backwardboth", control=control)
+#' Lforwardboth <- step_optim(model, D, prm, "forwardboth", control=control, mc.cores=1)
 #'
 #' # It's possible avoid removing specified inputs
-#' L <- step_optim(model, D, kseq, prm, keepinputs = c("mu","mu_tday"), control=control)
+#' L <- step_optim(model, D, prm, keepinputs = c("mu","mu_tday"), control=control)
 #' 
 #' # Give a starting model
 #' modelstart <- model$clone_deep()
 #' modelstart$inputs[2:3] <- NULL
-#' L <- step_optim(model, D, kseq, prm, modelstart=modelstart, control=control)
+#' L <- step_optim(model, D, prm, modelstart=modelstart, control=control)
 #'
 #' # If a fitting function is given, then it will be used for calculating the forecasts
 #' # ONLY on the complete cases in each step
-#' L1 <- step_optim(model, D, kseq, prm, fitfun=rls_fit, control=control)
+#' L1 <- step_optim(model, D, prm, fitfun=rls_fit, control=control)
 #'
 #' # The easiest way to conclude if missing values have an influence is to
 #' # compare the selection result running with and without
-#' L2 <- step_optim(model, D, kseq, prm, control=control)
+#' L2 <- step_optim(model, D, prm, control=control)
 #'
 #' # Compare the selected models
 #' tmp1 <- capture.output(getse(L1, "model"))
@@ -166,13 +166,13 @@
 #' # Note that caching can be really smart (the cache files are located in the
 #' # cachedir folder (folder in current working directory, can be removed with
 #' # unlink(foldername)) See e.g. `?rls_optim` for how the caching works
-#' # L <- step_optim(model, D, kseq, prm, "forward", cachedir="cache", cachererun=FALSE)
+#' # L <- step_optim(model, D, prm, "forward", cachedir="cache", cachererun=FALSE)
 #' 
 #' @importFrom parallel mclapply
 #'
 #' @export
 
-step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("both","backward","forward","backwardboth","forwardboth"), modelstart=NA, keepinputs = FALSE, optimfun = rls_optim, fitfun = NA, scorefun = rmse, printout = FALSE, mc.cores = getOption("mc.cores", 2L), ...){
+step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("both","backward","forward","backwardboth","forwardboth"), modelstart=NA, keepinputs = FALSE, optimfun = rls_optim, fitfun = NA, scorefun = rmse, printout = FALSE, mc.cores = getOption("mc.cores", 2L), ...){
     # Do:
     # - checking of input, model, ...
     # - Maybe have "cloneit" argument in optimfun, then don't clone inside optim.
@@ -246,7 +246,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
     while(!done){
         message("\n------------------------------------------------------------------------\n")
         message(pst("Step ",istep,". Current model:"))
-        print(m)
+        message(print(m))
         # If the init model is not yet optimized
         if(istep == 1 & length(L) == 0){
             # Optimize
@@ -393,7 +393,7 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
                 tmp <- cbind(tmp, apply(casesStep != casesCurrent, 2, sum))
                 nams(tmp)[2] <- "CasesDiff"
             }
-            print(tmp)
+            onlineforecast:::print_to_message(tmp)
 
             # Compare scores: Is one the step models score smaller than the current ref?
             imin <- which.min(scoreStep)
@@ -421,6 +421,10 @@ step_optim <- function(modelfull, data, kseq = NA, prm=list(NA), direction = c("
             message(print(m))
         }
     }
-    names(L) <- c(pst("step",1:(length(L)-1)),"final")
+    if(length(L) == 1){
+        names(L) <- "final"
+    }else{
+        names(L) <- c(pst("step",1:(length(L)-1)),"final")
+    }
     invisible(L)
 }
