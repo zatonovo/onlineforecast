@@ -10,6 +10,8 @@ lapply_rbind(X, FUN, ...)
 \item{X}{object to apply on}
 
 \item{FUN}{function to apply}
+
+\item{...}{passed on to lapply}
 }
 \description{
 Helper which does lapply and then rbind

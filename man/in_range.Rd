@@ -12,8 +12,6 @@ in_range(tstart, time, tend = NA)
 \item{time}{The timestamps as POSIX.}
 
 \item{tend}{The end of the period. If not given then the period will have no end.}
-
-\item{timezone}{The timezone of the timestamps, time.}
 }
 \value{
 A logical vector indicating the selected period with TRUE

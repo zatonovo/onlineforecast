@@ -21,7 +21,7 @@
 #' @title Convert to data.list class
 #' @param object The object to be converted into a data.list
 #' @return a value of class data.list
-#' @seealso \code{For specific detailed info see the children, e.g. \link{onlinefocast:::as.data.list.data.frame} }
+#' @seealso \code{For specific detailed info see the children, e.g. \link{as.data.list.data.frame} }
 #' 
 #' @rdname as.data.list
 #' @export

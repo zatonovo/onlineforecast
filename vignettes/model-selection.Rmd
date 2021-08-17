@@ -150,8 +150,8 @@ model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 ```
 Finally, set the horizons to run (just keep a vector for later use):
 ```{r}
-# Select a model, just run it for a single horizon
-kseq <- 5
+# Select a model, just run optimization and score for a single horizon
+model$kseq <- 5
 ```
 
 Now we can use the `step_optim()` function for the selection.  In each step new models are generated, with either one removed input or one added input, and     then all the generated models are optimized and their scores compared. If     any new model have an improved score compared to the currently selected     model, then the new is selected and the process is repeated until no new     improvement is achieved.
@@ -184,7 +184,7 @@ The default procedure is backward selection with stepping in both directions:
 # Run the default selection, which is "both" and equivalent to "backwadboth"
 # Note the control argument, which is passed to optim, it's now set to few
 # iterations in the prm optimization
-Lboth <- step_optim(model, D, kseq, prm, direction="both", control=list(maxit=1))
+Lboth <- step_optim(model, D, prm, direction="both", control=list(maxit=1))
 ```
 We now have the models selected in each step in and we see that the final model
 is decreased:
@@ -194,14 +194,14 @@ getse(Lboth, "model")
 
 Forward selection:
 ```{r, message=FALSE, results="hide"}
-Lforward <- step_optim(model, D, kseq, prm, "forward", control=list(maxit=1))
+Lforward <- step_optim(model, D, prm, "forward", control=list(maxit=1))
 ```
 ```{r}
 getse(Lforward, "model")
 ```
 Same model is selected, which is also the case in backwards selection:
 ```{r, message=FALSE, results="hide"}
-Lbackward <- step_optim(model, D, kseq, prm, "backward", control=list(maxit=1))
+Lbackward <- step_optim(model, D, prm, "backward", control=list(maxit=1))
 ```
 ```{r}
 getse(Lbackward, "model")
@@ -215,7 +215,7 @@ modelstart <- model$clone_deep()
 # Remove two inputs
 modelstart$inputs[2:3] <- NULL
 # Run the selection
-L <- step_optim(model, D, kseq, prm, modelstart=modelstart, control=control)
+L <- step_optim(model, D, prm, modelstart=modelstart, control=list(maxit=1))
 ```
 ```{r}
 getse(L, "model")

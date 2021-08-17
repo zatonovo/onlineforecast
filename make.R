@@ -50,8 +50,8 @@ library(roxygen2)
 #test()
 
 # # Run the examples
-#load_all(as.package("../onlineforecast"))
-#run_examples()
+load_all(as.package("../onlineforecast"))
+run_examples()
 
 # # Run tests in a single file
 # test_file("tests/testthat/test-rls-heat-load.R")
@@ -60,10 +60,10 @@ library(roxygen2)
 # ----------------------------------------------------------------
 # Build the package
 document()
-build(".", vignettes=FALSE)
+build(".", vignettes=TRUE)
 
 # Install it
-install.packages("../onlineforecast_0.9.4.tar.gz")
+install.packages("../onlineforecast_0.10.0.tar.gz")
 
 library(onlineforecast)
 # ----------------------------------------------------------------
@@ -80,11 +80,11 @@ library(onlineforecast)
 # Test before release
 devtools::check()
 
-devtools::check_built("../onlineforecast_0.9.4.tar.gz")
+devtools::check_built("../onlineforecast_0.10.0.tar.gz")
 
 # Does give different results than check() above
 #system("R CMD check --as-cran ../onlineforecast_0.9.4.tar.gz")
-system("R CMD check ../onlineforecast_0.9.4.tar.gz")
+system("R CMD check ../onlineforecast_0.10.0.tar.gz")
 unlink("onlineforecast.Rcheck/", recursive=TRUE)
 
 # Use for more checking:

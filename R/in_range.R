@@ -19,7 +19,6 @@
 #' @param tstart The start of the period.
 #' @param time The timestamps as POSIX.
 #' @param tend The end of the period. If not given then the period will have no end. 
-#' @param timezone The timezone of the timestamps, time.
 #' @return A logical vector indicating the selected period with TRUE
 #' @name in_range
 #' @examples

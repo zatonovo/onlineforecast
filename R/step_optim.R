@@ -55,11 +55,13 @@
 #' the score will be calculated using only the complete cases across horizons
 #' and models in each step, see the last examples.
 #'
+#' Note, that either kseq or kseqopt must be set on the modelfull object. If kseqopt
+#' is set, then it is used no matter the value of kseq.
+#'
 #' @title Forward and backward model selection
 #' @param modelfull The full forecastmodel containing all inputs which will be
 #'     can be included in the selection.
 #' @param data The data.list which holds the data on which the model is fitted.
-#' @param kseq The horizons to fit for (if not set, then model$kseq is used)
 #' @param prm A list of integer parameters to be stepped. Given using the same
 #'     syntax as parameters for optimization, e.g. `list(I__degree = c(min=3,
 #'     max=7))` will step the "degree" for input "I".
@@ -78,6 +80,7 @@
 #'     in rls_optim()). Furthermore, information on complete cases are printed
 #'     and returned.
 #' @param scorefun The score function used.
+#' @param printout Logical. Passed on to fitting functions.
 #' @param mc.cores The mc.cores argument of mclapply. If debugging it can be
 #'     nessecary to set it to 1 to stop execution.
 #' @param ... Additional arguments which will be passed on to optimfun. For
@@ -117,7 +120,8 @@
 #' model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 #' 
 #' # Select a model, in the optimization just run it for a single horizon
-#' model$kseqopt <- 5
+#' # Note that kseqopt could also be set
+#' model$kseq <- 5
 #' # 
 #' prm <- list(mu_tday__nharmonics = c(min=3, max=7))
 #' 
@@ -125,7 +129,8 @@
 #' # Iterations in the prm optimization (MUST be increased in real applications)
 #' control <- list(maxit=1)
 #'
-#' # Run the default selection scheme, which is "both" (same as "backwardboth" if no start model is given)
+#' # Run the default selection scheme, which is "both"
+#' # (same as "backwardboth" if no start model is given)
 #' L <- step_optim(model, D, prm, control=control)
 #'
 #' # The optim value from each step is returned
@@ -142,7 +147,7 @@
 #' Lforwardboth <- step_optim(model, D, prm, "forwardboth", control=control, mc.cores=1)
 #'
 #' # It's possible avoid removing specified inputs
-#' L <- step_optim(model, D, prm, keepinputs = c("mu","mu_tday"), control=control)
+#' L <- step_optim(model, D, prm, keepinputs=c("mu","mu_tday"), control=control)
 #' 
 #' # Give a starting model
 #' modelstart <- model$clone_deep()
@@ -172,7 +177,7 @@
 #'
 #' @export
 
-step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("both","backward","forward","backwardboth","forwardboth"), modelstart=NA, keepinputs = FALSE, optimfun = rls_optim, fitfun = NA, scorefun = rmse, printout = FALSE, mc.cores = getOption("mc.cores", 2L), ...){
+step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","backward","forward","backwardboth","forwardboth"), modelstart=NA, keepinputs = FALSE, optimfun = rls_optim, fitfun = NA, scorefun = rmse, printout = FALSE, mc.cores = getOption("mc.cores", 2L), ...){
     # Do:
     # - checking of input, model, ...
     # - Maybe have "cloneit" argument in optimfun, then don't clone inside optim.
@@ -191,7 +196,7 @@ step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("
     istep <- 1
     # Different start up, if a start model is given
     if( class(modelstart)[1] == "forecastmodel" ){
-        # The full model will not be changed from here, so don't need to clone it
+        # The full model will not be changed from here, so no need to clone it
         mfull <- modelfull
         m <- modelstart$clone()
     }else{
@@ -227,6 +232,10 @@ step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("
             scoreCurrent <- Inf
         }
     }
+    # If kseqopt is set, then make sure that it is used in all runs (also when only running fitfun)
+    if(!is.na(m$kseqopt)){
+        m$kseq <- m$kseqopt
+    }
     # Find the inputs to keep, if any
     if(class(keepinputs) == "logical"){
         if(keepinputs){
@@ -250,14 +259,13 @@ step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("
         # If the init model is not yet optimized
         if(istep == 1 & length(L) == 0){
             # Optimize
-            res <- optimfun(m, data, kseq, printout=printout, scorefun=scorefun, ...)
+            res <- optimfun(m, data, printout=printout, scorefun=scorefun, ...)
             # Should we forecast only on the complete cases?
             if(class(fitfun) == "function"){
                 # Forecast to get the complete cases
                 mtmp <- m$clone_deep()
-                mtmp$kseq <- kseq
                 Yhat <- fitfun(res$par, mtmp, data, printout=printout)$Yhat
-                scoreCurrent <- sum(score(residuals(Yhat,data[[model$output]]),data$scoreperiod))
+                scoreCurrent <- sum(score(residuals(Yhat,data[[m$output]]),data$scoreperiod))
                 casesCurrent <- complete_cases(Yhat)
             }else{
                 scoreCurrent <- res$value
@@ -360,7 +368,7 @@ step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("
 
             # Run the optimization
             Lstep <- mclapply(1:length(mStep), function(i, ...){
-                optimfun(mStep[[i]], data, kseq, printout=printout, ...)
+                optimfun(mStep[[i]], data, printout=printout, scorefun=scorefun, ...)
             }, mc.cores=mc.cores, ...)
             names(Lstep) <- names(mStep)
 
@@ -368,11 +376,10 @@ step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("
             if(class(fitfun) == "function"){
                 LYhat <- mclapply(1:length(mStep), function(i){
                     mtmp <- mStep[[i]]$clone_deep()
-                    mtmp$kseq <- kseq
                     fitfun(Lstep[[i]]$par, mtmp, data, printout=printout)$Yhat
                 }, mc.cores=mc.cores)
                 # Use complete cases across models and horizons per default
-                scoreStep <- apply(score(residuals(LYhat,data[[model$output]]), data$scoreperiod), 2, sum)
+                scoreStep <- apply(score(residuals(LYhat,data[[m$output]]), data$scoreperiod), 2, sum)
                 casesStep <- sapply(LYhat, complete_cases)
             }else{
                 # Use the scores from optimfun
@@ -393,7 +400,7 @@ step_optim <- function(modelfull, data, prm=list(NA), kseq = NA, direction = c("
                 tmp <- cbind(tmp, apply(casesStep != casesCurrent, 2, sum))
                 nams(tmp)[2] <- "CasesDiff"
             }
-            onlineforecast:::print_to_message(tmp)
+            print_to_message(tmp)
 
             # Compare scores: Is one the step models score smaller than the current ref?
             imin <- which.min(scoreStep)

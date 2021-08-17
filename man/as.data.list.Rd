@@ -51,7 +51,7 @@ as.data.frame(as.data.list(X))
 
 }
 \seealso{
-\code{For specific detailed info see the children, e.g. \link{onlinefocast:::as.data.list.data.frame} }
+\code{For specific detailed info see the children, e.g. \link{as.data.list.data.frame} }
 
 as.data.list
 }

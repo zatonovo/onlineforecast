@@ -22,9 +22,9 @@
 #' lagdf(1:10, 3)
 #' # Back in time
 #' lagdf(1:10, -3)
-#' # Works but returns a numric
+#' # Works but returns a numeric column
 #' lagdf(as.factor(1:10), 3)
-#' # Works and returns a character
+#' # Works and returns a character column
 #' lagdf(as.character(1:10), 3)
 #' # Giving several lag values
 #' lagdf(1:10, c(1:3))

@@ -8,7 +8,6 @@ step_optim(
   modelfull,
   data,
   prm = list(NA),
-  kseq = NA,
   direction = c("both", "backward", "forward", "backwardboth", "forwardboth"),
   modelstart = NA,
   keepinputs = FALSE,
@@ -30,8 +29,6 @@ can be included in the selection.}
 syntax as parameters for optimization, e.g. `list(I__degree = c(min=3,
 max=7))` will step the "degree" for input "I".}
 
-\item{kseq}{The horizons to fit for (if not set, then model$kseq is used)}
-
 \item{direction}{The direction to be used in the selection process.}
 
 \item{modelstart}{A forecastmodel. If it's set then it will be used as the
@@ -52,6 +49,8 @@ in rls_optim()). Furthermore, information on complete cases are printed
 and returned.}
 
 \item{scorefun}{The score function used.}
+
+\item{printout}{Logical. Passed on to fitting functions.}
 
 \item{mc.cores}{The mc.cores argument of mclapply. If debugging it can be
 nessecary to set it to 1 to stop execution.}
@@ -118,6 +117,9 @@ models, it can be very important to make sure that only complete cases are
 included when calculating the score. By providing the `fitfun` argument then
 the score will be calculated using only the complete cases across horizons
 and models in each step, see the last examples.
+
+Note, that either kseq or kseqopt must be set on the modelfull object. If kseqopt
+is set, then it is used no matter the value of kseq.
 }
 \examples{
 
@@ -147,7 +149,8 @@ model$add_regprm("rls_prm(lambda=0.9)")
 model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 
 # Select a model, in the optimization just run it for a single horizon
-model$kseqopt <- 5
+# Note that kseqopt could also be set
+model$kseq <- 5
 # 
 prm <- list(mu_tday__nharmonics = c(min=3, max=7))
 
@@ -155,7 +158,8 @@ prm <- list(mu_tday__nharmonics = c(min=3, max=7))
 # Iterations in the prm optimization (MUST be increased in real applications)
 control <- list(maxit=1)
 
-# Run the default selection scheme, which is "both" (same as "backwardboth" if no start model is given)
+# Run the default selection scheme, which is "both"
+# (same as "backwardboth" if no start model is given)
 L <- step_optim(model, D, prm, control=control)
 
 # The optim value from each step is returned
@@ -172,7 +176,7 @@ Lbackwardboth <- step_optim(model, D, prm, "backwardboth", control=control)
 Lforwardboth <- step_optim(model, D, prm, "forwardboth", control=control, mc.cores=1)
 
 # It's possible avoid removing specified inputs
-L <- step_optim(model, D, prm, keepinputs = c("mu","mu_tday"), control=control)
+L <- step_optim(model, D, prm, keepinputs=c("mu","mu_tday"), control=control)
 
 # Give a starting model
 modelstart <- model$clone_deep()
