@@ -82,7 +82,7 @@
 #' @param scorefun The score function used.
 #' @param printout Logical. Passed on to fitting functions.
 #' @param mc.cores The mc.cores argument of mclapply. If debugging it can be
-#'     nessecary to set it to 1 to stop execution.
+#'     necessary to set it to 1 to stop execution.
 #' @param ... Additional arguments which will be passed on to optimfun. For
 #'     example control how many steps
 #'
@@ -129,9 +129,12 @@
 #' # Iterations in the prm optimization (MUST be increased in real applications)
 #' control <- list(maxit=1)
 #'
+#' # On Windows multi cores are not supported, so for the examples use only one
+#' mc.cores <- 1
+#' 
 #' # Run the default selection scheme, which is "both"
 #' # (same as "backwardboth" if no start model is given)
-#' L <- step_optim(model, D, prm, control=control)
+#' L <- step_optim(model, D, prm, control=control, mc.cores=mc.cores)
 #'
 #' # The optim value from each step is returned
 #' getse(L, "optimresult")
@@ -141,26 +144,26 @@
 #' L$final$model
 #'
 #' # Other selection schemes
-#' Lforward <- step_optim(model, D, prm, "forward", control=control)
-#' Lbackward <- step_optim(model, D, prm, "backward", control=control)
-#' Lbackwardboth <- step_optim(model, D, prm, "backwardboth", control=control)
-#' Lforwardboth <- step_optim(model, D, prm, "forwardboth", control=control, mc.cores=1)
+#' Lforward <- step_optim(model, D, prm, "forward", control=control, mc.cores=mc.cores)
+#' Lbackward <- step_optim(model, D, prm, "backward", control=control, mc.cores=mc.cores)
+#' Lbackwardboth <- step_optim(model, D, prm, "backwardboth", control=control, mc.cores=mc.cores)
+#' Lforwardboth <- step_optim(model, D, prm, "forwardboth", control=control, mc.cores=mc.cores)
 #'
 #' # It's possible avoid removing specified inputs
-#' L <- step_optim(model, D, prm, keepinputs=c("mu","mu_tday"), control=control)
+#' L <- step_optim(model, D, prm, keepinputs=c("mu","mu_tday"), control=control, mc.cores=mc.cores)
 #' 
 #' # Give a starting model
 #' modelstart <- model$clone_deep()
 #' modelstart$inputs[2:3] <- NULL
-#' L <- step_optim(model, D, prm, modelstart=modelstart, control=control)
+#' L <- step_optim(model, D, prm, modelstart=modelstart, control=control, mc.cores=mc.cores)
 #'
 #' # If a fitting function is given, then it will be used for calculating the forecasts
 #' # ONLY on the complete cases in each step
-#' L1 <- step_optim(model, D, prm, fitfun=rls_fit, control=control)
+#' L1 <- step_optim(model, D, prm, fitfun=rls_fit, control=control, mc.cores=mc.cores)
 #'
 #' # The easiest way to conclude if missing values have an influence is to
 #' # compare the selection result running with and without
-#' L2 <- step_optim(model, D, prm, control=control)
+#' L2 <- step_optim(model, D, prm, control=control, mc.cores=mc.cores)
 #'
 #' # Compare the selected models
 #' tmp1 <- capture.output(getse(L1, "model"))
@@ -171,7 +174,7 @@
 #' # Note that caching can be really smart (the cache files are located in the
 #' # cachedir folder (folder in current working directory, can be removed with
 #' # unlink(foldername)) See e.g. `?rls_optim` for how the caching works
-#' # L <- step_optim(model, D, prm, "forward", cachedir="cache", cachererun=FALSE)
+#' # L <- step_optim(model, D, prm, "forward", cachedir="cache", cachererun=FALSE, mc.cores=mc.cores)
 #' 
 #' @importFrom parallel mclapply
 #'
@@ -232,10 +235,6 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
             scoreCurrent <- Inf
         }
     }
-    # If kseqopt is set, then make sure that it is used in all runs (also when only running fitfun)
-    if(!is.na(m$kseqopt)){
-        m$kseq <- m$kseqopt
-    }
     # Find the inputs to keep, if any
     if(class(keepinputs) == "logical"){
         if(keepinputs){
@@ -264,6 +263,10 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
             if(class(fitfun) == "function"){
                 # Forecast to get the complete cases
                 mtmp <- m$clone_deep()
+                # If kseqopt is set, then make sure that it is used when fitting here
+                if(!is.na(m$kseqopt)){
+                    mtmp$kseq <- m$kseqopt
+                }
                 Yhat <- fitfun(res$par, mtmp, data, printout=printout)$Yhat
                 scoreCurrent <- sum(score(residuals(Yhat,data[[m$output]]),data$scoreperiod))
                 casesCurrent <- complete_cases(Yhat)
@@ -376,6 +379,10 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
             if(class(fitfun) == "function"){
                 LYhat <- mclapply(1:length(mStep), function(i){
                     mtmp <- mStep[[i]]$clone_deep()
+                    # If kseqopt is set, then make sure that it is used when fitting here
+                    if(!is.na(m$kseqopt)){
+                        mtmp$kseq <- m$kseqopt
+                    }
                     fitfun(Lstep[[i]]$par, mtmp, data, printout=printout)$Yhat
                 }, mc.cores=mc.cores)
                 # Use complete cases across models and horizons per default

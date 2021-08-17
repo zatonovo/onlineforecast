@@ -50,8 +50,8 @@ library(roxygen2)
 #test()
 
 # # Run the examples
-load_all(as.package("../onlineforecast"))
-run_examples()
+#load_all(as.package("../onlineforecast"))
+#run_examples()
 
 # # Run tests in a single file
 # test_file("tests/testthat/test-rls-heat-load.R")
