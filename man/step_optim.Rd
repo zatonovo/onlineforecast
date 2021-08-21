@@ -151,19 +151,20 @@ model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 # Select a model, in the optimization just run it for a single horizon
 # Note that kseqopt could also be set
 model$kseq <- 5
-# 
+
+# Set the parameters to step on, note the 
 prm <- list(mu_tday__nharmonics = c(min=3, max=7))
 
 # Note the control argument, which is passed to optim, it's now set to few
-# Iterations in the prm optimization (MUST be increased in real applications)
+# iterations in the offline parameter optimization (MUST be increased in real applications)
 control <- list(maxit=1)
 
-# On Windows multi cores are not supported, so for the examples use only one
+# On Windows multi cores are not supported, so for the examples use only one core
 mc.cores <- 1
 
 # Run the default selection scheme, which is "both"
 # (same as "backwardboth" if no start model is given)
-L <- step_optim(model, D, prm, control=control, mc.cores=mc.cores)
+\donttest{L <- step_optim(model, D, prm, control=control, mc.cores=mc.cores)
 
 # The optim value from each step is returned
 getse(L, "optimresult")
@@ -186,8 +187,10 @@ modelstart <- model$clone_deep()
 modelstart$inputs[2:3] <- NULL
 L <- step_optim(model, D, prm, modelstart=modelstart, control=control, mc.cores=mc.cores)
 
-# If a fitting function is given, then it will be used for calculating the forecasts
-# ONLY on the complete cases in each step
+# If a fitting function is given, then it will be used for calculating the forecasts.
+# Below it's the rls_fit function, so the same as used internally in rls_fit, so only 
+# difference is that now ONLY on the complete cases for all models in each step are used
+# when calculating the score in each step
 L1 <- step_optim(model, D, prm, fitfun=rls_fit, control=control, mc.cores=mc.cores)
 
 # The easiest way to conclude if missing values have an influence is to
@@ -197,7 +200,7 @@ L2 <- step_optim(model, D, prm, control=control, mc.cores=mc.cores)
 # Compare the selected models
 tmp1 <- capture.output(getse(L1, "model"))
 tmp2 <- capture.output(getse(L2, "model"))
-identical(tmp1, tmp2)
+identical(tmp1, tmp2)}
 
 
 # Note that caching can be really smart (the cache files are located in the
