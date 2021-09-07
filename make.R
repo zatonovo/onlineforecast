@@ -62,8 +62,18 @@ library(roxygen2)
 document()
 build(".", vignettes=TRUE)
 
+# The version (change only in DESCRIPTION)
+txt <- scan("DESCRIPTION", character())
+ver <- txt[which(txt == "Version:") + 1]
+
+# Update CITATION (change the year manually)
+txt2 <- scan("inst/CITATION", character(), sep="#", quote="")
+txt2[grep("R package version",txt2)] <- paste0('  note     = "R package version ',ver,'",')
+write.table(txt2, "inst/CITATION", row.names=FALSE, col.names=FALSE, quote=FALSE)
+
 # Install it
-install.packages("../onlineforecast_0.10.0.tar.gz")
+gzfile <- paste0("../onlineforecast_",ver,".tar.gz")
+install.packages(gzfile)
 
 library(onlineforecast)
 # ----------------------------------------------------------------
@@ -71,7 +81,7 @@ library(onlineforecast)
 
 # ----------------------------------------------------------------
 # Build binary package
-#system("R CMD INSTALL --build ../onlineforecast_0.9.3.tar.gz")
+#system(paste0("R CMD INSTALL --build ",gzfile))
 # ----------------------------------------------------------------
 
 
@@ -80,11 +90,11 @@ library(onlineforecast)
 # Test before release
 devtools::check()
 
-devtools::check_built("../onlineforecast_0.10.0.tar.gz")
+devtools::check_built(gzfile)
 
 # Does give different results than check() above
-#system("R CMD check --as-cran ../onlineforecast_0.9.4.tar.gz")
-system("R CMD check ../onlineforecast_0.10.0.tar.gz")
+#system(paste0("R CMD check --as-cran ",gzfile))
+system(paste0("R CMD check ",gzfile))
 unlink("onlineforecast.Rcheck/", recursive=TRUE)
 
 # Use for more checking:

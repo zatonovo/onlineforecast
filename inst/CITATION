@@ -1,5 +1,4 @@
 citHeader("To cite onlineforecast in publications use:")
-
 citEntry(
   entry    = "Article",
   title    = "Short-term heat load forecasting for single family houses",
@@ -14,4 +13,12 @@ citEntry(
   textVersion = paste(
       "We are in process of writing a journal paper about the package, but for now we referer to the paper 'Short-term heat load forecasting for single family houses', in which the implemented modelling is described."
   )
+)
+citEntry(
+  entry    = "Manual",
+  title    = "{{onlineforecast}: Forecast Modelling for Online Applications}",
+  author   = "Peder Bacher and Hjörleifur G. Bergsteinsson",
+  year     = "2021",
+  note     = "R package version 0.10.1",
+  url      = "https://onlineforecasting.org"
 )
