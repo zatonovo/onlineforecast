@@ -292,7 +292,9 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
                         stop("The input variable '",nm,"' doesn't have the same number of observations as time vector 't' in the data. It has ",length(data[[nm]]),", but 't' has ",length(data$t))
                     }
                 }else{
-                    stop("The variable '",nm,"' is missing in data, or it has the wrong class.\nIt must be class: data.frame, matrix or vector.\nIt is needed for the input expression '",self$inputs[[i]]$expr[[1]],"'")
+                    if(!nm == "pi"){
+                        stop("The variable '",nm,"' is missing in data, or it has the wrong class.\nIt must be class: data.frame, matrix or vector.\nIt is needed for the input expression '",self$inputs[[i]]$expr[[1]],"'")
+                    }
                 }
             }
         }
