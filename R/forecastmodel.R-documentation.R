@@ -48,6 +48,8 @@
 #'
 #'     - kseq = NA: The horizons to fit for.
 #'
+#'     - kseqopt = NA: The horizons to fit for when optimizing.
+#' 
 #'     - p = NA: The (transformation stage) parameters used for the fit.
 #'
 #'     - Lfits = list(): The regression fits, one for each k in kseq (simply a list with the latest fit).
@@ -135,7 +137,7 @@
 
 #----------------------------------------------------------------
 #' @section \code{$insert_prm(prm)}:
-#' Insert the transformation parameters prm in the input expressions and regression expressions, and keep them (simply string manipulation).
+#' Insert the transformation parameters prm in the input expressions and regression expressions, and keep them in $prm (simply string manipulation).
 #'
 #' @examples
 #' 

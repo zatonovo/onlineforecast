@@ -13,13 +13,15 @@
 #' \code{cachedir} argument (relative to the current working directory).
 #' E.g. \code{rls_optim(model, D, cachedir="cache")} will write a file in the folder 'cache', such that
 #' next time the same call is carried out, then the file is read instead of running the optimization again.
-#' See the example in url{https://onlineforecasting.org/vignettes/nice-tricks.html}.
+#' See the example in \url{https://onlineforecasting.org/vignettes/nice-tricks.html}.
 #' 
 #' @title Optimize parameters for onlineforecast model fitted with RLS
 #' @param model The onlineforecast model, including inputs, output, kseq, p
-#' @param data The data.list including the variables used in the model.
+#' @param data The data.list which holds the data on which the model is fitted.
+#' @param kseq The horizons to fit for (if not set, then model$kseq is used)
 #' @param scorefun The function to be score used for calculating the score to be optimized.
 #' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written. See \url{https://onlineforecasting.org/vignettes/nice-tricks.html} for examples.
+#' @param cachererun A logical controlling whether to run the optimization even if the cache exists. 
 #' @param printout A logical determining if the score function is printed out in each iteration of the optimization.
 #' @param method The method argument for \code{\link{optim}}.
 #' @param ... Additional parameters to \code{\link{optim}}
@@ -59,7 +61,7 @@
 #' 
 #' 
 #' @export
-rls_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, method="L-BFGS-B", ...){
+rls_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cachererun=FALSE, printout=TRUE, method="L-BFGS-B", ...){
     # Take the parameters bounds from the parameter bounds set in the model
     init <- model$get_prmbounds("init")
     lower <- model$get_prmbounds("lower")
@@ -68,24 +70,38 @@ rls_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, 
     if(any(is.na(lower))){ lower[is.na(lower)] <- -Inf}
     if(any(is.na(upper))){ lower[is.na(upper)] <- Inf}
 
+    # Clone the model no matter what (at least model$kseq should not be changed no matter if optimization is stopped)
+    m <- model$clone_deep()
+    if(!is.na(kseq[1])){
+        m$kseq <- kseq
+    }else if(!is.na(m$kseqopt[1])){
+        m$kseq <- m$kseqopt
+    }
+        
+
     # Caching the results based on some of the function arguments
     if(cachedir != ""){
         # Have to insert the parameters in the expressions to get the right state of the model for unique checksum
-        model$insert_prm(init)
-        # Give all the elements needed to calculate the unique cache name
-        # This is maybe smarter, don't have to calculate the transformation of the data: cnm <- cache_name(model$regprm, getse(model$inputs, nms="expr"), model$output, model$prmbounds, model$kseq, data, objfun, init, lower, upper, cachedir = cachedir)
+        m$insert_prm(init)
         # Have to reset the state first to remove dependency of previous calls
-        model$reset_state()
-        cnm <- cache_name(rls_fit, rls_optim, model$outputrange, model$regprm, model$transform_data(data), data[[model$output]], scorefun, init, lower, upper, cachedir = cachedir)
-        # Maybe load the cached result
-        if(file.exists(cnm)){ return(readRDS(cnm)) }
+        m$reset_state()
+        # Give all the elements needed to calculate the unique cache name
+        # This is maybe smarter, don't have to calculate the transformation of the data: cnm <- cache_name(m$regprm, getse(m$inputs, nms="expr"), m$output, m$prmbounds, m$kseq, data, objfun, init, lower, upper, cachedir = cachedir)
+        cnm <- cache_name(rls_fit, rls_optim, m$outputrange, m$regprm, m$transform_data(data), data[[m$output]], scorefun, init, lower, upper, kseq, cachedir = cachedir)
+        # Load the cached result if it exists
+        if(file.exists(cnm) & !cachererun){
+            res <- readRDS(cnm)
+            # Set the optimized parameters into the model
+            model$insert_prm(res$par)
+            return(res)
+        }
     }
 
     # Run the optimization
     res <- optim(par = init,
                  fn = rls_fit,
                  # Parameters to pass to rls_fit
-                 model = model,
+                 model = m,
                  data = data,
                  scorefun = scorefun,
                  printout = printout,
@@ -94,10 +110,10 @@ rls_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, 
                  lower = lower,
                  upper = upper,
                  method =  method,
-                 ...)
-    
+                 ...)        
     # Save the result in the cachedir
-    if(cachedir != ""){ cache_save(res, cnm) }
-    # Return the result
+    if(cachedir != ""){ cache_save(res, cnm)}
+    # Set the optimized parameters into the model
+    model$insert_prm(res$par)
     return(res)
 }

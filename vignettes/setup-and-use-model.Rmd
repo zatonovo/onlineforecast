@@ -46,7 +46,7 @@ fhs <- figwidth * owsval
 # Set the knitr options
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "##    ",
+  comment = "##!!    ",
   prompt = FALSE,
   cache = TRUE,
   cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
@@ -58,25 +58,33 @@ knitr::opts_chunk$set(
 )
 options(digits=3)
 
-hook_output <- knit_hooks$get("output")
-knit_hooks$set(output = function(x, options) {
+
+# For cropping output and messages
+cropfun <- function(x, options, func){
   lines <- options$output.lines
-  if (is.null(lines)) {
-    return(hook_output(x, options))  # pass to default hook
+  ## if (is.null(lines)) {
+  ##   return(func(x, options))  # pass to default hook
+  ## }
+  if(!is.null(lines)){
+      x <- unlist(strsplit(x, "\n"))
+      i <- grep("##!!",x)
+      if(length(i) > lines){
+          # truncate the output, but add ....
+          #x <- c(x[-i[(lines+1):length(i)]], "```", "## ...output cropped", "```")
+          x <- x[-i[(lines+1):length(i)]]
+          x[i[lines]] <- pst(x[i[lines]], "\n\n## ...output cropped")
+      }
+      # paste these lines together
+      x <- paste(c(x, ""), collapse = "\n")
   }
-  x <- unlist(strsplit(x, "\n"))
-  more <- "## ...output cropped"
-  if (length(lines)==1) {        # first n lines
-    if (length(x) > lines) {
-      # truncate the output, but add ....
-      x <- c(head(x, lines), more)
-    }
-  } else {
-    x <- c(more, x[lines], more)
-  }
-  # paste these lines together
-  x <- paste(c(x, ""), collapse = "\n")
-  hook_output(x, options)
+  x <- gsub("!!","",x)
+  func(x, options)
+}
+
+hook_chunk <- knit_hooks$get("chunk")
+
+knit_hooks$set(chunk = function(x, options) {
+    cropfun(x, options, hook_chunk)
 })
 
 ```
@@ -148,7 +156,7 @@ model$add_regprm("rls_prm(lambda=0.9)")
 # Optimization bounds for parameters
 model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 # Set the horizons for which the model will be fitted
-model$kseq <- c(3,18)
+model$kseq <- 1:36
 ```
 
 
@@ -206,7 +214,7 @@ model$add_prmbounds(lambda = c(0.9, 0.99, 0.9999))
 Finally, we set the horizons for which to fit:
 ```{r}
 # Set the horizons for which the model will be fitted
-model$kseq <- c(3,18)
+model$kseq <- 1:36
 ```
 The horizons to fit for is actually not directly related to the model, but
 rather the fitting of the model. In principle, it would be more "clean" if the
@@ -220,25 +228,24 @@ We have set up the model and can now tune the `lambda` with the `rls_optim()`,
 which is a wrapper for the `optim()` function:
 ```{r, output.lines=15}
 # Call the optim() wrapper
-model$prm <- rls_optim(model, D)$par
+rls_optim(model, D, kseq = c(3,18))
 ```
 Note, how it only calculated a score for the 3 and 18 steps
-horizons - as we specified with `model$kseq` above. The parameters could be
+horizons - since we gave it `kseq` as an argument, which then overwrites
+`model$kseq` for the optimization only. The parameters could be
 optimized separately for each horizon, for example it is often such that for the
 first horizons a very low forgetting factor is optimal (e.g. 0.9). Currently,
 however, the parameters can only be optimized together. By optimizing for a
 short (3 steps) and a long horizon (18 steps), we obtain a balance - using less computations compared to optimizing on all horizons.
 
-The optimization converge and the tuned parameter becomes:
+The optimization converge and the tuned parameter was inserted:
 ```{r}
 # Optimized lambda
 model$prm
 ```
 
-Now we can fit with the optimized `lambda` on all horizons over the entire period:
+Now we can fit with the optimized `lambda` on the horizons in `model$kseq` over the entire period:
 ```{r}
-# Set to fit for all horizons
-model$kseq <- 1:36
 # Fit for all on entire period in D
 fit1 <- rls_fit(model$prm, model, D)
 ```
@@ -324,7 +331,7 @@ model <- forecastmodel$new()
 model$output = "heatload"
 model$add_inputs(Ta = "lp(Ta, a1=0.9)",
                  mu = "one()")
-model$add_regprm("rls_prm(lambda=0.9)")
+model$add_regprm("rls_prm(lambda=0.99)")
 model$add_prmbounds(Ta__a1 = c(0.5, 0.9, 0.9999),
                     lambda = c(0.9, 0.99, 0.9999))
 model$kseq <- c(3,18)
@@ -362,6 +369,7 @@ There are quite a few functions available for input transformations:
 - `one()` generates an matrix of ones (for including an intercept).
 - `fs()` generate Fourier series for modelling harmonic functions.
 - `bspline()` wraps the `bs()` function for generating base splines.
+- `pbspline()` wraps the `pbs()` function for generating periodic base splines.
 - `AR()` generates auto-regressive model inputs.
 
 and they can even be combined, see more details in [onlineforecasting] and in their help

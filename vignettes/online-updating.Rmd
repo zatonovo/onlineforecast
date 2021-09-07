@@ -32,6 +32,7 @@ figheight2 <- 6.5
 figheight3 <- 8
 figheight4 <- 9.5
 figheight5 <- 11
+
 # Set the size of squared figures (same height as full: figheight/figwidth)
 owsval <- 0.35
 ows <- paste0(owsval*100,"%")
@@ -46,7 +47,7 @@ fhs <- figwidth * owsval
 # Set the knitr options
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "##    ",
+  comment = "##!!    ",
   prompt = FALSE,
   cache = TRUE,
   cache.path = paste0("../tmp/vignettes/tmp-",vignettename,"/"),
@@ -58,27 +59,33 @@ knitr::opts_chunk$set(
 )
 options(digits=3)
 
-hook_output <- knit_hooks$get("output")
-knit_hooks$set(output = function(x, options) {
-  lines <- options$output.lines
-  if (is.null(lines)) {
-    return(hook_output(x, options))  # pass to default hook
-  }
-  x <- unlist(strsplit(x, "\n"))
-  more <- "## ...output cropped"
-  if (length(lines)==1) {        # first n lines
-    if (length(x) > lines) {
-      # truncate the output, but add ....
-      x <- c(head(x, lines), more)
-    }
-  } else {
-    x <- c(more, x[lines], more)
-  }
-  # paste these lines together
-  x <- paste(c(x, ""), collapse = "\n")
-  hook_output(x, options)
-})
 
+# For cropping output and messages
+cropfun <- function(x, options, func){
+  lines <- options$output.lines
+  ## if (is.null(lines)) {
+  ##   return(func(x, options))  # pass to default hook
+  ## }
+  if(!is.null(lines)){
+      x <- unlist(strsplit(x, "\n"))
+      i <- grep("##!!",x)
+      if(length(i) > lines){
+          # truncate the output, but add ....
+          x <- x[-i[(lines+1):length(i)]]
+          x[i[lines]] <- pst(x[i[lines]], "\n\n## ...output cropped")
+      }
+      # paste these lines together
+      x <- paste(c(x, ""), collapse = "\n")
+  }
+  x <- gsub("!!","",x)
+  func(x, options)
+}
+
+hook_chunk <- knit_hooks$get("chunk")
+
+knit_hooks$set(chunk = function(x, options) {
+    cropfun(x, options, hook_chunk)
+})
 ```
 
 [onlineforecasting]: https://onlineforecasting.org/articles/onlineforecasting.pdf
@@ -88,7 +95,11 @@ knit_hooks$set(output = function(x, options) {
 
 
 ## Intro
-This vignette explains how to 
+This vignette explains how to use the package in a real online operation, where
+the following is repeated in real time: new data is received, model is updated
+and forecasts are calculated. At a lower frequency the parameters are
+optimized, e.g. the updating is executed every hour and the parameters are
+optimized once a week.
 
 Load the package:
 ```{r, echo=1:2, purl=1:2}
@@ -114,77 +125,100 @@ model$add_inputs(Ta = "lp(Ta, a1=0.9)",
 model$add_regprm("rls_prm(lambda=0.9)")
 model$add_prmbounds(Ta__a1 = c(0.5, 0.9, 0.9999),
                     lambda = c(0.9, 0.99, 0.9999))
-model$kseq <- c(3,18)
-# Optimize the parameters
-model$prm <- rls_optim(model, subset(D,D$trainperiod))$par
+model$kseq <- 1:36
+# Optimize the parameters on the train period (i.e. until 2011-02-01)
+rls_optim(model, subset(D,D$trainperiod), kseq = c(3,18))
 ```
-
 
 
 ## Recursive update and prediction
 
-How to get new data and update and predict.
+Here we go through the steps of getting new data, running a model update and
+making predictions.
 
-First fit on a period
+First fit on a period:
 ```{r}
+# Keep a sequence with these points
 iseq <- which(in_range("2010-12-15",D$t,"2011-01-01"))
-Dfit <- subset(D, iseq)
-model$kseq <- 1:36
-rls_fit(model$prm, model, Dfit)
+# Fit the model
+rls_fit(model$prm, model, subset(D, iseq))
 ```
 
-Now the fits are saved in the model object (its an R6 object, hence passed by reference to the functions and can be changed inside the functions). A list of fits with an entry for each horizon is in Lfits, see the two first
+Now the fits are saved in the model object (its an R6 object, hence passed by reference to the functions and can be changed inside the functions). A list of fits with an entry for each horizon is in Lfits, see the two first:
 ```{r}
+# The data of a fit is saved in this list
 str(model$Lfits[1:2])
 ```
 
-Now new data arrives, take the point right after the fit period
+We step to the next time step, where new data arrives. Take the point right
+after the fit period and take the data for this time point:
 ```{r}
+# Next time step
 (i <- iseq[length(iseq)] + 1)
+# The new data for this time step
 Dnew <- subset(D, i)
 ```
 
-First we need to transform the new data (This must only be done once for each
-new data, since some transform functions, e.g. lp(), actually keep states, see
-the detailed description in )
+To update and predict, we need to transform the new data (this must only be done
+only once for each new data, since some transform functions, e.g. lp(), actually
+keep state data, see some on this in \texttt{?lp} and \texttt{?forecastmodel}
+under \texttt{\$reset\_state()}): 
 ```{r}
-Dnew_transformed <- model$transform_data(Dnew)
+# Transform the new data
+DnewTransformed <- model$transform_data(Dnew)
 ```
 
-Then we can update the parameters using the transformed data
+Then we can update the regression coefficients using the transformed data
 ```{r}
-rls_update(model, Dnew_transformed, Dnew[[model$output]])
+# The value of the coefficients for horizon 1, before the update
+model$Lfits$k1$theta
+# Update the coefficients
+rls_update(model, DnewTransformed, Dnew[[model$output]])
+# The value of the coefficients for horizon 1, after the update
+model$Lfits$k1$theta
 ```
 
-Calculate predictions using the new data and the updated fits (rls coefficient estimates in model$Lfits[[k]]$theta)
+Calculate predictions using the new data and the updated fits:
 ```{r}
-yhat <- rls_predict(model, Dnew_transformed)
+# Calculate the predictions
+yhat <- rls_predict(model, DnewTransformed)
 ```
 
-Plot to see that it fits the observations
+Plot to see the predictions with the observations:
 ```{r}
+# The index for the predicted steps ahead
 iseq <- i+model$kseq
+# Plot the observations and predictions
 plot(D$t[iseq], D$heatload[iseq], type = "b", xlab = "t", ylab = "y")
 lines(D$t[iseq], yhat, type = "b", col = 2)
-legend("topright", c("observations",pst("predictions (",min(model$kseq)," to ",max(model$kseq)," steps ahead)")), lty = 1, col = 1:2)
+legend("topright", c("Observations",pst("Predictions (",min(model$kseq)," to ",max(model$kseq)," steps ahead)")), lty = 1, col = 1:2)
 ```
 
 Run this for a longer period to verify that the same forecasts are obtained (in one go vs. iteratively)
 
-First in one go
+First in one go on all data:
 ```{r}
-val <- rls_fit(model$prm, model, D, returnanalysis = TRUE)
+# Fit and predict on entire data
+val <- rls_fit(model$prm, model, D)
+# Keep the forecasts
 D$Yhat1 <- val$Yhat
 ```
 
-and then iteratively
+and then run iteratively through:
 ```{r}
+# The indexes of training period
 itrain <- which(in_range("2010-12-15",D$t,"2011-01-01"))
+# The indexes of the test period
 itest <- which(in_range("2011-01-01",D$t,"2011-01-04"))
+
+# Fit on the training period
 rls_fit(model$prm, model, subset(D, itrain))
 
+# Prepare for the forecasts
 D$Yhat2 <- data.frame(matrix(NA, nrow(D$Yhat1), ncol(D$Yhat1)))
 names(D$Yhat2) <- names(D$Yhat1)
+
+# Step through the test period:
 for(i in itest){
     Dnew <- subset(D, i)
     Dnewtr <- model$transform_data(Dnew)
@@ -193,9 +227,7 @@ for(i in itest){
 }
 ```
 
-Compare to see the difference between the one step forecasts
+Compare to see the difference between the one step forecasts:
 ```{r}
 D$Yhat1$k1[itest] - D$Yhat2$k1[itest]
 ```
-
-Note about model$reset_states()

@@ -3,18 +3,13 @@
 .RData
 .Ruserdata
 
-NAMESPACE
-
 *.o
 src/onlineforecast\.so
-inst/doc
 
 modifications_old_notstaged/
 
 
 cache/
-
-man/
 
 misc-R/*cache*
 

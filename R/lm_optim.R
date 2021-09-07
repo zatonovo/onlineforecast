@@ -12,8 +12,10 @@
 #' @title Optimize parameters for onlineforecast model fitted with LM
 #' @param model The onlineforecast model, including inputs, output, kseq, p
 #' @param data The data.list including the variables used in the model.
+#' @param kseq The horizons to fit for (if not set, then model$kseq is used)
 #' @param scorefun The function to be score used for calculating the score to be optimized.
 #' @param cachedir A character specifying the path (and prefix) of the cache file name. If set to \code{""}, then no cache will be loaded or written. See \url{https://onlineforecasting.org/vignettes/nice-tricks.html} for examples.
+#' @param cachererun A logical controlling whether to run the optimization even if the cache exists.
 #' @param printout A logical determining if the score function is printed out in each iteration of the optimization.
 #' @param method The method argument for \code{\link{optim}}.
 #' @param ... Additional parameters to \code{\link{optim}}
@@ -55,7 +57,7 @@
 #'
 #' @importFrom stats optim
 #' @export
-lm_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, method="L-BFGS-B", ...){
+lm_optim <- function(model, data, kseq = NA, scorefun = rmse, cachedir="", cachererun=FALSE, printout=TRUE, method="L-BFGS-B", ...){
     ## Take the parameters bounds from the parameter bounds set in the model
     init <- model$get_prmbounds("init")
     lower <- model$get_prmbounds("lower")
@@ -64,21 +66,36 @@ lm_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, m
     if(any(is.na(lower))){ lower[is.na(lower)] <- -Inf}
     if(any(is.na(upper))){ lower[is.na(upper)] <- Inf}
 
-    ## Caching the results based on some of the function arguments
-    if(cachedir != ""){
-        ## Have to insert the parameters in the expressions
-        model$insert_prm(init)
-        ## Give all the elements to calculate the unique cache name
-        cnm <- cache_name(lm_fit, lm_optim, model$outputrange, model$regprm, model$transform_data(data),
-                          data[[model$output]], scorefun, init, lower, upper, cachedir = cachedir)
-        ## Maybe load the cached result
-        if(file.exists(cnm)){ return(readRDS(cnm)) }
+    # Clone the model no matter what (at least model$kseq should not be changed no matter if optimization is stopped)
+    m <- model$clone_deep()
+    if(!is.na(kseq[1])){
+        m$kseq <- kseq
+    }else if(!is.na(m$kseqopt[1])){
+        m$kseq <- m$kseqopt
     }
 
-    ## Run the optimization
+    ## Caching the results based on some of the function arguments
+    if(cachedir != ""){
+        # Have to insert the parameters in the expressions to get the right state of the model for unique checksum
+        m$insert_prm(init)
+        # Have to reset the state first to remove dependency of previous calls
+        m$reset_state()
+        ## Give all the elements to calculate the unique cache name
+        cnm <- cache_name(lm_fit, lm_optim, m$outputrange, m$regprm, m$transform_data(data),
+                          data[[m$output]], scorefun, init, lower, upper, cachedir = cachedir)
+        # Load the cached result if it exists
+        if(file.exists(cnm) & !cachererun){
+            res <- readRDS(cnm)
+            # Set the optimized parameters into the model
+            model$insert_prm(res$par)
+            return(res)
+        }
+    }
+
+    # Run the optimization
     res <- optim(par = init,
                  fn = lm_fit,
-                 model = model,
+                 model = m,
                  data = data,
                  scorefun = scorefun,
                  printout = printout,
@@ -87,8 +104,9 @@ lm_optim <- function(model, data, scorefun = rmse, cachedir="", printout=TRUE, m
                  upper = upper,
                  method = method,
                  ...)
-    ## Save the result in the cachedir
+    # Save the result in the cachedir
     if(cachedir != ""){ cache_save(res, cnm) }
-    ## Return the result
+    # Set the optimized parameters into the model
+    model$insert_prm(res$par)
     return(res)
 }

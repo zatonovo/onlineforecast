@@ -37,9 +37,8 @@
 #' # Define a simple model 
 #' model <- forecastmodel$new()
 #' model$output <- "y"
-#' model$add_inputs(Ta = "Ta",
+#' model$add_inputs(Ta = "lp(Ta, a1=0.9)",
 #'                  mu = "one()")
-#' model$add_regprm("rls_prm(lambda=0.99)")
 #'
 #' # Before fitting the model, define which points to include in the evaluation of the score function
 #' D$scoreperiod <- in_range("2010-12-20", D$t)
@@ -53,13 +52,13 @@
 #' class(fit)
 #' # The one-step forecast
 #' plot(D$y, type="l")
-#' lines(fit$Yhat$k1, col=2)
+#' lines(lagvec(fit$Yhat$k1,-1), col=2)
 #' # Get the residuals
 #' plot(residuals(fit)$h1)
 #' # Score for each horizon
-#' score_fit(fit)
+#' score(residuals(fit))
 #'
-#' # The lm_fit don't put anything in
+#' # The lm_fit don't put anything in this field
 #' fit$Lfitval
 #' # Find the lm fits here
 #' model$Lfits
@@ -68,6 +67,10 @@
 #' # Some diurnal pattern is present
 #' acf(residuals(fit)$h1, na.action=na.pass, lag.max=96)
 #'
+#' # Run with other parameters and return the RMSE
+#' lm_fit(c(Ta__a1=0.8), model, D, scorefun=rmse, returnanalysis=FALSE)
+#' lm_fit(c(Ta__a1=0.9), model, D, scorefun=rmse, returnanalysis=FALSE)
+#' 
 #' @importFrom stats lm residuals
 #' @export
 lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, printout = TRUE){

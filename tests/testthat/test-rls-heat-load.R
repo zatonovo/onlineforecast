@@ -1,5 +1,3 @@
-context("running RLS test")
-
 ## Load current package (must be outcommented)
 ## library("devtools")
 ## load_all(as.package("../../../onlineforecast"))

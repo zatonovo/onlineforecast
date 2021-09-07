@@ -39,17 +39,18 @@
 #' # For this example use a temporary directory 
 #' # In real use this should not be temporary! (changes between R sessions with tempdir())
 #' cachedir <- tempdir()
-#' 
+#'
+#' # Uncomment to run:
 #' # First time it takes at least 1 sec.
-#' fun(x=2,y=2)
+#' #fun(x=2,y=2)
 #' # Second time it loads the cache and is much faster
-#' fun(x=2,y=2)
+#' #fun(x=2,y=2)
 #' # Try changing the arguments (x,y) and run again
 #'
 #' # See the cache file(s)
-#' dir(cachedir)
+#' #dir(cachedir)
 #' # Delete the cache folder
-#' unlink(cachedir, recursive=TRUE)
+#' #unlink(cachedir, recursive=TRUE)
 #'
 #' # Demonstrate how cache_name() is functioning
 #' # Cache using the all objects given in the function calling, i.e. both x and y
@@ -81,7 +82,18 @@
 cache_name <- function(..., cachedir = "cache"){
     # Get the name, definition and arguments of the function from which cache_name was called
     funname <- strsplit(deparse(sys.calls()[[sys.nframe()-1]]), "\\(")[[1]][1]
-    fundef <- digest::digest(attr(eval(parse(text=funname)), "srcref"))
+    # Find the function in the nearest environment in the stack (i.e. parent calls)
+    ## for(i in rev(sys.parents())){
+    ##     browser()
+    ##     if(funname %in% ls(parent.frame(i+1))){
+    ##         val <- mget(funname, parent.frame(i+1))
+    ##         break
+    ##     }
+    ## }
+    ## fundef <- digest::digest(attr(eval(val[[funname]]), "srcref"))
+    # Somehow the above stopped working, don't know why! just take it, this should do the same I guess
+    fundef <- try(get(funname), silent=TRUE)
+    fundef <- digest::digest(fundef)
     # if no arguments were given, then use the arguments function from which cache_name was called
     if(length(list(...)) == 0){
         funargs <- digest::digest(as.list( match.call(definition = sys.function( -1 ), call = sys.call(-1)))[-1])

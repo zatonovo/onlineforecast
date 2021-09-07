@@ -28,7 +28,7 @@ make_input <- function(observations, kseq){
     val <- sapply(kseq, function(k){
         observations
     })
-    ## set row and column names
+    # set row and column names
     nams(val) <- paste0('k', kseq)
     return( as.data.frame(val) )
 }

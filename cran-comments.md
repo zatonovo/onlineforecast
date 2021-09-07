@@ -1,4 +1,16 @@
 #----------------------------------------------------------------
+# v0.10.0
+
+We have added features and done some small changes to functions. This version
+should be fully backward compatible.
+
+
+
+
+
+
+
+#----------------------------------------------------------------
 # v0.9.3
 # Response to review of v0.9.2 by Uwe Ligges
 

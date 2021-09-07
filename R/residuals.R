@@ -8,9 +8,11 @@
 #' @param object The forecast matrix (a data.frame with kxx as column names, Yhat in returned fits).
 #' @param y The observations vector.
 #' @param ... Not used.
-#' @return A data.frame with the residuals for each horizon.
+#' @return If object is a matrix or data.frame: a data.frame with the residuals for each horizon.
+#' If object is a list: A list with residuals from each element.
 #'
 #' @examples
+#' # ?? list example
 #' # Just a vector to be forecasted
 #' n <- 100
 #' D <- data.list()
@@ -41,11 +43,11 @@
 #' @rdname residuals
 #' @export
 residuals.data.frame <- function(object, y, ...){
-    Yhat <- object
-    # Add some checking at some point
-    Residuals <- y - lagdf(Yhat, "+k")
+    # Improvements: Add some checking at some point
+    # Calculate the residuals
+    Residuals <- y - lagdf(object, "+k")
     # Named with hxx (it's not a forecast, but an observation available at t)
-    names(Residuals) <- gsub("k","h",names(Residuals))
+    nams(Residuals) <- gsub("k","h",nams(Residuals))
     #
     return(Residuals)
 }
@@ -55,10 +57,16 @@ residuals.data.frame <- function(object, y, ...){
 residuals.matrix <- residuals.data.frame
 
 #' @rdname residuals
-#' @param object The value from a fit a forecastmodel (currently \code{\link{lm_fit}} or \code{\link{rls_fit}}.
-#' @param ... Not used.
+#' @export
+residuals.list <- function(object, y, ...){
+    # Each element is a forecast matrix, so do it on each
+    return(lapply(object, residuals, y=y))
+}
+
+#' @rdname residuals
 #' @export
 residuals.forecastmodel_fit <- function(object, ...){
     fit <- object
-    residuals(fit$Yhat, fit$data[[fit$model$output]])
+    return(residuals(fit$Yhat, fit$data[[fit$model$output]]))
 }
+

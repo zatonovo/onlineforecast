@@ -22,9 +22,9 @@
 #' lagdf(1:10, 3)
 #' # Back in time
 #' lagdf(1:10, -3)
-#' # Works but returns a numric
+#' # Works but returns a numeric column
 #' lagdf(as.factor(1:10), 3)
-#' # Works and returns a character
+#' # Works and returns a character column
 #' lagdf(as.character(1:10), 3)
 #' # Giving several lag values
 #' lagdf(1:10, c(1:3))
@@ -114,12 +114,12 @@ lagdf.data.frame <- function(x, lagseq) {
         if (lagseq %in% c("+k","+h")) {
             lagseq <- rep(0, length(nms))
             ## lagseq according to the k value of the columnnames
-            i <- grep("^[k|h][[:digit:]]+$", nms)
+            i <- grep("[k|h][[:digit:]]+$", nms)
             lagseq[i] <- as.integer(sapply(strsplit(nms[i], "[k|h]"), function(x){ x[length(x)] }))
         } else if (lagseq %in% c("-k","-h")) {
             lagseq <- rep(0, length(nms))
             ## lagseq according to the negative k value of the columnnames
-            i <- grep("^[k|h][[:digit:]]+$", nms)
+            i <- grep("[k|h][[:digit:]]+$", nms)
             lagseq[i] <- -as.integer(sapply(strsplit(nms[i], "[k|h]"), function(x){ x[length(x)] }))
         }
     }
