@@ -37,7 +37,7 @@
 #' 
 #' @export
 data.list <- function(...) {
-    structure(list(...), class = "data.list")
+    structure(list(...), class = c("data.list","list"))
 }
 
 
@@ -180,7 +180,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
             }
         })
     }
-    class(val) <- "data.list"
+    class(val) <- c("data.list","list")
     return(val)
 }
 
