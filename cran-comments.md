@@ -1,9 +1,16 @@
 #----------------------------------------------------------------
+# v1.0.0
+
+We have not changed much, but we have written a paper and submitted it to
+JSS. So now we have set the major version forward.
+
+
+
+#----------------------------------------------------------------
 # v0.10.0
 
 We have added features and done some small changes to functions. This version
 should be fully backward compatible.
-
 
 
 

@@ -1,24 +1,22 @@
 citHeader("To cite onlineforecast in publications use:")
 citEntry(
   entry    = "Article",
-  title    = "Short-term heat load forecasting for single family houses",
-  author   = "Peder Bacher and Henrik Madsen and Henrik Aalborg Nielsen and Bengt Perers",
-  journal  = "Energy and Buildings",
-  year     = "2013",
-  volume   = "65",
-  number   = "0",
-  pages    = "101-112",
-  doi      = "10.1016/j.enbuild.2013.04.022",
-  url      = "https://onlineforecasting.org",
-  textVersion = paste(
-      "We are in process of writing a journal paper about the package, but for now we referer to the paper 'Short-term heat load forecasting for single family houses', in which the implemented modelling is described."
-  )
+  title    = "onlineforecast: An R package for adaptive and recursive forecasting",
+  author   = "Peder Bacher and Hjörleifur G. Bergsteinsson and Linde Frölke and Mikkel L. Sørensen and Julian Lemos-Vinasco and Jon Liisberg and Jan Kloppenborg Møller and Henrik Aalborg Nielsen and Henrik Madsen",
+  Journal  = "test",
+  year     = "2021",
+  eprint   = "2109.12915",
+  archivePrefix="arXiv",
+  primaryClass="stat.CO",
+  url      = "https://arxiv.org/abs/2109.12915",
+  textVersion = "The article \"onlineforecast: An R package for adaptive and recursive forecasting\", see https://arxiv.org/abs/2109.12915. This is the pre-print version submitted to Journal of Statistical Software."
 )
 citEntry(
   entry    = "Manual",
   title    = "{{onlineforecast}: Forecast Modelling for Online Applications}",
   author   = "Peder Bacher and Hjörleifur G. Bergsteinsson",
   year     = "2021",
-  note     = "R package version 0.10.1",
-  url      = "https://onlineforecasting.org"
+  note     = "R package version 1.0.0",
+  url      = "https://onlineforecasting.org",
+  textVersion = ""
 )

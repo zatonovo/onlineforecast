@@ -56,20 +56,20 @@ library(roxygen2)
 # # Run tests in a single file
 # test_file("tests/testthat/test-rls-heat-load.R")
 
-
 # ----------------------------------------------------------------
-# Build the package
-document()
-build(".", vignettes=TRUE)
-
-# The version (change only in DESCRIPTION)
+# The version (move the value from DESCRIPTION to other places, so only update it in DESCRIPTION)
 txt <- scan("DESCRIPTION", character())
-ver <- txt[which(txt == "Version:") + 1]
+(ver <- txt[which(txt == "Version:") + 1])
 
 # Update CITATION (change the year manually)
 txt2 <- scan("inst/CITATION", character(), sep="#", quote="")
 txt2[grep("R package version",txt2)] <- paste0('  note     = "R package version ',ver,'",')
 write.table(txt2, "inst/CITATION", row.names=FALSE, col.names=FALSE, quote=FALSE)
+
+# ----------------------------------------------------------------
+# Build the package
+document()
+build(".", vignettes=TRUE)
 
 # Install it
 gzfile <- paste0("../onlineforecast_",ver,".tar.gz")
