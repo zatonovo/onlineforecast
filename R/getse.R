@@ -70,14 +70,14 @@ getse <- function(L, inm = NA, depth = 2, useregex = FALSE, fun = NA) {
     if(depth == 1){
         if(useregex){ inm <- grep(inm, names(L)) }
         R <- L[[inm]]
-        if(class(fun) == "function"){ R <- fun(R) }
+        if(inherits(fun, "function")){ R <- fun(R) }
     }
     # Match in the subelements of L?
     if(depth == 2){
         R <- lapply(L, function(x){
             if(useregex){ inm <- grep(inm, names(x)) }
             val <- x[[inm]]
-            if(class(fun) == "function"){ val <- fun(val) }
+            if(inherits(fun, "function")){ val <- fun(val) }
             return(val)
         })
     }

@@ -286,7 +286,7 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
                     if( nrow(data[[nm]]) != length(data$t) ){
                         stop(pst("The input variable '",nm,"' doesn't have the same number of observations as time vector 't' in the data. It has ",nrow(data[[nm]]),", but 't' has ",length(data$t)))
                     }
-                }else if(class(data[[nm]]) == "numeric"){
+                }else if(inherits(data[[nm]], "numeric")){
                     # Observation input, check the length
                     if( length(data[[nm]]) != length(data$t) ){
                         stop("The input variable '",nm,"' doesn't have the same number of observations as time vector 't' in the data. It has ",length(data[[nm]]),", but 't' has ",length(data$t))

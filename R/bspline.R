@@ -72,7 +72,7 @@ bspline <- function(X, Boundary.knots = NA, intercept = FALSE, df = NULL, knots 
         Boundary.knots <- bknots
     }
     # If a list, then call on each element
-    if (class(X) == "list") {
+    if (inherits(X, "list")){
         # Call again for each element
         val <- lapply(1:length(X), function(i) {
             bspline(X[[i]], df = df, knots = knots, degree = degree, intercept = intercept, 

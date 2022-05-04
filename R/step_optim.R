@@ -201,7 +201,7 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
     # Init
     istep <- 1
     # Different start up, if a start model is given
-    if( class(modelstart)[1] == "forecastmodel" ){
+    if( inherits(modelstart, "forecastmodel")){
         # The full model will not be changed from here, so no need to clone it
         mfull <- modelfull
         m <- modelstart$clone()
@@ -239,7 +239,7 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
         }
     }
     # Find the inputs to keep, if any
-    if(class(keepinputs) == "logical"){
+    if(inherits(keepinputs, "logical")){
         if(keepinputs){
             keepinputs <- nams(mfull$inputs)
         }else{
@@ -263,7 +263,7 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
             # Optimize
             res <- optimfun(m, data, printout=printout, scorefun=scorefun, ...)
             # Should we forecast only on the complete cases?
-            if(class(fitfun) == "function"){
+            if(inherits(fitfun, "function")){
                 # Forecast to get the complete cases
                 mtmp <- m$clone_deep()
                 # If kseqopt is set, then make sure that it is used when fitting here
@@ -283,7 +283,7 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
         }
         
         message("Current score: ",format(scoreCurrent,digits=7))
-        if(class(fitfun) == "function"){
+        if(inherits(fitfun, "function")){
             message("Current complete cases: ",sum(casesCurrent)," (Diff in score from optim:",L[[istep]]$optimresult$value-scoreCurrent,")")
         }
         # Next step
@@ -379,7 +379,7 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
             names(Lstep) <- names(mStep)
 
             # Complete cases considered: Should we forecast and recalculate the score on complete cases from all models?
-            if(class(fitfun) == "function"){
+            if(inherits(fitfun, "function")){
                 LYhat <- mclapply(1:length(mStep), function(i){
                     mtmp <- mStep[[i]]$clone_deep()
                     # If kseqopt is set, then make sure that it is used when fitting here
@@ -406,7 +406,7 @@ step_optim <- function(modelfull, data, prm=list(NA), direction = c("both","back
                 tmp[ ,1] <- pst(format(100 * (scoreCurrent - tmp) / scoreCurrent, digits=2),"%")
                 nams(tmp) <- "Improvement"
             }
-            if(class(fitfun) == "function"){
+            if(inherits(fitfun, "function")){
                 tmp <- cbind(tmp, apply(casesStep != casesCurrent, 2, sum))
                 nams(tmp)[2] <- "CasesDiff"
             }

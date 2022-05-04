@@ -209,7 +209,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
 as.data.frame.data.list <- function(x, row.names=NULL, optional=FALSE, ...){
     # Then convert into a data.frame
     val <- do.call("cbind", x)
-    if(class(val) == "matrix"){
+    if(inherits(val, "matrix")){
         val <- as.data.frame(val)
     }
     # Fix names of data.frames (i.e. forecasts, their names are now "kxx", but should be X.kxx)
