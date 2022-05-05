@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // lp_vector_cpp
 NumericVector lp_vector_cpp(NumericVector x, double a1);
 RcppExport SEXP _onlineforecast_lp_vector_cpp(SEXP xSEXP, SEXP a1SEXP) {

@@ -37,7 +37,7 @@
 
 lp <- function(X, a1, usestate = TRUE) {
     ## 
-    if (class(X) == "list") {
+    if (inherits(X, "list")) {
         ## If only one coefficient, then repeat it
         if (length(a1) == 1) {
             a1 <- rep(a1, length(X))

@@ -183,7 +183,7 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
     #----------------------------------------------------------------
     # Calculate the result to return
     # If the objective function (scorefun) is given
-    if(class(scorefun) == "function"){
+    if(inherits(scorefun, "function")){
         # Do some checks
         if( !("scoreperiod" %in% names(data)) ){ stop("data$scoreperiod is not set: Must have it set to an index (int or logical) defining which points to be evaluated in the scorefun().") }
         if( all(is.na(data$scoreperiod)) ){ stop("data$scoreperiod is not set correctly: It must be set to an index (int or logical) defining which points to be evaluated in the scorefun().") }

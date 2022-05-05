@@ -130,7 +130,7 @@ lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, pr
     #----------------------------------------------------------------
     # Calculate the result to return
     # If the objective function (scorefun) is given
-    if(class(scorefun) == "function"){
+    if(inherits(scorefun, "function")){
         # Do some checks
         if( !("scoreperiod" %in% names(data)) ){ stop("data$scoreperiod is not set: Must have it set to an index (int or logical) defining which points to be evaluated in the scorefun().") }
         if( all(is.na(data$scoreperiod)) ){ stop("data$scoreperiod is not set correctly: It must be set to an index (int or logical) defining which points to be evaluated in the scorefun().") }
@@ -156,39 +156,4 @@ lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, pr
         return(val)
     }
 
-    ## OLD
-    ## # Is an objective function given?
-    ## if(class(scorefun) == "function" & !returnanalysis){
-    ##     # Do some checks
-    ##     if( !("scoreperiod" %in% names(data)) ){ stop("data$scoreperiod are set: Must have it set to an index (int or logical) defining which points to be evaluated in the scorefun().") }
-    ##     if( all(is.na(data$scoreperiod)) ){ stop("data$scoreperiod is not set correctly: It must be set to an index (int or logical) defining which points to be evaluated in the scorefun().") }
-    ##     scoreperiod <- data$scoreperiod    
-    ##     # Return the scorefun values
-    ##     scoreval <- sapply(1:ncol(Yhat), function(i){
-    ##         scorefun(Resid[scoreperiod,i])
-    ##     })
-    ##     nams(scoreval) <- nams(Yhat)
-    ##     val <- sum(scoreval, na.rm = TRUE)
-    ##     if(printout){print(c(scoreval,sum=val))}
-    ##     return(val)
-    ## } else if(returnanalysis){
-    ##     # The estimated coefficients
-    ##     Lfitval <- lapply(model$Lfits, function(model){ 
-    ##       coef <- model$coefficients
-    ##       names(coef) <- gsub("(.+?)(\\.k.*)", "\\1", names(coef))
-    ##       return(coef)
-    ##     })
-    ##     # Include score function
-    ##     scoreval <- NA
-    ##     if(class(scorefun) == "function"){
-    ##         # Calculate the objective function for each horizon
-    ##         scoreval <- sapply(1:ncol(Yhat), function(i){
-    ##             scorefun(Resid[,i])
-    ##         })
-    ##         nams(scoreval) <- nams(Yhat)
-    ##     }
-    ##     # Return the model validation data
-    ##     return(list(Yhat = Yhat, t = data$t, Resid = Resid, datatr = datatr, Lfitval = Lfitval, scoreval = scoreval, scoreperiod = data$scoreperiod))
-    ## }
-    ## invisible("ok")
 }
