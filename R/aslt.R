@@ -15,7 +15,7 @@
 #' @param ... Arguments to be passed to methods.
 #' @return An object of class POSIXlt
 #' @section Methods:
-#' #' @examples
+#' @examples
 #' 
 #' # Create a POSIXlt with tz="GMT"
 #' aslt("2019-01-01")

@@ -12,8 +12,11 @@
 #' See the vignette 'setup-data' on how a data.list must be setup.
 #' 
 #' It's simply a list of class \code{data.list} holding:
+#' 
 #'   - vector \code{t}
+#' 
 #'   - vector(s) of observations
+#' 
 #'   - data.frames (or matrices) of forecast inputs
 #' 
 #' 
@@ -26,14 +29,14 @@
 #' time <- seq(ct("2019-01-01"),ct("2019-01-02"),by=3600)
 #' # Observations time series (as vector)
 #' xobs <- rnorm(length(time))
-#' # Forecast input as data.frame
+#' # Forecast input as a data.frame with columns names 'kxx', where 'xx' is the horizon
 #' X <- data.frame(matrix(rnorm(length(time)*3), ncol=3))
 #' names(X) <- pst("k",1:3)
 #' 
 #' D <- data.list(t=time, xobs=xobs, X=X)
 #'
-#' # Check it
-#' check(D)
+#' # Check it (see \code{?\link{summary.data.list}})
+#' summary(D)
 #' 
 #' @export
 data.list <- function(...) {
@@ -90,7 +93,7 @@ data.list <- function(...) {
 #' plot(X$Ta$k10, X$Taobs)
 #'
 #' # Fit a model for the 10-step horizon
-#' abline(lm(Taobs ~ Ta.k10, X), col=2)
+#' abline(lm(Taobs ~ Ta.k10, as.data.frame(X)), col=2)
 #'
 #' @export
 subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = FALSE, pattern = NA, ...) {
@@ -135,20 +138,20 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
             subset <- 1:dim(D[[1]])[1]
         }
     }else if(length(subset) == 2){
-        if(any(class(subset) %in% c("character","POSIXlt","POSIXct","POSIXt"))){
+        if(inherits(subset,c("character","POSIXlt","POSIXct","POSIXt"))){
             # Start and end of a period is given
             subset <- in_range(subset[1], D$t, subset[2])
         }
     }else{
         # Check if a non-meaningful subset is given
-        if(any(class(subset) == "character")){
+        if(inherits(subset,"character")){
             stop("subset cannot be a character, except if it is of length 2 and can be converted in a POSIX, e.g. subset=c('2020-01-01','2020-01-10'. ")
         }
     }
     # Take all horizons k?
     if(is.na(kseq[1])){
         val <- lapply(D[nms], function(X) {
-            if (any(class(X) == "data.frame")) {
+            if (inherits(X,"data.frame")) {
                 return(X[subset, , drop=FALSE]) # drop = FALSE needed in case data frame only has 1 column, otherwise this does not return a data frame
             } else {
                 return(X[subset])
@@ -158,7 +161,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
         # Multiple horizons (hence length(kseq) > 1)
         # Take the specified horizons
         val <- lapply(D[nms], function(X) {
-            if (any(class(X) == "data.frame")) {
+            if (inherits(X,"data.frame")) {
                 # Check if holds forecasts by checking if any name is "kxx"
                 if(length(grep("k[[:digit:]]+$", names(X))) > 0){
                     return(X[subset,pst("k",kseq), drop=FALSE])
@@ -173,7 +176,7 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
     # Lag the forecasts k if specified
     if(lagforecasts){
         val <- lapply(val, function(X){
-            if(any(class(X) == "data.frame") & length(grep("k[[:digit:]]+$",names(X))) > 0) {
+            if(inherits(X,"data.frame") & length(grep("k[[:digit:]]+$",names(X))) > 0) {
                 return(lagdf.data.frame(X, lagseq="+k"))
             }else{
                 return(X)
@@ -209,11 +212,11 @@ subset.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts =
 as.data.frame.data.list <- function(x, row.names=NULL, optional=FALSE, ...){
     # Then convert into a data.frame
     val <- do.call("cbind", x)
-    if(class(val) == "matrix"){
+    if(inherits(val,"matrix")){
         val <- as.data.frame(val)
     }
-    # Fix names of data.frames (i.e. forecasts, their names are now "kxx", but should be X.kxx)
-    i <- grep("k[[:digit:]]+$", names(val))
+    # Fix names of data.frames (i.e. forecasts, if their names are now "kxx", but should be X.kxx)
+    i <- grep("^k[[:digit:]]+$", names(val))
     if(length(i) > 0){
         names(val)[i] <- pst(names(x)[i],".",names(val)[i])
     }
@@ -262,81 +265,105 @@ pairs.data.list <- function(x, subset = NA, nms = NA, kseq = NA, lagforecasts = 
 }
 
 
-
-#' Checking the object for appropriate form. 
+#' Summary including checks of the data.list for appropriate form. 
 #'
-#' Prints on table form the result of the check.
+#' Prints on table form the result of the checks.
 #' 
-#' @title Checking the object for appropriate form. 
-#' @param object The object to be checked.
+#' @title Summary with checks of the data.list for appropriate form. 
+#' @param object The object to be summarized and checked
+#' @param printit A boolean deciding if check results tables are printed
+#' @param stopit A boolean deciding if the function stop with an error if the check is not ok
+#' @param nms A character vector. If given specifies the variables (vectors or matrices) in object to check
+#' @param msgextra A character which is added in the printout of an (potential) error message
+#' @param ... Not used
 #' @return The tables generated.
 #'
-#' # Check a data.list (see \code{?\link{check.data.list}})
-#' check(Dbuilding)
+#' Checking the data.list for appropriate form:
+#'
+#' A check of the time vector t, which must have equidistant time points and no NAs.
+#'
+#' Then the results of checks of vectors (observations):
 #' 
-#' @export
-check <- function(object){
-    UseMethod("check")
-}
-
-#' Checking the data.list for appropriate form. 
-#'
-#' Prints a check of the time vector t, which must have equidistant time points and no NAs.
-#'
-#' Then the results of checking vectors (observations):
-#'   - ok: A 'V' indicates a successful check
-#'   - maxNAs: Proportion of NAs
-#'   - length: printed if not the same as the 't' vector
-#'   - class: the class
+#'   - NAs: Proportion of NAs
+#' 
+#'   - length: Same length as the 't' vector?
+#' 
+#'   - class: The class of the vector
 #' 
 #' Then the results of checking data.frames and matrices (forecasts):
-#'   - ok: a 'V' indicates a successful check
-#'   - maxNAs: the proportion of NAs for the horizon (i.e. column) with the highest proportion of NAs
-#'   - meanNAs: the proportion of NAs of the entire data.frame
-#'   - nrow: printed if not the same as the 't' vector length
-#'   - colnames: columns must be names 'kxx', where 'xx' is the horizon
-#'   - sameclass: 'X' if not all columns are the same class
-#'   - class: prints the class of the columns if they are all the same
 #' 
-#' @title Checking the data.list for appropriate form. 
-#' @param object The object to be checked.
-#' @return The tables generated.
-#'
-#' # Check a data.list (see \code{?\link{check.data.list}})
-#' check(Dbuilding)
-#'
-#' # Vector with observations not same length as t
-#' D <- Dbuilding
-#' D$heatload <- D$heatload[1:10]
-#' check(D)
-#'
+#'   - maxHorizonNAs: The proportion of NAs for the horizon (i.e. column) with the highest proportion of NAs
+#' 
+#'   - meanNAs: The proportion of NAs of the entire matrix
+#' 
+#'   - nrow: Same length as the 't' vector?
+#' 
+#'   - colnames: Columns must be names 'kx', where 'x' is the horizon (e.g. k12 is 12-step horizon)
+#' 
+#'   - sameclass: Error if not all columns are the same class
+#' 
+#'   - class: Prints the class of the columns if they are all the same
+#' 
+#' @examples
+#' 
+#' summary(Dbuilding)
+#' 
 #' # Some NAs in k1 forecast
 #' D <- Dbuilding
 #' D$Ta$k1[1:1500] <- NA
-#' check(D)
+#' summary(D)
 #'
+#' # Vector with observations not same length as t throws error
+#' D <- Dbuilding
+#' D$heatload <- D$heatload[1:10]
+#' try(summary(D))
+#' 
+#' # Forecasts wrong count
+#' D <- Dbuilding
+#' D$Ta <- D$Ta[1:10, ]
+#' try(summary(D))
+#' 
 #' # Wrong column names
-#' names(D$Ta)
+#' D <- Dbuilding
+#' names(D$Ta)[4] <- "xk"
+#' names(D$Ta)[2] <- "x2"
+#' try(summary(D))
+#' 
+#' # No column names
+#' D <- Dbuilding
+#' names(D$Ta) <- NULL
+#' try(summary(D))
+#' 
+#' # Don't stop or only print if stopped 
+#' onlineforecast:::summary.data.list(D, stopit=FALSE)
+#' try(onlineforecast:::summary.data.list(D, printit=FALSE))
 #'
+#' # Only check for specified variables
+#' # (e.g. do like this in model functions to check only variables used in model)
+#' onlineforecast:::summary.data.list(D, nms=c("heatload","I"))
+#' 
 #' @export
-check.data.list <- function(object){
-    # Check if how the data.list is setup and report potential issues
+summary.data.list <- function(object, printit=TRUE, stopit=TRUE, nms=names(object), msgextra="", ...){
     D <- object
-    if(!"t" %in% names(D)){ stop("'t' is missing in the data.list: It must be a vector of equidistant time points (can be an integer, but preferably POSIXct class with tz 'GMT' or 'UTC'.)") }
 
-    if(length(unique(diff(D$t))) != 1){ stop("'t' is not equidistant and have no NA values")}
-    message("\nTime t is fine: Length ",length(D$t),"\n")
+    # The final message
+    msg <- NULL
 
-    # Which is data.frame or matrix?
-    dfOrMat <- sapply(D, function(x){ (class(x) %in% c("matrix","data.frame"))[1] })
+    # Check the time vector
+    if(!"t" %in% names(D)){ msg <- c(msg,"'t' is missing in the data.list: It must be a vector of equidistant time points (can be an integer, but preferably POSIXct class with tz 'GMT' or 'UTC'.)")}
+    if(length(D$t) > 1){
+        if(length(unique(diff(D$t))) != 1){ msg <- c(msg,"'t' is not equidistant or have NA values.") }
+    }
+
+    # Which elements are data.frame or matrix?
+    isMatrix <- sapply(D, function(x){ inherits(x,c("matrix","data.frame")) })
+    
     # Vectors check
-    vecseq <- which(!dfOrMat & names(dfOrMat) != "t")
+    vecseq <- which(!isMatrix  &  names(isMatrix) != "t"  & names(isMatrix) %in% nms)
     Observations <- NA
     if(length(vecseq) > 0){
-        cat("Observation vectors:\n")
-        vecchecks <- c("ok","NAs","length","class")
-        Observations <- data.frame(matrix("", nrow=length(vecseq), ncol=length(vecchecks), dimnames=list(names(vecseq),vecchecks)), stringsAsFactors=FALSE)
-        Observations$ok <- "V"
+        vecchecks <- c("NAs","length","class")
+        Observations <- data.frame(matrix("ok", nrow=length(vecseq), ncol=length(vecchecks), dimnames=list(pst("$",names(vecseq)),vecchecks)), stringsAsFactors=FALSE)
         #
         for(i in 1:length(vecseq)){
             #
@@ -346,58 +373,83 @@ check.data.list <- function(object){
             Observations$NAs[i] <- pst(NAs,"%")
             # Check the length
             if(length(D[[nm]]) != length(D$t)){
-                Observations$length[i] <- length(D[[nm]])
+                Observations$length[i] <- "ERROR"
+                msg <- c(msg,pst(rownames(Observations)[i]," (length ",length(D[[nm]]),"), not same length as t (length ",length(D$t),")"))
             }
             # Its class
             Observations$class[i] <- class(D[[nm]])
-            # Not ok?
-            if(sum(Observations[i, 3] == "") < 1){
-                Observations$ok[i] <- ""
-            }
         }
-        print(Observations)
     }
-    #
-    # For forecasts
-    dfseq <- which(dfOrMat)
+
+    # Forecasts check
+    dfseq <- which(isMatrix  &  names(isMatrix) %in% nms)
     Forecasts <- NA
     if(length(dfseq) > 0){
-        cat("\nForecast data.frames or matrices:\n")
-        dfchecks <- c("ok","maxNAs","meanNAs","nrow","colnames","sameclass","class")
-        Forecasts <- data.frame(matrix("", nrow=length(dfseq), ncol=length(dfchecks), dimnames=list(names(dfseq),dfchecks)), stringsAsFactors=FALSE)
-        Forecasts$ok <- "V"
+        dfchecks <- c("maxHorizonNAs","NAs","nrow","colnames","sameclass","class")
+        Forecasts <- data.frame(matrix("ok", nrow=length(dfseq), ncol=length(dfchecks), dimnames=list(pst("$",names(dfseq)),dfchecks)), stringsAsFactors=FALSE)
         #
         for(i in 1:length(dfseq)){
             #
             nm <- names(dfseq)[i]
             colnms <- nams(D[[nm]])
-            # max NAs
-            maxNAs <- round(max(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
-            Forecasts$maxNAs[i] <- pst(maxNAs,"%")
-            # Mean NAs
-            meanNAs <- round(mean(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
-            Forecasts$meanNAs[i] <- pst(meanNAs,"%")
-            # Check the number of rows
-            if(nrow(D[[nm]]) != length(D$t)){
-                Forecasts$nrow[i] <- nrow(D[[nm]])
-            }
-            # Check the colnames, are they unique and all k+integer?
-            if(!length(unique(grep("k[[:digit:]]+$",colnms,value=TRUE))) == length(colnms)){
-                Forecasts$colnames[i] <- "X"
-            }
-            if(!length(unique(sapply(colnms, function(colnm){ class(D[[nm]][ ,colnm]) }))) == 1){
-                Forecasts$sameclass[i] <- "X"
+            if(is.null(colnms)){
+                msg <- c(msg, pst("'",nm,"' has no column names! Columns in forecast matrices must be named 'kx', where x is the horizon (e.g. 'k12' is the column with the 12 step forecast)"))
+                Forecasts[i, ] <- rep(NA,ncol(Forecasts))
             }else{
-                Forecasts$class[i] <- class(D[[nm]][ ,1])
-            }
-            # Not ok?
-            if(sum(Forecasts[i, ] == "") < (length(dfchecks)-4)){
-                Forecasts$ok[i] <- ""
+                # max NAs
+                tmp <- round(max(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
+                Forecasts$maxHorizonNAs[i] <- pst(tmp,"%")
+                # Mean NAs
+                tmp <- round(mean(sapply(colnms, function(colnm){ 100*sum(is.na(D[[nm]][ ,colnm])) / nrow(D[[nm]]) })))
+                Forecasts$NAs[i] <- pst(tmp,"%")
+                # Check the number of rows
+                if(nrow(D[[nm]]) != length(D$t)){
+                    Forecasts$nrow[i] <- "ERROR"
+                    msg <- c(msg, pst(nm," has ",nrow(D[[nm]])," rows, must be equal to length of t (n=",length(D$t),")"))
+                }
+                # Check the colnames, are they unique and all k+integer?
+                tmp <- unique(grep("k[[:digit:]]+$",colnms,value=TRUE))
+                if(!length(tmp) == length(colnms)){
+                    Forecasts$colnames[i] <- "ERROR"
+                    msg <- c(msg, pst(nm," has columns named: '",pst(colnms[!(colnms %in% tmp)],collapse="','"),"'. Columns in forecast matrices must be named 'kx', where x is the horizon (e.g. 'k12' is the column with the 12 step forecast)"))
+                }
+                if(!length(unique(sapply(colnms, function(colnm){ class(D[[nm]][ ,colnm]) }))) == 1){
+                    Forecasts$sameclass[i] <- "ERROR"
+                    msg <- c(msg, pst(nm," doesn't have same class for all columns"))
+                }else{
+                    Forecasts$class[i] <- class(D[[nm]][ ,1])
+                }
             }
         }
-        print(Forecasts)
     }
 
+    # Print the results
+    if(printit){
+        cat("\nLength of time vector 't': ",length(D$t),"\n\n", sep="")
+        if(length(vecseq) > 0){
+        #    cat("\n- Observation vectors:\n")
+            print(Observations)
+        }
+        if(length(dfseq) > 0){
+            #   cat("\n- Forecast data.frames or matrices:\n")
+            cat("\n")
+            print(Forecasts)
+        }
+    }
+
+    # Error message to print?
+    if(length(msg) > 0){
+        cat("\n")
+        msg <- c(msg,"\nSee '?summary.data.list' for more information")
+        # Stop or just print
+        if(stopit){
+            stop(pst(msg,collapse="\n"))
+        }else{
+            cat("ERRORS: \n",pst(msg,collapse="\n"),"\n")
+        }
+    }
+
+    # Return
     invisible(list(Observations=Observations, Forecasts=Forecasts))
 }
 

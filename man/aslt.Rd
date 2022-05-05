@@ -33,19 +33,6 @@ The argument is converted into POSIXlt with tz="GMT".
 }
 \section{Methods}{
 
-#' @examples
-
-# Create a POSIXlt with tz="GMT"
-aslt("2019-01-01")
-class(aslt("2019-01-01"))
-aslt("2019-01-01 01:00:05")
-
-# Convert between time zones
-x <- aslt("2019-01-01", tz="CET")
-aslt(x,tz="GMT")
-
-# To seconds and back again
-aslt(as.numeric(x, units="sec"))
 
 
     - aslt.character: Simply a wrapper for \code{as.POSIXlt}
@@ -60,3 +47,18 @@ aslt(as.numeric(x, units="sec"))
     - aslt.numeric: Converts from UNIX time in seconds to POSIXlt.
 }
 
+\examples{
+
+# Create a POSIXlt with tz="GMT"
+aslt("2019-01-01")
+class(aslt("2019-01-01"))
+aslt("2019-01-01 01:00:05")
+
+# Convert between time zones
+x <- aslt("2019-01-01", tz="CET")
+aslt(x,tz="GMT")
+
+# To seconds and back again
+aslt(as.numeric(x, units="sec"))
+
+}

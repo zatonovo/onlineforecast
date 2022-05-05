@@ -1,4 +1,11 @@
 #----------------------------------------------------------------
+# v1.0.1
+
+We have changed a few minor things:
+- Added better checks and error messages for input data
+- Small bug fixes 
+
+#----------------------------------------------------------------
 # v1.0.0
 
 We have not changed much, but we have written a paper and submitted it to

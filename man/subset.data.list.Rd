@@ -74,6 +74,6 @@ X <- subset(Dbuilding, 1:1000, pattern="^Ta", kseq = 10, lagforecasts = TRUE)
 plot(X$Ta$k10, X$Taobs)
 
 # Fit a model for the 10-step horizon
-abline(lm(Taobs ~ Ta.k10, X), col=2)
+abline(lm(Taobs ~ Ta.k10, as.data.frame(X)), col=2)
 
 }

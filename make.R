@@ -14,7 +14,7 @@
 ## install.packages("R.rsp")
 ## install.packages("data.table")
 ## install.packages("plotly")
-
+## install.packages("pbs")
 
 #----------------------------------------------------------------
 # Go
@@ -46,12 +46,12 @@ library(roxygen2)
 #use_test("newtest")
 
 # # Run all tests
-#document()
-#test()
+document()
+test()
 
 # # Run the examples
-#load_all(as.package("../onlineforecast"))
-#run_examples()
+load_all(as.package("../onlineforecast"))
+run_examples()
 
 # # Run tests in a single file
 # test_file("tests/testthat/test-rls-heat-load.R")
@@ -69,6 +69,7 @@ write.table(txt2, "inst/CITATION", row.names=FALSE, col.names=FALSE, quote=FALSE
 # ----------------------------------------------------------------
 # Build the package
 document()
+# Run the "vignettes/make.R" to build the cache
 build(".", vignettes=TRUE)
 
 # Install it

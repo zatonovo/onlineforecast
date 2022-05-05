@@ -28,30 +28,32 @@
 #' @examples
 #'
 #' # How to make a diurnal curve using splines
-#'  # Select first 54 hours from the load data
-#'  D <- subset(Dbuilding, 1:76, kseq=1:4)
-#'  # Make the hour of the day as a forecast input
-#'  D$tday <- make_tday(D$t, kseq=1:4)
-#'  D$tday
+#' # Select first 54 hours from the load data
+#' D <- subset(Dbuilding, 1:76, kseq=1:4)
+#' # Make the hour of the day as a forecast input
+#' D$tday <- make_tday(D$t, kseq=1:4)
+#' D$tday
 #' 
-#'  # Calculate the base splines for each column in tday
-#'  L <- bspline(D$tday)
+#' # Calculate the base splines for each column in tday
+#' L <- bspline(D$tday)
 #'
-#'  # Now L holds a data.frame for each base spline
-#'  str(L)
-#'  # Hence this will result in four inputs for the regression model
+#' # Now L holds a data.frame for each base spline
+#' str(L)
+#' # Hence this will result in four inputs for the regression model
 #'
-#'  # Plot (note that the splines period starts at tday=0)
-#'  plot(D$t, L$bs1$k1, type="s")
-#'  for(i in 2:length(L)){
-#'    lines(D$t, L[[i]]$k1, col=i, type="s")
-#'  }
+#' # Plot (note that the splines period starts at tday=0)
+#' plot(D$t, L$bs1$k1, type="s")
+#' for(i in 2:length(L)){
+#'   lines(D$t, L[[i]]$k1, col=i, type="s")
+#' }
 #'
-#'  # In a model formulation it will be:
-#'  model <- forecastmodel$new()
-#'  model$add_inputs(mutday = "bspline(tday)")
-#'  # Such that at the transform stage will give the same as above
-#'  model$transform_data(D)
+#' # In a model formulation it will be:
+#' model <- forecastmodel$new()
+#' model$add_inputs(mutday = "bspline(tday)")
+#' # We set the horizons (actually not needed for the transform, only required for data checks)
+#' model$kseq <- 1:4
+#' # Such that at the transform stage will give the same as above
+#' model$transform_data(D)
 #'
 #' # Periodic splines are useful for modelling a diurnal harmonical functions
 #' L <- bspline(D$tday, bknots=c(0,24), df=4, periodic=TRUE)
@@ -62,7 +64,7 @@
 #' # Plot
 #' plot(D$t, L$bs1$k1, type="s")
 #' for(i in 2:length(L)){
-#'     lines(D$t, L[[i]]$k1, col=i, type="s")
+#'    lines(D$t, L[[i]]$k1, col=i, type="s")
 #' }
 #'
 #' @export
@@ -72,7 +74,7 @@ bspline <- function(X, Boundary.knots = NA, intercept = FALSE, df = NULL, knots 
         Boundary.knots <- bknots
     }
     # If a list, then call on each element
-    if (class(X) == "list") {
+    if (inherits(X,"list")) {
         # Call again for each element
         val <- lapply(1:length(X), function(i) {
             bspline(X[[i]], df = df, knots = knots, degree = degree, intercept = intercept, 
@@ -82,7 +84,7 @@ bspline <- function(X, Boundary.knots = NA, intercept = FALSE, df = NULL, knots 
         return(val)
     }
     # X must be a data.frame or matrix
-    if(!(class(X) %in% c("data.frame","matrix"))){ stop("X must be a data.frame or matrix") }
+    if(!inherits(X,c("data.frame","matrix"))){ stop("X must be a data.frame or matrix") }
     # First find the horizons, they are used in the end
     nms <- nams(X)
     # All columns must be like "k12"

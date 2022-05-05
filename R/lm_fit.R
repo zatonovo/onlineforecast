@@ -74,12 +74,12 @@
 #' @importFrom stats lm residuals
 #' @export
 lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, printout = TRUE){
-    # Check that the model is setup correctly, it will stop and print a message if not
-    model$check(data)
-    
     # Function for initializing an lm fit:
     # - it will change the "model" input (since it an R6 class and thus passed by reference
     # - If scorefun is given, e.g. rmse() then the value of this is returned
+
+    # Check the model output data (input is check in the transform function)
+    model$check(data, checkinputs=FALSE)
 
     if(printout){
         # Should here actually only print the one that were found and changed?
@@ -101,7 +101,7 @@ lm_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE, pr
     # ################################ 
     # Init the inputs states (and some more is reset)
     model$reset_state()
-    # Generate the 2nd stage inputs (i.e. the transformed data)
+    # Generate the 2nd stage inputs (i.e. the transformed data). Input data is checked in the transform function.
     datatr <- model$transform_data(data)
 
     #

@@ -299,14 +299,14 @@ however we can see the result of the evaluation by:
 # Evaluate input expressions
 datatr <- model$transform_data(D)
 # See what came out
-summary(datatr)
+summary.default(datatr)
 # In particular for the mu = "one()"
 head(datatr$mu)
 ```
 
 If we wanted to debug we could:
 ```{r, eval=FALSE}
-# Set to debug
+# Set the function to debug (uncomment the line)
 #debug(one)
 # Run the input transformation now and it will stop in one()
 datatr <- model$transform_data(D)

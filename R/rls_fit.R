@@ -118,19 +118,19 @@
 
 rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
                     runcpp = TRUE, printout = TRUE){
-    # Check that the model is setup correctly, it will stop and print a message if not
-    model$check(data)
-    
     # Function for initializing an rls fit:
     # - it will change the "model" input (since it an R6 class and thus passed by reference
     # - If scorefun is given, e.g. rmse() then the value of this is returned
     #
 
+    # Check the model output data (input is check in the transform function)
+    model$check(data, checkinputs=FALSE)
+    
     if(printout){
         # Should here actually only print the ones that were found and changed?
         message("----------------")
         if(is.na(prm[1])){
-            message("prm=NA, so current parameters are used.")
+            message("Argument 'prm' is NA, so parameters in 'model$prm' are used.")
         }else{
             print_to_message(prm)
         }
@@ -145,7 +145,7 @@ rls_fit <- function(prm=NA, model, data, scorefun = NA, returnanalysis = TRUE,
 
     # Reset the model state (e.g. inputs state, stored iterative data, ...)
     model$reset_state()
-    # Generate the 2nd stage inputs (i.e. the transformed data)
+    # Generate the 2nd stage inputs (i.e. the transformed data). Input data is checked in the transform function.
     datatr <- model$transform_data(data)
 
     # Initialize the fit for each horizon

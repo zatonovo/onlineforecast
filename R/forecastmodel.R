@@ -213,6 +213,9 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
     #----------------------------------------------------------------
     # Function for transforming the input data to the regression data
     transform_data = function(data){
+        # Do a check of the data
+        self$check(data, checkoutput=FALSE)
+        
         # Evaluate for each input the expresssion to generate the model input data
         L <- lapply(self$inputs, function(input){
             # Evaluate the expression (input$expr)
@@ -248,53 +251,58 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
 
     #----------------------------------------------------------------
     # Check if the model and data is setup correctly
-    check = function(data = NA){
-        # some checks are done here, maybe more should be added (??also when transforming inputs, if something goes wrong its caught and message is printed)
-        #
+    check = function(data = NA, checkoutput = TRUE, checkinputs = TRUE){
+        # some checks are done here, this one is called in transform_data()
         # ################################
-        # First check if the output is set correctly
-        if( is.na(self$output) ){
-            stop("Model output is NA, it must be set to the name of a variable in the data.list used.")
-        }
-        if( !(self$output %in% names(data)) ){
-            stop("Model output '",self$output,"' is not in the data provided: It must be set to the name of a variable in the data.list used.")
-        }
-        if( !(is.numeric(data[[self$output]])) ){
-            stop("The model output '",self$output,"' is not a numeric. It has to be a vector of numbers.")
-        }
-        if( length(data[[self$output]]) != length(data$t) ){
-            stop("The length of the model output '",self$output,"' is ",length(data[[self$output]]),", which is not equal to the length of the time vector (t), which is ",length(data$t))
-        }
-        # ################################
-        # Check that the kseq is set in the model
-        if( !is.numeric(self$kseq) ){
-            stop("'model$kseq' is not set. Must be an integer (or numeric) vector.")
+        if(checkoutput){
+            # Check if the output is set correctly
+            if( is.na(self$output) ){
+                stop("Model output is NA, it must be set to the name of a variable in the data.list used.")
+            }
+            if( !(self$output %in% names(data)) ){
+                stop("Model output '",self$output,"' is not in the data provided: It must be set to the name of a variable in the data.list used.")
+            }
+            if( !(is.numeric(data[[self$output]])) ){
+                stop("The model output '",self$output,"' is not a numeric. It has to be a vector of numbers.")
+            }
+            if( length(data[[self$output]]) != length(data$t) ){
+                stop("The length of the model output '",self$output,"' is ",length(data[[self$output]]),", which is not equal to the length of the time vector (t), which is ",length(data$t))
+            }
         }
         # ################################
-        # Check all input variables are correctly set data
-        for(i in 1:length(self$inputs)){
-            # Find all the variables in the expression
-            nms <- all.vars(parse(text=self$inputs[[i]]$expr[[1]]))
+        if(checkinputs){
+            # Check that the kseq is set in the model
+            if( !is.numeric(self$kseq) ){
+                stop("'model$kseq' is not set. Must be an integer (or numeric) vector.")
+            }
+            # ################################
+            # Check all input variables are correctly set in data
+            # Find all the variable names used in the expressions
+            tmp <- lapply(self$inputs, function(input){
+                all.vars(parse(text=input$expr[[1]]))
+            })
+            nms <- unique(unlist(tmp))
+            
+            # Do the default test of the data.list, only for the variables used in the expressions
+            summary.data.list(data, printit=FALSE, nms=nms)
+            
+            # Do a bit of extra check
+            # Are all variables used available in data?
+            notindata <- nms[!(nms %in% names(data)) & nms != "pi"]
+            if(length(notindata) > 0){
+                stop("Variables ",pst("'",notindata,"'",collapse="','")," are used in input expressions, but are not in data")
+            }
+            
+            # Check each variable
             for(nm in nms){
-                if(class(data[[nm]]) %in% c("data.frame","matrix")){
-                    # It's a forecast input, hence must have the k columns in kseq
-                    if(!all(self$kseq %in% as.integer(gsub("k","",names(data[[nm]]))))){
-                        missingk <- which(!self$kseq %in% as.integer(gsub("k","",names(data[[nm]]))))
-                        stop("The input variable '",nm,"' doesn't have all needed horizons.\nIt has ",pst(names(data[[nm]]),collapse=","),"\nIt is missing ",pst("k",self$kseq[missingk],collapse=","))
-                    }
-                    # Check if the number of observations match
-                    if( nrow(data[[nm]]) != length(data$t) ){
-                        stop(pst("The input variable '",nm,"' doesn't have the same number of observations as time vector 't' in the data. It has ",nrow(data[[nm]]),", but 't' has ",length(data$t)))
-                    }
-                }else if(class(data[[nm]]) == "numeric"){
-                    # Observation input, check the length
-                    if( length(data[[nm]]) != length(data$t) ){
-                        stop("The input variable '",nm,"' doesn't have the same number of observations as time vector 't' in the data. It has ",length(data[[nm]]),", but 't' has ",length(data$t))
-                    }
-                }else{
-                    if(!nm == "pi"){
-                        stop("The variable '",nm,"' is missing in data, or it has the wrong class.\nIt must be class: data.frame, matrix or vector.\nIt is needed for the input expression '",self$inputs[[i]]$expr[[1]],"'")
-                    }
+                # Are the inputs forecast matrices?
+                if(!inherits(data[[nm]],c("data.frame","matrix"))){
+                    stop(nm," must be a forecast matrix (in 'data' as a data.frame or matrix with columns named 'kxx', see ?data.list), since it is used as a variable in an input expression")
+                }
+                # It's a forecast input, hence must have the k columns in kseq
+                if(!all(self$kseq %in% as.integer(gsub("k","",names(data[[nm]]))))){
+                    missingk <- which(!self$kseq %in% as.integer(gsub("k","",names(data[[nm]]))))
+                    stop("The input variable '",nm,"' doesn't have all needed horizons.\nIt has ",pst(names(data[[nm]]),collapse=","),"\nIt is missing ",pst("k",self$kseq[missingk],collapse=","))
                 }
             }
         }

@@ -33,5 +33,5 @@ unlink(paste0(dirnam,"tmp-model-selection/"), recursive=TRUE)
 makeit("model-selection", openit=FALSE)
 
 # 
-unlink(paste0(dirnam,"tmp-output/tmp-online-updating/"), recursive=TRUE)
+unlink(paste0(dirnam,"tmp-online-updating/"), recursive=TRUE)
 makeit("online-updating", openit=FALSE)

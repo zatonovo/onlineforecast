@@ -70,7 +70,12 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, printit = TRU
     fit <- object
     #
     if(is.na(scoreperiod[1])){
-        scoreperiod <- fit$data$scoreperiod
+        if(is.null(fit$data$scoreperiod)){
+            warning("No scoreperiod set, so using all data for score calculation.")
+            scoreperiod <- rep(TRUE, length(residuals(fit)))
+        }else{
+            scoreperiod <- fit$data$scoreperiod
+        }
     }
     #
     scipen <- options(scipen=10)$scipen

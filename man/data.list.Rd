@@ -19,8 +19,11 @@ Make a data.list of the vectors and data.frames given.
 See the vignette 'setup-data' on how a data.list must be setup.
 
 It's simply a list of class \code{data.list} holding:
+
   - vector \code{t}
+
   - vector(s) of observations
+
   - data.frames (or matrices) of forecast inputs
 }
 \examples{
@@ -29,13 +32,13 @@ It's simply a list of class \code{data.list} holding:
 time <- seq(ct("2019-01-01"),ct("2019-01-02"),by=3600)
 # Observations time series (as vector)
 xobs <- rnorm(length(time))
-# Forecast input as data.frame
+# Forecast input as a data.frame with columns names 'kxx', where 'xx' is the horizon
 X <- data.frame(matrix(rnorm(length(time)*3), ncol=3))
 names(X) <- pst("k",1:3)
 
 D <- data.list(t=time, xobs=xobs, X=X)
 
-# Check it
-check(D)
+# Check it (see \code{?\link{summary.data.list}})
+summary(D)
 
 }
