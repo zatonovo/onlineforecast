@@ -60,7 +60,6 @@ run_examples()
 # The version (move the value from DESCRIPTION to other places, so only update it in DESCRIPTION)
 txt <- scan("DESCRIPTION", character())
 (ver <- txt[which(txt == "Version:") + 1])
-
 # Update CITATION (change the year manually)
 txt2 <- scan("inst/CITATION", character(), sep="#", quote="")
 txt2[grep("R package version",txt2)] <- paste0('  note     = "R package version ',ver,'",')
@@ -104,17 +103,21 @@ unlink("onlineforecast.Rcheck/", recursive=TRUE)
 
 
 #-----------------
-# WINDOWS:
+# Use Rcpp and RcppArmadillo (2022-05): Some problem (segmentation fault) occured, something (Rostream...) was added to the 'src/RcppExports.cpp' file, however in some weird way it disappeared again!
+#
+# Update if new functions are added to the src folder
+#Rcpp::compileAttributes()
+
+# New package from scratch, see what is generated and correct that in the current package
+#library(RcppArmadillo)
+#RcppArmadillo.package.skeleton("onlineforecast", path = "~/tmp/")
+
+# on WINDOWS:
 # Install rtools
 # Run in R:
 #writeLines('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
 # Restart R and check if rtools are found:
 #Sys.which("make")
-
-# Must have Makevars and Makevars.win in "src"
-# Make the two files, find them and copy into "src"
-#library("RcppArmadillo")
-#RcppArmadillo.package.skeleton("tmp-pkg")
 
 
 #-----------------

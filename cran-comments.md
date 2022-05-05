@@ -2,7 +2,7 @@
 # v1.0.1
 
 We have changed a few minor things:
-- Added better checks and error messages for input data
+- Added better checks and error messages for data
 - Small bug fixes 
 
 #----------------------------------------------------------------

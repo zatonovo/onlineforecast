@@ -15,7 +15,7 @@ citEntry(
   entry    = "Manual",
   title    = "{{onlineforecast}: Forecast Modelling for Online Applications}",
   author   = "Peder Bacher and Hjörleifur G. Bergsteinsson",
-  year     = "2021",
+  year     = "2022",
   note     = "R package version 1.0.1",
   url      = "https://onlineforecasting.org",
   textVersion = ""
