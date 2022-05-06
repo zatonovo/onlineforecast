@@ -107,11 +107,9 @@ text, but not explained, then have a look in the two preceding vignettes to find
 ## Load forecasts
 
 First Load the package, setup the model and calculate the forecasts:
-```{r, echo=1:2, purl=1:2}
+```{r}
 # Load the package
 library(onlineforecast)
-#library(devtools)
-#load_all(as.package("../../onlineforecast"))
 ```
 
 Just start by taking a rather short data set:

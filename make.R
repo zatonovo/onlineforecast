@@ -68,7 +68,7 @@ write.table(txt2, "inst/CITATION", row.names=FALSE, col.names=FALSE, quote=FALSE
 # ----------------------------------------------------------------
 # Build the package
 document()
-# Run the "vignettes/make.R" to build the cache
+# Run the "vignettes/make.R" to build a cache
 build(".", vignettes=TRUE)
 
 # Install it
