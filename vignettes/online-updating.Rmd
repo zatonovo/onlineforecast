@@ -88,7 +88,7 @@ knit_hooks$set(chunk = function(x, options) {
 })
 ```
 
-[onlineforecasting]: https://onlineforecasting.org/articles/onlineforecasting.pdf
+[onlineforecasting]: https://arxiv.org/abs/2109.12915
 [building heat load forecasting]: https://onlineforecasting.org/examples/building-heat-load-forecasting.html
 [onlineforecasting.org]: https://onlineforecasting.org
 <!--shared-init-end-->
