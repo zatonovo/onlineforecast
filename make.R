@@ -1,4 +1,4 @@
-#----------------------------------------------------------------
+## #----------------------------------------------------------------
 ## # These packages must be installed
 ## install.packages("Rcpp")
 ## install.packages("R6")
@@ -7,7 +7,7 @@
 ## # cpp matrix library
 ## install.packages("RcppArmadillo")
 ## # For develop install
-## install.packages("devtools")
+## install.packages("devtools", type="source")
 ## install.packages("roxygen2")
 ## # For testing and building vignettes
 ## install.packages("rmarkdown")
@@ -22,9 +22,9 @@ library(devtools)
 library(roxygen2)
 
 # Load the package directly
-## document()
-## pack <- as.package("../onlineforecast")
-## load_all(pack)
+ document()
+ pack <- as.package("../onlineforecast")
+ load_all(pack)
 
 
 # ----------------------------------------------------------------
@@ -45,6 +45,8 @@ library(roxygen2)
 # Init new test
 #use_test("newtest")
 
+
+
 # # Run all tests
 document()
 test()
@@ -60,10 +62,7 @@ run_examples()
 # The version (move the value from DESCRIPTION to other places, so only update it in DESCRIPTION)
 txt <- scan("DESCRIPTION", character())
 (ver <- txt[which(txt == "Version:") + 1])
-# Update CITATION (change the year manually)
-txt2 <- scan("inst/CITATION", character(), sep="#", quote="")
-txt2[grep("R package version",txt2)] <- paste0('  note     = "R package version ',ver,'",')
-write.table(txt2, "inst/CITATION", row.names=FALSE, col.names=FALSE, quote=FALSE)
+# Not needed to write elsewhere now
 
 # ----------------------------------------------------------------
 # Build the package
@@ -71,10 +70,11 @@ document()
 # Run the "vignettes/make.R" to build a cache
 build(".", vignettes=TRUE)
 
-# Install it
+# The file
 gzfile <- paste0("../onlineforecast_",ver,".tar.gz")
-install.packages(gzfile)
 
+# Install it
+install.packages(gzfile)
 library(onlineforecast)
 # ----------------------------------------------------------------
 
@@ -163,3 +163,4 @@ unlink("onlineforecast.Rcheck/", recursive=TRUE)
 ##     write(x, nm)
 ## }
 ## docit()
+

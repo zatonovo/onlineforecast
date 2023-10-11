@@ -137,5 +137,6 @@ rls_summary <- function(object, scoreperiod = NA, scorefun = rmse, printit = TRU
 }
 
 #' @importFrom stats sd
+#' @inherit rls_summary
 #' @export
 summary.rls_fit <- rls_summary

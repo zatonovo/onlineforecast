@@ -1,8 +1,8 @@
 Package: onlineforecast
 Type: Package
 Title: Forecast Modelling for Online Applications
-Version: 1.0.1
-Description: A framework for fitting adaptive forecasting models. Provides a way to use forecasts as input to models, e.g. weather forecasts for energy related forecasting. The models can be fitted recursively and can easily be setup for updating parameters when new data arrives. See the included vignettes, the website <https://onlineforecasting.org> and the pre-print paper "onlineforecast: An R package for adaptive and recursive forecasting" <arXiv:2109.12915>.
+Version: 1.0.2
+Description: A framework for fitting adaptive forecasting models. Provides a way to use forecasts as input to models, e.g. weather forecasts for energy related forecasting. The models can be fitted recursively and can easily be setup for updating parameters when new data arrives. See the included vignettes, the website <https://onlineforecasting.org> and the paper "onlineforecast: An R package for adaptive and recursive forecasting" <https://journal.r-project.org/articles/RJ-2023-031/>.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -25,7 +25,7 @@ Suggests:
     data.table,
     plotly
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 URL: https://onlineforecasting.org
 BugReports: https://lab.compute.dtu.dk/packages/onlineforecast/-/issues
 Config/testthat/edition: 3

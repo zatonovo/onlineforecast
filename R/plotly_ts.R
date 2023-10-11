@@ -27,6 +27,8 @@ plotly_ts <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", y
     UseMethod("plotly_ts")
 }
 
+
+#' @inherit plotly_ts
 #' @export
 plotly_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
                               mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=TRUE, p=NA, kseq = NA, ...) {
@@ -34,6 +36,8 @@ plotly_ts.data.list <- function(object, patterns=".*", xlim = NA, ylims = NA, xl
                       mains = mains, mainouter=mainouter, legendtexts = legendtexts, colormaps = colormaps, xat = xat, usely = usely, p = p, kseq=kseq, ...)
 }
 
+
+#' @inherit plotly_ts
 #' @export
 plotly_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xlab = "", ylabs = NA,
                               mains = "", mainouter="", legendtexts = NA, colormaps = NA, xat = NA, usely=TRUE, p=NA, namesdata=NA, ...) {

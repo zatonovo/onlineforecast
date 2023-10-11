@@ -57,6 +57,7 @@ resample <- function(object, ts, tstart=NA, tend=NA, timename="t", fun=mean, qua
 }
 
 #' @importFrom stats aggregate
+#' @inherit resample
 #' @export
 resample.data.frame <- function(object, ts, tstart=NA, tend=NA, timename="t", fun=mean, quantizetime=TRUE, ...)
 {

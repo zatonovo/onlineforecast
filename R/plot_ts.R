@@ -277,6 +277,10 @@ plot_ts.data.frame <- function(object, patterns=".*", xlim = NA, ylims = NA, xla
 plot_ts.matrix <- plot_ts.data.frame
 
 
+#' @rdname plot_ts
+#' @param data The data.frame from where to find columns to plot
+#' @param xnm The name of the column
+#' @param pattern The regex pattern
 plot_ts_iseq <- function(data, pattern, xnm, namesdata){
     iseq <- integer(0)
     # Use these names when finding columns to plot
@@ -302,6 +306,14 @@ plot_ts_iseq <- function(data, pattern, xnm, namesdata){
 
 # Plot all columns found with regex pattern
 #' @importFrom graphics plot lines axis title axis.POSIXct mtext par legend
+#' @rdname plot_ts
+#' @param iplot The plot index
+#' @param ylim ylim in the plot
+#' @param main main title
+#' @param mainline line for the main title
+#' @param colormap the colormap for the lines
+#' @param legendtext Text for the legend
+#' @param xaxis Boolean determining to include the xaxis
 plot_ts_series <- function(data, pattern, iplot = 1,
                            ylim = NA, xlab = "", main = "", mainline = -1.2, colormap = NA, legendtext = NA,
                            xat = NA, plotit = TRUE, p = NA, namesdata = NA, xaxis = TRUE, ...) {

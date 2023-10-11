@@ -40,6 +40,7 @@ lagdf <- function(x, lagseq){
 }
 
 
+#' @inherit lagdf
 #' @export
 lagdf.numeric <- function(x, lagseq) {
     ## Return a data.frame
@@ -51,17 +52,20 @@ lagdf.numeric <- function(x, lagseq) {
 }
 
 
+#' @inherit lagdf
 #' @export
 lagdf.factor <- function(x, lagseq) {
     lagdf.numeric(x, lagseq)
 }
 
 
+#' @inherit lagdf
 #' @export
 lagdf.character <- function(x, lagseq) {
     lagdf.numeric(x, lagseq)
 }
 
+#' @inherit lagdf
 #' @export
 lagdf.logical <- function(x, lagseq) {
     lagdf.numeric(x, lagseq)
@@ -154,6 +158,8 @@ lagdf.data.frame <- function(x, lagseq) {
     return(X)
 }
 
+
+#' @inherit lagdf.data.frame
 #' @export
 lagdf.matrix <- function(x, lagseq){
     lagdf.data.frame(x, lagseq)
@@ -196,4 +202,3 @@ lagdf.matrix <- function(x, lagseq){
 ##         invisible(NULL)
 ##     }
 ## }
-

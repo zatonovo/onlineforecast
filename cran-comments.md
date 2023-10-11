@@ -1,4 +1,23 @@
 #----------------------------------------------------------------
+# v1.0.2
+Updated package documentation to fix:
+You have file
+  'onlineforecast/man/onlineforecast.Rd' with
+  \docType{package}, likely intended as a package
+  overview help file, but without the appropriate
+  PKGNAME-package \alias as per "Documenting packages"
+  in R-exts.
+
+From email:
+From: Kurt Hornik
+  <Kurt.Hornik@wu.ac.at>Sent: 19 August 2023 10:53
+  AMTo: Peder Bacher <pbac@dtu.dk>Cc:
+  Kurt.Hornik@R-project.org
+  <Kurt.Hornik@R-project.org>Subject: CRAN package
+  onlineforecast
+
+
+#----------------------------------------------------------------
 # v1.0.1
 
 We have changed a few minor things:

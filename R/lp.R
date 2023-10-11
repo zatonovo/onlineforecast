@@ -4,7 +4,7 @@
 #load_all(as.package("../../onlineforecast"))
 #?lp
 
-#' First-order low-pass filtering of a time series vector.
+#' First-order low-pass filtering of time series.
 #'
 #' This function applies a first order unity gain low-pass filter to the columns of \code{X}.
 #' The low-pass filter is applied to each column seperately. The stationary gain of the filter i one.
@@ -66,6 +66,16 @@ lp <- function(X, a1, usestate = TRUE) {
 }
 
 
+#' First-order low-pass filtering of a time series vector.
+#' 
+#' This function applies a first order unity gain low-pass filter vector.
+#'
+#' The \code{lp_vector_cpp} function does the same much faster.
+#' 
+#' @title First-order low-pass filtering
+#' @param x vector.
+#' @param a1 The low-pass filter coefficient.
+#' @return The low-pass filtered vector
 lp_vector <- function(x, a1) {
     ## Make a 1'st order low pass filter as (5.3) p.46 in the HAN report.
     y <- numeric(length(x))

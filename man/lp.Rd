@@ -17,7 +17,7 @@ lp(X, a1, usestate = TRUE)
 The low-pass filtered dataframe (as a matrix)
 }
 \description{
-First-order low-pass filtering of a time series vector.
+First-order low-pass filtering of time series.
 }
 \details{
 This function applies a first order unity gain low-pass filter to the columns of \code{X}.
