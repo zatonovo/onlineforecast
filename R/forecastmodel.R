@@ -300,9 +300,9 @@ forecastmodel <- R6::R6Class("forecastmodel", public = list(
                     stop(nm," must be a forecast matrix (in 'data' as a data.frame or matrix with columns named 'kxx', see ?data.list), since it is used as a variable in an input expression")
                 }
                 # It's a forecast input, hence must have the k columns in kseq
-                if(!all(self$kseq %in% as.integer(gsub("k","",names(data[[nm]]))))){
-                    missingk <- which(!self$kseq %in% as.integer(gsub("k","",names(data[[nm]]))))
-                    stop("The input variable '",nm,"' doesn't have all needed horizons.\nIt has ",pst(names(data[[nm]]),collapse=","),"\nIt is missing ",pst("k",self$kseq[missingk],collapse=","))
+                if(!all(self$kseq %in% as.integer(gsub("k","",colnames(data[[nm]]))))){
+                    missingk <- which(!self$kseq %in% as.integer(gsub("k","",colnames(data[[nm]]))))
+                    stop("The input variable '",nm,"' doesn't have all needed horizons.\nIt has ",pst(colnames(data[[nm]]),collapse=","),"\nIt is missing ",pst("k",self$kseq[missingk],collapse=","))
                 }
             }
         }
